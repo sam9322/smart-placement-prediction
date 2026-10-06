@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal | Smart Placement Prediction & Career Coach</title>
+  <meta name="description" content="SaaS Student Portal for Engineering Placement Prediction, AI Career Coaching, Skill Gap Analysis, and Mock Interviews.">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js for SaaS Analytics Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Canvas Confetti for Celebration Feedback -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    
+    <!-- ==========================================================================
+         SIDEBAR NAVIGATION
+         ========================================================================== -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="sidebar-brand">
+          <div class="brand-icon-box">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <span>CareerPulse<span style="color: var(--primary);">.AI</span></span>
+        </a>
+        <button class="sidebar-close-btn" onclick="closeMobileSidebar()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+        <a href="#dashboard" class="sidebar-link active" onclick="switchView('dashboard')">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#profile" class="sidebar-link" onclick="switchView('profile')">
+          <i class="fa-solid fa-id-card-clip"></i>
+          <span>Student Profile</span>
+        </a>
+        <a href="#resume" class="sidebar-link" onclick="switchView('resume')">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Resume Analyzer</span>
+          <span class="sidebar-badge badge-warning">ATS</span>
+        </a>
+
+        <div class="nav-section-title">AI Guidance Engine</div>
+        <a href="#prediction" class="sidebar-link" onclick="switchView('prediction')">
+          <i class="fa-solid fa-calculator"></i>
+          <span>Placement Predictor</span>
+          <span class="sidebar-badge badge-primary">AI</span>
+        </a>
+        <a href="#coach" class="sidebar-link" onclick="switchView('coach')">
+          <i class="fa-solid fa-compass"></i>
+          <span>Career Coach</span>
+        </a>
+        <a href="#skillgap" class="sidebar-link" onclick="switchView('skillgap')">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>Skill Gap Analysis</span>
+        </a>
+
+        <div class="nav-section-title">Preparation & Practice</div>
+        <a href="#roadmap" class="sidebar-link" onclick="switchView('roadmap')">
+          <i class="fa-solid fa-route"></i>
+          <span>Career Roadmap</span>
+        </a>
+        <a href="#interview" class="sidebar-link" onclick="switchView('interview')">
+          <i class="fa-solid fa-user-tie"></i>
+          <span>Interview Prep Hub</span>
+          <span class="sidebar-badge badge-success">Quiz</span>
+        </a>
+
+        <div class="nav-section-title">Portal Navigation</div>
+        <a href="index.html" class="sidebar-link">
+          <i class="fa-solid fa-house"></i>
+          <span>Back to Landing Page</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar-circle" id="sidebar-user-avatar">SW</div>
+          <div style="flex: 1; min-width: 0;">
+            <div class="user-meta-name" id="sidebar-user-name">Samiksha Walbe</div>
+            <div class="user-meta-branch">B.Tech CSE '26</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="authManager.logout(); window.location.href='index.html';" title="Sign Out">
+            <i class="fa-solid fa-right-from-bracket" style="color: var(--accent-rose);"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN CONTENT AREA
+         ========================================================================== -->
+    <div class="app-main">
+      
+      <!-- Top Application Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-title-box">
+            <h2 id="header-view-title">Student Dashboard</h2>
+            <p id="header-view-desc">Holistic overview of placement metrics, skill readiness, and action items</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Quick Search Button -->
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-modal').classList.add('open')">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span style="display: inline-block;">Quick Jump</span>
+          </button>
+
+          <!-- Account Switcher between Samiksha & Jyoti -->
+          <div class="account-switcher-pill" style="display: inline-flex; align-items: center; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 9999px; padding: 2px 4px; gap: 4px;">
+            <span class="text-xs text-muted" style="padding: 0 6px; font-weight: 600; font-size: 0.75rem;">
+              <i class="fa-solid fa-users text-primary"></i> Account:
+            </span>
+            <button type="button" class="btn btn-xs btn-primary font-semibold" id="switch-account-samiksha-btn" onclick="switchToAccount('samiksha')" title="Switch to Samiksha Walbe (B.Tech CSE - 8.85 CGPA)" style="border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+              <span class="user-avatar-circle" style="width: 16px; height: 16px; font-size: 0.55rem; background: rgba(255,255,255,0.25); display: inline-flex; align-items: center; justify-content: center; margin-right: 4px;">SW</span>
+              Samiksha (CSE)
+            </button>
+            <button type="button" class="btn btn-xs btn-ghost text-muted" id="switch-account-jyoti-btn" onclick="switchToAccount('jyoti')" title="Switch to Jyoti Kore (B.Tech IT - 8.40 CGPA)" style="border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
+              <span class="user-avatar-circle" style="width: 16px; height: 16px; font-size: 0.55rem; background: var(--accent-emerald); color: #fff; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px;">JK</span>
+              Jyoti (IT)
+            </button>
+          </div>
+
+          <!-- Theme Toggle Button -->
+          <button class="btn btn-secondary btn-icon" id="theme-toggle-btn" onclick="handleThemeToggle()" title="Toggle Theme">
+            <i class="fa-solid fa-moon" id="theme-toggle-icon"></i>
+          </button>
+
+          <!-- User Quick Pill -->
+          <a href="#profile" class="btn btn-ghost btn-sm" onclick="switchView('profile')" style="padding: 0.35rem 0.65rem;" title="Go to Profile">
+            <span class="user-avatar-circle" id="header-user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">SW</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- App View Router Containers -->
+      <main class="app-content">
+
+        <!-- ====================================================================
+             1. DASHBOARD VIEW
+             ==================================================================== -->
+        <section id="view-dashboard" class="app-view active">
+          <!-- Welcome Banner -->
+          <div class="welcome-banner">
+            <div class="welcome-info">
+              <h1>Welcome back, <span class="text-gradient" id="dash-welcome-name">Samiksha Walbe</span> 👋</h1>
+              <p id="dash-welcome-sub">
+                B.Tech in Computer Science & Engineering • Batch of 2026 • CGPA: 8.85
+              </p>
+            </div>
+            <div class="flex gap-2" style="display: flex; gap: 0.75rem;">
+              <a href="#prediction" class="btn btn-primary" onclick="switchView('prediction')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Recalculate Placement %
+              </a>
+            </div>
+          </div>
+
+          <!-- 4 KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: rgba(79, 70, 229, 0.12); color: var(--primary);">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <div>
+                <div class="kpi-value text-gradient" id="dash-kpi-prob">86%</div>
+                <div class="kpi-title">Placement Probability</div>
+                <div class="text-xs text-muted" id="dash-kpi-prob-sub">Tier 1 Ready (14-32 LPA)</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan);">
+                <i class="fa-solid fa-bullseye"></i>
+              </div>
+              <div>
+                <div class="kpi-value" id="dash-kpi-career" style="font-size: 1.25rem;">SDE</div>
+                <div class="kpi-title">Target Career Role</div>
+                <div class="text-xs text-muted" id="dash-kpi-career-sub">82% Skill Match (6/8 skills)</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald);">
+                <i class="fa-solid fa-list-check"></i>
+              </div>
+              <div>
+                <div class="kpi-value" id="dash-kpi-milestones">4 / 9</div>
+                <div class="kpi-title">Roadmap Milestones</div>
+                <div class="text-xs text-muted" id="dash-kpi-milestones-sub">44% of Roadmap Done</div>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.12); color: var(--accent-amber);">
+                <i class="fa-solid fa-user-check"></i>
+              </div>
+              <div>
+                <div class="kpi-value" id="dash-kpi-interview">8 / 10</div>
+                <div class="kpi-title">Interview Aptitude Score</div>
+                <div class="text-xs text-muted" id="dash-kpi-interview-sub">1 Mock Simulation Logged</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="dashboard-charts-grid">
+            <div class="chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-chart-radar text-primary"></i> Candidate Competency Radar</h3>
+                  <p class="card-subtitle">Your skill dimensions benchmarked against Tier-1 product company requirements</p>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="chart-radar"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-chart-bar text-cyan"></i> Placement Factor Breakdown</h3>
+                  <p class="card-subtitle">Relative weight contribution across key placement factors</p>
+                </div>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="chart-factors"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Grid: Upcoming Campus Drives & Recommended Next Actions -->
+          <div class="dashboard-bottom-grid">
+            <!-- Upcoming Drives -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-building text-primary"></i> Campus Placement Drives</h3>
+                  <p class="card-subtitle">Visiting companies & eligibility status</p>
+                </div>
+              </div>
+              <div style="overflow-x: auto;">
+                <table class="drives-table">
+                  <thead>
+                    <tr>
+                      <th>Company & Role</th>
+                      <th>CTC</th>
+                      <th>Drive Date</th>
+                      <th>Eligibility</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dash-drives-tbody">
+                    <!-- Dynamic injection -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Recommended Next Actions -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-bolt text-amber"></i> Recommended Action Items</h3>
+                  <p class="card-subtitle">Personalized priority steps to maximize offer conversion</p>
+                </div>
+              </div>
+              <div id="dash-actions-list">
+                <!-- Dynamic injection -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             2. STUDENT PROFILE VIEW
+             ==================================================================== -->
+        <section id="view-profile" class="app-view">
+          <div class="profile-grid">
+            <!-- Left Summary Column -->
+            <div>
+              <div class="profile-card-summary">
+                <div class="profile-avatar-large" id="profile-summary-avatar">SW</div>
+                <h3 class="text-xl" id="profile-summary-name">Samiksha Walbe</h3>
+                <p class="text-sm text-muted" id="profile-summary-roll">CS22B1052 • B.Tech CSE</p>
+
+                <div class="profile-metric-pill-grid">
+                  <div class="metric-pill">
+                    <div class="metric-pill-label">CGPA</div>
+                    <div class="metric-pill-val" id="profile-summary-cgpa">8.85</div>
+                  </div>
+                  <div class="metric-pill">
+                    <div class="metric-pill-label">Skills Logged</div>
+                    <div class="metric-pill-val" id="profile-summary-skills-count">10</div>
+                  </div>
+                  <div class="metric-pill">
+                    <div class="metric-pill-label">Projects</div>
+                    <div class="metric-pill-val" id="profile-summary-projects-count">2</div>
+                  </div>
+                  <div class="metric-pill">
+                    <div class="metric-pill-label">Aptitude</div>
+                    <div class="metric-pill-val" id="profile-summary-aptitude">88%</div>
+                  </div>
+                </div>
+
+                <button class="btn btn-secondary btn-sm w-full mb-2" onclick="switchToAccount('samiksha')">
+                  <i class="fa-solid fa-rotate-left"></i> Reload Samiksha Profile
+                </button>
+              </div>
+
+              <!-- Projects Card in Left Column -->
+              <div class="card mt-4" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-folder-tree text-primary"></i> Capstone Projects</h3>
+                  <button class="btn btn-outline btn-sm" onclick="addProject()"><i class="fa-solid fa-plus"></i> Add</button>
+                </div>
+                <div id="profile-projects-list">
+                  <!-- Dynamic injection -->
+                </div>
+              </div>
+
+              <!-- Certifications Card in Left Column -->
+              <div class="card mt-4" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-certificate text-amber"></i> Certifications</h3>
+                  <button class="btn btn-outline btn-sm" onclick="addCertification()"><i class="fa-solid fa-plus"></i> Add</button>
+                </div>
+                <div id="profile-certs-list">
+                  <!-- Dynamic injection -->
+                </div>
+              </div>
+
+              <!-- Internships Card in Left Column -->
+              <div class="card mt-4" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-briefcase text-emerald"></i> Internships</h3>
+                  <button class="btn btn-outline btn-sm" onclick="addInternship()"><i class="fa-solid fa-plus"></i> Add</button>
+                </div>
+                <div id="profile-internships-list">
+                  <!-- Dynamic injection -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Detailed Edit Form Column -->
+            <div>
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-user-pen text-primary"></i> Edit Academic & Personal Details</h3>
+                  <span class="badge badge-info">Stored in LocalStorage</span>
+                </div>
+
+                <form onsubmit="handleSaveProfileForm(event)">
+                  <div class="grid gap-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Full Name <span class="required">*</span></label>
+                      <input type="text" id="profile-fullname" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Email Address <span class="required">*</span></label>
+                      <input type="email" id="profile-email" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Phone Number</label>
+                      <input type="text" id="profile-phone" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">College / Institute</label>
+                      <input type="text" id="profile-college" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Degree & Branch</label>
+                      <input type="text" id="profile-degree" class="form-control" placeholder="B.Tech">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Department / Branch</label>
+                      <input type="text" id="profile-branch" class="form-control" placeholder="Computer Science & Engineering">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Graduation Year</label>
+                      <input type="number" id="profile-gradyear" class="form-control" placeholder="2026">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Roll / Registration Number</label>
+                      <input type="text" id="profile-roll" class="form-control" placeholder="CS22B1048">
+                    </div>
+                  </div>
+
+                  <h4 class="mt-4 mb-3" style="font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                    Academic Scores & Placement Readiness
+                  </h4>
+
+                  <div class="grid gap-3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Current CGPA (out of 10) <span class="required">*</span></label>
+                      <input type="number" step="0.01" min="0" max="10" id="profile-cgpa" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">10th Board Marks (%)</label>
+                      <input type="number" step="0.1" min="0" max="100" id="profile-tenth" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">12th Board Marks (%)</label>
+                      <input type="number" step="0.1" min="0" max="100" id="profile-twelfth" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Standing Backlogs <span class="required">*</span></label>
+                      <input type="number" min="0" max="10" id="profile-backlogs" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Aptitude Test Score (%)</label>
+                      <input type="number" min="0" max="100" id="profile-aptitude" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Coding Rating (LeetCode)</label>
+                      <input type="number" min="1000" max="2500" id="profile-coding-rating" class="form-control">
+                    </div>
+                  </div>
+
+                  <h4 class="mt-4 mb-3" style="font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                    Technical Skills Matrix
+                  </h4>
+
+                  <div class="form-group">
+                    <label class="form-label">Add Technical Skill (Press Enter or click Add)</label>
+                    <div class="flex gap-2" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                      <input type="text" id="profile-skill-input" class="form-control" placeholder="e.g. Docker, TypeScript, PyTorch" onkeydown="if(event.key==='Enter'){event.preventDefault(); addSkillFromInput();}">
+                      <button type="button" class="btn btn-secondary" onclick="addSkillFromInput()">
+                        <i class="fa-solid fa-plus"></i> Add
+                      </button>
+                    </div>
+                    <div class="tags-wrapper" id="profile-skills-container">
+                      <!-- Skill tags rendered here -->
+                    </div>
+                  </div>
+
+                  <div class="flex justify-end gap-3 mt-4" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i class="fa-solid fa-floppy-disk"></i> Save Student Profile
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             RESUME UPLOAD & ANALYZER VIEW
+             ==================================================================== -->
+        <section id="view-resume" class="app-view">
+          <!-- Header Banner -->
+          <div class="card mb-4" style="margin-bottom: 2rem;">
+            <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span class="badge badge-warning"><i class="fa-solid fa-file-invoice"></i> Smart ATS Resume Parser</span>
+                <h3 class="text-2xl font-bold mt-1">Resume Upload & Competency Analyzer</h3>
+                <p class="text-muted text-sm">Upload your PDF, DOCX or TXT resume to extract skills, evaluate ATS placement score, and measure job role alignment.</p>
+              </div>
+              <div style="min-width: 240px;">
+                <label class="form-label text-xs">Benchmark Against Role:</label>
+                <select id="resume-target-role" class="form-control" onchange="resumeAnalyzer.selectedRole = this.value">
+                  <option value="sde">Software Development Engineer</option>
+                  <option value="webdev">Full Stack Web Developer</option>
+                  <option value="data-analyst">Data Analyst & BI Specialist</option>
+                  <option value="aiml">AI / Machine Learning Engineer</option>
+                  <option value="cloud-devops">Cloud & DevOps Engineer</option>
+                  <option value="cybersecurity">Cybersecurity Analyst</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Drop Zone Card -->
+          <div class="card mb-4" style="margin-bottom: 2rem;">
+            <div id="resume-drop-zone" style="border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center; cursor: pointer; transition: all var(--transition-fast);" onclick="document.getElementById('resume-file-input').click()">
+              <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin: 0 auto 1.25rem auto;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <h4 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Click to Upload or Drag and Drop Resume</h4>
+              <p class="text-sm text-muted" style="margin-bottom: 1.25rem;">Supported Formats: <strong>PDF, DOCX, DOC, TXT</strong> (Max file size: 10MB)</p>
+              
+              <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+              
+              <div class="flex justify-center gap-2" style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;" onclick="event.stopPropagation()">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resumeAnalyzer.loadSampleResume('sde')">
+                  <i class="fa-solid fa-bolt text-amber"></i> Test with Sample SDE Resume
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resumeAnalyzer.loadSampleResume('aiml')">
+                  <i class="fa-solid fa-brain text-primary"></i> Test with Sample AI/ML Resume
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div id="resume-loading-state" class="card p-4 text-center" style="display: none; align-items: center; justify-content: center; flex-direction: column; padding: 3rem; margin-bottom: 2rem;">
+            <i class="fa-solid fa-circle-notch fa-spin text-primary" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+            <h4 id="resume-loading-msg" style="font-size: 1.1rem;">Parsing Resume with NLP Engine...</h4>
+            <p class="text-sm text-muted">Extracting skills, projects, certifications, and calculating ATS scores</p>
+          </div>
+
+          <!-- Results Container -->
+          <div id="resume-results-container" style="display: none;">
+            <!-- Score & Role Match Top Grid -->
+            <div class="grid gap-3 mb-4" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+              <!-- Score Gauge Card -->
+              <div class="card text-center">
+                <span class="badge badge-primary mb-2">Resume Assessment</span>
+                <h4 id="resume-result-filename" style="font-size: 1.05rem; margin-bottom: 1rem;">resume.pdf</h4>
+                
+                <div style="position: relative; width: 150px; height: 150px; margin: 0 auto 1rem auto;">
+                  <svg style="width: 100%; height: 100%; transform: rotate(-90deg);" viewBox="0 0 140 140">
+                    <circle cx="70" cy="70" r="60" fill="none" stroke="var(--border-color)" stroke-width="12"></circle>
+                    <circle id="resume-gauge-circle" cx="70" cy="70" r="60" fill="none" stroke="var(--accent-emerald)" stroke-width="12" stroke-linecap="round" stroke-dasharray="376.99" stroke-dashoffset="60" style="transition: stroke-dashoffset 1s ease, stroke 0.4s ease;"></circle>
+                  </svg>
+                  <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <span id="resume-ats-score" style="font-size: 2rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">84/100</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">ATS Score</span>
+                  </div>
+                </div>
+
+                <div id="resume-score-grade" class="badge badge-success mb-3">Excellent (ATS Ready)</div>
+
+                <button class="btn btn-primary btn-sm w-full mt-2" onclick="resumeAnalyzer.importExtractedToProfile()">
+                  <i class="fa-solid fa-cloud-arrow-down"></i> Auto-Import Extracted Data into My Profile
+                </button>
+              </div>
+
+              <!-- Role Fit & Benchmark Card -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-bullseye text-primary"></i> Target Role Qualification Match</h3>
+                </div>
+                
+                <div style="margin-bottom: 1.25rem;">
+                  <div class="flex justify-between items-center mb-1" style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem;">Role Benchmark Fit:</span>
+                    <span class="range-value" id="resume-role-match-pct">78% Fit</span>
+                  </div>
+                  <div class="progress-track" style="height: 10px;">
+                    <div class="progress-fill success" id="resume-role-match-bar" style="width: 78%;"></div>
+                  </div>
+                </div>
+
+                <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-wand-magic-sparkles text-amber"></i> Actionable ATS Improvement Tips</h4>
+                <div id="resume-suggestions-extracted">
+                  <!-- Suggestions injected here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Extracted Sections Grid -->
+            <div class="grid gap-3 mb-4" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+              <!-- Extracted Skills -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-code text-primary"></i> Extracted Technical Skills</h3>
+                  <span class="badge badge-info">NLP Detected</span>
+                </div>
+                <div class="flex flex-wrap gap-2" id="resume-skills-extracted" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  <!-- Skills pills -->
+                </div>
+              </div>
+
+              <!-- Extracted Education & Certifications -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-graduation-cap text-primary"></i> Education & Credentials</h3>
+                </div>
+                <div style="margin-bottom: 1rem;" id="resume-edu-extracted">
+                  <!-- Education line -->
+                </div>
+                <h5 style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">Certifications Detected</h5>
+                <div class="flex flex-wrap gap-2" id="resume-certs-extracted" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  <!-- Certs pills -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Extracted Projects & Experience Grid -->
+            <div class="grid gap-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+              <!-- Projects -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-folder-tree text-primary"></i> Projects Detected</h3>
+                </div>
+                <div id="resume-projects-extracted">
+                  <!-- Projects cards -->
+                </div>
+              </div>
+
+              <!-- Experience / Internships -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-briefcase text-emerald"></i> Internships / Experience</h3>
+                </div>
+                <div id="resume-exp-extracted">
+                  <!-- Internships cards -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             3. PLACEMENT PREDICTION VIEW
+             ==================================================================== -->
+        <section id="view-prediction" class="app-view">
+          <div class="prediction-layout">
+            <!-- Left Form Controls -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title"><i class="fa-solid fa-sliders text-primary"></i> Placement Scoring Parameters</h3>
+                  <p class="card-subtitle">Adjust parameters or pull automatically from student profile</p>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="syncPredictionFormWithProfile()" title="Sync with Profile">
+                  <i class="fa-solid fa-arrows-rotate"></i> Sync Profile
+                </button>
+              </div>
+
+              <form onsubmit="handleRunPrediction(event)">
+                <!-- CGPA Slider -->
+                <div class="form-group">
+                  <div class="range-header">
+                    <label class="form-label">Academic CGPA (0 - 10)</label>
+                    <span class="range-value" id="pred-cgpa-val">8.45</span>
+                  </div>
+                  <input type="range" id="pred-cgpa" min="5.0" max="10.0" step="0.05" value="8.45" class="range-slider" oninput="handleRangeInput('pred-cgpa', 'pred-cgpa-val')">
+                </div>
+
+                <!-- Aptitude Score Slider -->
+                <div class="form-group">
+                  <div class="range-header">
+                    <label class="form-label">Aptitude & Reasoning Score (%)</label>
+                    <span class="range-value" id="pred-aptitude-val">84</span>
+                  </div>
+                  <input type="range" id="pred-aptitude" min="30" max="100" step="1" value="84" class="range-slider" oninput="handleRangeInput('pred-aptitude', 'pred-aptitude-val')">
+                </div>
+
+                <!-- Coding Rating Slider -->
+                <div class="form-group">
+                  <div class="range-header">
+                    <label class="form-label">Coding Assessment Rating (LeetCode/HackerRank)</label>
+                    <span class="range-value" id="pred-coding-val">1680</span>
+                  </div>
+                  <input type="range" id="pred-coding" min="1200" max="2200" step="20" value="1680" class="range-slider" oninput="handleRangeInput('pred-coding', 'pred-coding-val')">
+                </div>
+
+                <div class="grid gap-3" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label">Major Projects Count</label>
+                    <select id="pred-projects" class="form-control">
+                      <option value="0">0 Projects</option>
+                      <option value="1">1 Project</option>
+                      <option value="2" selected>2 Projects</option>
+                      <option value="3">3+ Projects</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Internships Completed</label>
+                    <select id="pred-internships" class="form-control">
+                      <option value="0">0 Internships</option>
+                      <option value="1" selected>1 Internship</option>
+                      <option value="2">2+ Internships</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Recognized Certifications</label>
+                    <select id="pred-certs" class="form-control">
+                      <option value="0">0 Certifications</option>
+                      <option value="1">1 Certification</option>
+                      <option value="2">2 Certifications</option>
+                      <option value="3" selected>3+ Certifications</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Active / Standing Backlogs</label>
+                    <select id="pred-backlogs" class="form-control">
+                      <option value="0" selected>0 (Clean Record)</option>
+                      <option value="1">1 Backlog (-12% penalty)</option>
+                      <option value="2">2+ Backlogs (-24% penalty)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mt-4" style="margin-top: 2rem;">
+                  <button type="submit" class="btn btn-primary btn-lg w-full">
+                    <i class="fa-solid fa-calculator"></i> Calculate Placement Probability
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right Results Panel -->
+            <div class="prediction-result-panel">
+              <!-- Hero Circular Gauge Card -->
+              <div class="result-hero-box">
+                <span class="badge badge-primary mb-3">AI Prediction Output</span>
+                
+                <div class="gauge-container" id="pred-gauge-container">
+                  <svg class="gauge-svg" id="pred-gauge-svg" viewBox="0 0 200 200">
+                    <circle class="gauge-bg" cx="100" cy="100" r="90"></circle>
+                    <circle class="gauge-fill" cx="100" cy="100" r="90"></circle>
+                  </svg>
+                  <div class="gauge-content">
+                    <div class="gauge-percentage" id="pred-gauge-val">86%</div>
+                    <div class="gauge-label">Placement Probability</div>
+                  </div>
+                </div>
+
+                <div class="readiness-status high" id="pred-readiness-status">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>High Readiness - Tier 1 Product Company Candidate (14 - 32 LPA)</span>
+                </div>
+              </div>
+
+              <!-- Factor Weights Progress Bars -->
+              <div class="card">
+                <h4 class="mb-3" style="font-size: 1rem; margin-bottom: 1rem;"><i class="fa-solid fa-chart-simple text-primary"></i> Factor Breakdown</h4>
+                
+                <div class="progress-bar-wrapper">
+                  <div class="progress-info">
+                    <span class="progress-label">Academic Profile (CGPA)</span>
+                    <span class="progress-value" id="val-factor-academics">88%</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" id="bar-factor-academics" style="width: 88%;"></div></div>
+                </div>
+
+                <div class="progress-bar-wrapper">
+                  <div class="progress-info">
+                    <span class="progress-label">Technical & Coding Depth</span>
+                    <span class="progress-value" id="val-factor-tech">86%</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" id="bar-factor-tech" style="width: 86%;"></div></div>
+                </div>
+
+                <div class="progress-bar-wrapper">
+                  <div class="progress-info">
+                    <span class="progress-label">Project Portfolio</span>
+                    <span class="progress-value" id="val-factor-projects">85%</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" id="bar-factor-projects" style="width: 85%;"></div></div>
+                </div>
+
+                <div class="progress-bar-wrapper">
+                  <div class="progress-info">
+                    <span class="progress-label">Internship Exposure</span>
+                    <span class="progress-value" id="val-factor-internships">90%</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" id="bar-factor-internships" style="width: 90%;"></div></div>
+                </div>
+
+                <div class="progress-bar-wrapper">
+                  <div class="progress-info">
+                    <span class="progress-label">Aptitude & Reasoning</span>
+                    <span class="progress-value" id="val-factor-aptitude">84%</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" id="bar-factor-aptitude" style="width: 84%;"></div></div>
+                </div>
+              </div>
+
+              <!-- Personalized Improvement Suggestions -->
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa-solid fa-lightbulb text-amber"></i> Actionable Improvement Suggestions</h3>
+                </div>
+                <ul class="suggestions-list" id="pred-suggestions-list">
+                  <!-- Injected dynamically -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             4. CAREER COACH VIEW
+             ==================================================================== -->
+        <section id="view-coach" class="app-view">
+          <!-- Career Affinity Quiz Root -->
+          <div id="coach-quiz-root"></div>
+
+          <!-- All In-Demand Careers Catalog -->
+          <div class="card-header" style="margin-top: 2rem; margin-bottom: 1.5rem;">
+            <div>
+              <h3 class="text-2xl font-bold">Tech Career Tracks Catalog</h3>
+              <p class="text-muted">Select your target engineering specialization to synchronize your skill gap analysis and roadmap.</p>
+            </div>
+          </div>
+
+          <div class="career-grid-portal" id="coach-careers-root">
+            <!-- Dynamic catalog cards -->
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             5. SKILL GAP ANALYSIS VIEW
+             ==================================================================== -->
+        <section id="view-skillgap" class="app-view">
+          <div class="card mb-4" style="margin-bottom: 1.5rem;">
+            <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span class="badge badge-primary">Target Career Track</span>
+                <h3 class="text-2xl font-bold mt-1" id="skillgap-role-title">Software Development Engineer</h3>
+              </div>
+              <div style="min-width: 260px;">
+                <label class="form-label text-xs">Switch Target Role:</label>
+                <select id="skillgap-career-select" class="form-control" onchange="handleCareerSelectChange(event)">
+                  <!-- Injected options -->
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <div class="flex justify-between items-center mb-1" style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                <span style="font-weight: 700;">Overall Role Match:</span>
+                <span class="range-value" id="skillgap-match-percent">82%</span>
+              </div>
+              <div class="progress-track" style="height: 12px;">
+                <div class="progress-fill success" id="skillgap-match-bar" style="width: 82%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side-by-Side Comparison -->
+          <div class="gap-analysis-grid">
+            <div class="skill-comparison-card">
+              <div class="card-header">
+                <h3 class="card-title text-success"><i class="fa-solid fa-circle-check text-emerald"></i> Matched Technical Skills</h3>
+                <span class="badge badge-success">Acquired</span>
+              </div>
+              <p class="text-sm text-muted mb-3" style="margin-bottom: 1rem;">Skills in your profile that satisfy the job requirements:</p>
+              <div class="flex flex-wrap gap-2" id="skillgap-matched-container" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <!-- Matched skill pills -->
+              </div>
+            </div>
+
+            <div class="skill-comparison-card">
+              <div class="card-header">
+                <h3 class="card-title text-danger"><i class="fa-solid fa-triangle-exclamation text-rose"></i> Missing Career Skills</h3>
+                <span class="badge badge-danger">Skill Gap</span>
+              </div>
+              <p class="text-sm text-muted mb-3" style="margin-bottom: 1rem;">Key industry requirements missing from your current portfolio:</p>
+              <div id="skillgap-missing-container">
+                <!-- Missing skill rows -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Targeted Bridging Recommendations -->
+          <div style="margin-top: 2rem;">
+            <h3 class="text-xl font-bold mb-3" style="margin-bottom: 1rem;">Actionable Gap Bridging Plan</h3>
+            <div id="skillgap-recommendations">
+              <!-- Injected recommendations -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             6. CAREER ROADMAP VIEW
+             ==================================================================== -->
+        <section id="view-roadmap" class="app-view">
+          <div class="card mb-4" style="margin-bottom: 2rem;">
+            <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span class="badge badge-primary">Structured Semester Roadmap</span>
+                <h3 class="text-2xl font-bold mt-1">Campus Placement Mastery Path</h3>
+                <p class="text-muted text-sm">Interactive step-by-step milestones. Check off milestones as you achieve them to monitor real progress.</p>
+              </div>
+              <div style="text-align: right;">
+                <div class="text-sm font-bold" id="roadmap-progress-text">4 of 9 Completed (44%)</div>
+                <div class="progress-track" style="width: 180px; height: 10px; margin-top: 0.5rem;">
+                  <div class="progress-fill" id="roadmap-overall-bar" style="width: 44%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3-Stage Timeline -->
+          <div class="roadmap-timeline" id="roadmap-timeline-root">
+            <!-- Injected stages & checklist milestones -->
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             7. INTERVIEW PREPARATION HUB VIEW
+             ==================================================================== -->
+        <section id="view-interview" class="app-view">
+          <!-- Hub Navigation Pills -->
+          <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchInterviewTab('aptitude', event)">
+              <i class="fa-solid fa-brain"></i> Aptitude Test Drill
+            </button>
+            <button class="tab-btn" onclick="switchInterviewTab('technical', event)">
+              <i class="fa-solid fa-code"></i> Technical Questions (CS Core)
+            </button>
+            <button class="tab-btn" onclick="switchInterviewTab('hr', event)">
+              <i class="fa-solid fa-comments"></i> HR STAR Playbook
+            </button>
+            <button class="tab-btn" onclick="switchInterviewTab('mock', event)">
+              <i class="fa-solid fa-robot"></i> AI Mock Interview Simulator
+            </button>
+          </div>
+
+          <!-- Tab 1: Aptitude Quiz Root -->
+          <div id="interview-tab-aptitude" class="interview-subtab-content">
+            <div id="aptitude-quiz-root"></div>
+          </div>
+
+          <!-- Tab 2: Technical Questions -->
+          <div id="interview-tab-technical" class="interview-subtab-content" style="display: none;">
+            <div class="card mb-4" style="margin-bottom: 1.5rem;">
+              <h3 class="text-xl font-bold mb-1">Campus Technical Interview Flashcards</h3>
+              <p class="text-sm text-muted">Core questions frequently asked by Amazon, Google, TCS Digital, and Microsoft technical panels.</p>
+            </div>
+            <div id="tech-questions-root"></div>
+          </div>
+
+          <!-- Tab 3: HR STAR Guide -->
+          <div id="interview-tab-hr" class="interview-subtab-content" style="display: none;">
+            <div class="card mb-4" style="margin-bottom: 1.5rem;">
+              <h3 class="text-xl font-bold mb-1">HR & Behavioral Interview Playbook</h3>
+              <p class="text-sm text-muted">Master the STAR (Situation, Task, Action, Result) methodology with winning response templates.</p>
+            </div>
+            <div id="hr-questions-root"></div>
+          </div>
+
+          <!-- Tab 4: Mock Interview Simulator UI -->
+          <div id="interview-tab-mock" class="interview-subtab-content" style="display: none;">
+            <div class="card mb-3" style="margin-bottom: 1rem;">
+              <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span class="badge badge-primary" id="mock-role-badge">Technical Round (1 of 3)</span>
+                  <h3 class="text-lg font-bold mt-1" id="mock-current-question">
+                    Explain how indexing improves database search performance, and what are the trade-offs on INSERT operations?
+                  </h3>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock-chat-container">
+              <div class="mock-chat-messages" id="mock-chat-messages">
+                <div class="mock-bubble interviewer">
+                  <div class="flex items-center gap-2 mb-1" style="display: flex; gap: 0.5rem; margin-bottom: 0.25rem;">
+                    <i class="fa-solid fa-user-tie text-primary"></i>
+                    <strong>Senior Technical Interviewer:</strong>
+                  </div>
+                  Please articulate your response clearly. We evaluate architectural clarity, trade-off understanding, and technical terminology.
+                </div>
+              </div>
+
+              <div class="mock-chat-input-bar">
+                <textarea id="mock-candidate-input" class="form-control" rows="2" placeholder="Type your technical response here (e.g. B-Trees, logarithmic search, write overhead...)"></textarea>
+                <button class="btn btn-primary" onclick="interviewManager.submitMockAnswer()" style="height: auto;">
+                  <i class="fa-solid fa-paper-plane"></i> Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODALS & DIALOGUES
+       ========================================================================== -->
+  
+  <!-- Career Details Modal -->
+  <div class="modal-backdrop" id="career-detail-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="career-modal-title">Career Role Details</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('career-detail-modal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="career-modal-body">
+        <!-- Dynamic details -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('career-detail-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Jump / Search Modal -->
+  <div class="modal-backdrop" id="search-modal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-magnifying-glass text-primary"></i> Quick Navigation</h3>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('search-modal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="grid gap-2" style="display: grid; gap: 0.5rem;">
+          <a href="#dashboard" class="btn btn-secondary justify-start w-full" onclick="switchView('dashboard'); closeModal('search-modal')">
+            <i class="fa-solid fa-gauge-high"></i> Dashboard Overview
+          </a>
+          <a href="#profile" class="btn btn-secondary justify-start w-full" onclick="switchView('profile'); closeModal('search-modal')">
+            <i class="fa-solid fa-id-card-clip"></i> Edit Student Profile
+          </a>
+          <a href="#resume" class="btn btn-secondary justify-start w-full" onclick="switchView('resume'); closeModal('search-modal')">
+            <i class="fa-solid fa-file-invoice"></i> Resume Upload & ATS Analyzer
+          </a>
+          <a href="#prediction" class="btn btn-secondary justify-start w-full" onclick="switchView('prediction'); closeModal('search-modal')">
+            <i class="fa-solid fa-calculator"></i> Placement Probability Predictor
+          </a>
+          <a href="#coach" class="btn btn-secondary justify-start w-full" onclick="switchView('coach'); closeModal('search-modal')">
+            <i class="fa-solid fa-compass"></i> AI Career Coach Quiz
+          </a>
+          <a href="#skillgap" class="btn btn-secondary justify-start w-full" onclick="switchView('skillgap'); closeModal('search-modal')">
+            <i class="fa-solid fa-layer-group"></i> Skill Gap Analysis
+          </a>
+          <a href="#roadmap" class="btn btn-secondary justify-start w-full" onclick="switchView('roadmap'); closeModal('search-modal')">
+            <i class="fa-solid fa-route"></i> Career Roadmap Checklist
+          </a>
+          <a href="#interview" class="btn btn-secondary justify-start w-full" onclick="switchView('interview'); closeModal('search-modal')">
+            <i class="fa-solid fa-user-tie"></i> Interview Preparation Hub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Inline Script for Subtab switcher in Interview view -->
+  <script>
+    function switchInterviewTab(tabName, evt) {
+      const e = evt || window.event;
+      document.querySelectorAll('.tabs-nav .tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active');
+      }
+      const tabs = ['aptitude', 'technical', 'hr', 'mock'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`interview-tab-${t}`);
+        if (el) el.style.display = (t === tabName) ? 'block' : 'none';
+      });
+    }
+  </script>
+
+  <!-- Application Logic Modules in proper dependency sequence -->
+  <script src="js/state.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/resume.js"></script>
+  <script src="js/prediction.js"></script>
+  <script src="js/coach.js"></script>
+  <script src="js/skillgap.js"></script>
+  <script src="js/roadmap.js"></script>
+  <script src="js/interview.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

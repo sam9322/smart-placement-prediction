@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Placement Prediction & Career Coach | Final Year Project</title>
+  <meta name="description" content="AI-driven engineering placement probability predictor, automated skill gap analysis, and personalized career roadmaps for students.">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+  <nav class="landing-nav" id="main-nav">
+    <div class="container">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-icon-box">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <span>CareerPulse<span style="color: var(--primary);">.AI</span></span>
+      </a>
+
+      <ul class="nav-links" id="landing-nav-links">
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#careers" class="nav-link">Career Paths</a></li>
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="#testimonials" class="nav-link">Alumni Stories</a></li>
+        <li><a href="#academic" class="nav-link">Academic Info</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle Button -->
+        <button class="btn btn-secondary btn-icon" id="landing-theme-toggle" onclick="handleLandingThemeToggle()" title="Toggle Dark/Light Mode">
+          <i class="fa-solid fa-moon" id="landing-theme-icon"></i>
+        </button>
+
+        <!-- Guest Actions (Not Logged In) -->
+        <div id="landing-guest-nav" class="flex items-center gap-2" style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-outline btn-sm" onclick="openAuthModal('login')">
+            <i class="fa-solid fa-user-lock"></i> Sign In
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openAuthModal('register')">
+            <i class="fa-solid fa-user-plus"></i> Register
+          </button>
+        </div>
+
+        <!-- Authenticated User Actions (Logged In) -->
+        <div id="landing-auth-nav" class="flex items-center gap-2" style="display: none; gap: 0.5rem;">
+          <a href="app.html#dashboard" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-gauge-high"></i> <span id="landing-user-name">Dashboard</span>
+          </a>
+          <button class="btn btn-outline btn-sm" onclick="openAuthModal('login')" title="Switch Student Account">
+            <i class="fa-solid fa-users"></i> Switch Account
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="authManager.logout()" title="Sign Out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button class="mobile-menu-btn" id="landing-mobile-btn" aria-label="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==========================================================================
+       HERO SECTION WITH LIVE TEASER CALCULATOR
+       ========================================================================== -->
+  <header class="hero-section">
+    <div class="container">
+      <div class="hero-grid">
+        <!-- Left Content -->
+        <div>
+          <div class="hero-badge animate-fade-in">
+            <i class="fa-solid fa-certificate"></i>
+            <span>Department of CSE • B.Tech Final Year Capstone Project (2026-27)</span>
+          </div>
+
+          <h1 class="hero-title animate-fade-in">
+            Smart Placement Prediction & <span class="text-gradient">Career Coach</span>
+          </h1>
+
+          <p class="hero-description animate-fade-in">
+            Leverage algorithmic data modeling to evaluate your campus placement probability. Uncover critical skill gaps, discover tailored tech career specializations, and follow structured 3-stage roadmaps to land your dream offer.
+          </p>
+
+          <div class="hero-cta-group animate-fade-in">
+            <a href="app.html#prediction" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-chart-line"></i> Predict My Placement
+            </a>
+            <a href="app.html#dashboard" class="btn btn-secondary btn-lg">
+              <i class="fa-solid fa-gauge-high"></i> Explore Student Portal
+            </a>
+          </div>
+
+          <div class="hero-trust">
+            <div class="avatar-stack">
+              <span>AP</span>
+              <span>RS</span>
+              <span>SM</span>
+              <span>+12k</span>
+            </div>
+            <div>
+              <strong>Modeled on 12,000+ student placement records</strong> across product & service tier recruiters.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Hero Live Teaser Widget -->
+        <div>
+          <div class="hero-widget-card animate-float">
+            <div class="flex items-center justify-between mb-3" style="display: flex; justify-content: space-between; margin-bottom: 1.25rem;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 700;">Live Placement Estimator</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Interactive instant forecast simulation</p>
+              </div>
+              <span class="widget-badge" id="hero-gauge-tier">High Readiness</span>
+            </div>
+
+            <!-- Mini Circular Gauge Preview -->
+            <div style="position: relative; width: 140px; height: 140px; margin: 0 auto 1.5rem auto;">
+              <svg style="width: 100%; height: 100%; transform: rotate(-90deg);" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border-color)" stroke-width="10"></circle>
+                <circle id="hero-gauge-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--accent-emerald)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314.15" stroke-dashoffset="50" style="transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;"></circle>
+              </svg>
+              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span id="hero-gauge-pct" style="font-size: 1.85rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">84%</span>
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Probability</span>
+              </div>
+            </div>
+
+            <!-- Interactive Sliders -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <div class="flex justify-between text-xs font-semibold mb-1" style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span>Academic CGPA:</span>
+                <span class="range-value" id="hero-cgpa-val">8.4</span>
+              </div>
+              <input type="range" id="hero-cgpa-slider" min="5.0" max="10.0" step="0.1" value="8.4" class="range-slider">
+            </div>
+
+            <div class="grid gap-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+              <div>
+                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Internship Status:</label>
+                <select id="hero-intern-select" class="form-control text-xs" style="padding: 0.45rem;">
+                  <option value="yes">Completed (1+)</option>
+                  <option value="no">None Yet</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Coding Rating:</label>
+                <select id="hero-dsa-select" class="form-control text-xs" style="padding: 0.45rem;">
+                  <option value="1700">1600+ (LeetCode Med)</option>
+                  <option value="1450" selected>1400 - 1600 (Good)</option>
+                  <option value="1250">Beginner (<1400)</option>
+                </select>
+              </div>
+            </div>
+
+            <a href="app.html#prediction" class="btn btn-primary btn-sm w-full">
+              <i class="fa-solid fa-calculator"></i> Run Complete In-Depth Analysis
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       STATISTICS COUNTER SECTION
+       ========================================================================== -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-target="94.2%">0%</div>
+          <div class="stat-label">Prediction Accuracy</div>
+          <div class="stat-subtext">Verified across 3 consecutive batches</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="50+">0+</div>
+          <div class="stat-label">Tech Career Roles</div>
+          <div class="stat-subtext">Mapped with live industry syllabi</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="12,500+">0+</div>
+          <div class="stat-label">Placement Data Records</div>
+          <div class="stat-subtext">Synthesized alumni recruitment datasets</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="3.8x">0x</div>
+          <div class="stat-label">Higher Interview Conversion</div>
+          <div class="stat-subtext">For students following targeted roadmaps</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       FEATURES OVERVIEW SECTION
+       ========================================================================== -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Key Innovations</span>
+        <h2 class="section-title">Everything You Need for Campus Placement Success</h2>
+        <p class="section-description">
+          A comprehensive engineering career suite combining predictive modeling, AI advising, and realistic interview simulations.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-purple">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <h3 class="feature-title">Multi-Factor Placement Predictor</h3>
+          <p class="feature-text">
+            Weighted algorithmic scoring factoring in CGPA, coding difficulty ratings, internship exposure, project depth, aptitude tests, and backlogs.
+          </p>
+          <a href="app.html#prediction" class="feature-link">Try Predictor <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-cyan">
+            <i class="fa-solid fa-compass"></i>
+          </div>
+          <h3 class="feature-title">AI Career Coach & Matcher</h3>
+          <p class="feature-text">
+            Dynamic diagnostic assessment quiz to match your cognitive problem-solving style with high-growth engineering domains.
+          </p>
+          <a href="app.html#coach" class="feature-link">Meet Career Coach <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-emerald">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <h3 class="feature-title">Automated Skill Gap Analysis</h3>
+          <p class="feature-text">
+            Compare your existing technical skills against market requirements for SDE, AI/ML, Cloud, or Cyber roles with instant gap detection.
+          </p>
+          <a href="app.html#skillgap" class="feature-link">Analyze Skill Gaps <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-amber">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <h3 class="feature-title">3-Stage Career Roadmap</h3>
+          <p class="feature-text">
+            Structured roadmap progressing from Beginner Foundations → Intermediate Industry Projects → Placement Drive Mastery with persistent checklist tracking.
+          </p>
+          <a href="app.html#roadmap" class="feature-link">View Roadmap <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-rose">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <h3 class="feature-title">Interview Simulator & Question Bank</h3>
+          <p class="feature-text">
+            Timed aptitude drill, core CS flashcards (OS, DBMS, CN, DSA), HR STAR method playbook, and an interactive AI mock interview simulator.
+          </p>
+          <a href="app.html#interview" class="feature-link">Practice Interviews <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-box feature-icon-violet">
+            <i class="fa-solid fa-gauge"></i>
+          </div>
+          <h3 class="feature-title">Centralized SaaS Dashboard</h3>
+          <p class="feature-text">
+            Holistic student command center featuring live Chart.js competency radars, upcoming campus drive trackers, and personalized action recommendations.
+          </p>
+          <a href="app.html#dashboard" class="feature-link">Open Dashboard <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       CAREER CATEGORIES SHOWCASE
+       ========================================================================== -->
+  <section class="careers-section" id="careers">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Career Pathways</span>
+        <h2 class="section-title">Explore High-Paying Tech Specializations</h2>
+        <p class="section-description">
+          Detailed salary packages, core competencies, and hiring giants for the most sought-after campus placement roles.
+        </p>
+      </div>
+
+      <div class="careers-grid">
+        <!-- Career 1 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-code"></i></div>
+            <span class="career-package-pill">₹8 - 28 LPA</span>
+          </div>
+          <h3 class="career-cat-title">Software Development Engineer (SDE)</h3>
+          <p class="career-cat-desc">Architect resilient backend services, high-throughput microservices, and optimal DSA algorithms.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">DSA</span>
+            <span class="career-skill-chip">Java/C++</span>
+            <span class="career-skill-chip">DBMS</span>
+            <span class="career-skill-chip">System Design</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">Google, Microsoft, Amazon, Uber, Cisco</div>
+        </div>
+
+        <!-- Career 2 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <span class="career-package-pill">₹6 - 20 LPA</span>
+          </div>
+          <h3 class="career-cat-title">Full Stack Web Developer</h3>
+          <p class="career-cat-desc">Build modern single-page applications, responsive user interfaces, and secure RESTful backend APIs.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">React.js</span>
+            <span class="career-skill-chip">Node.js</span>
+            <span class="career-skill-chip">TypeScript</span>
+            <span class="career-skill-chip">MongoDB/SQL</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">Swiggy, Razorpay, Zomato, Atlassian, Flipkart</div>
+        </div>
+
+        <!-- Career 3 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-brain"></i></div>
+            <span class="career-package-pill">₹10 - 32 LPA</span>
+          </div>
+          <h3 class="career-cat-title">AI / Machine Learning Engineer</h3>
+          <p class="career-cat-desc">Train deep neural networks, computer vision pipelines, and fine-tune large language models.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">Python</span>
+            <span class="career-skill-chip">PyTorch</span>
+            <span class="career-skill-chip">Math & Linear Algebra</span>
+            <span class="career-skill-chip">Scikit-Learn</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">NVIDIA, DeepMind, Microsoft AI, InMobi, Flipkart</div>
+        </div>
+
+        <!-- Career 4 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+            <span class="career-package-pill">₹6 - 16 LPA</span>
+          </div>
+          <h3 class="career-cat-title">Data Analyst & BI Specialist</h3>
+          <p class="career-cat-desc">Unearth business trends, structure ETL pipelines, and craft executive dashboards.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">SQL</span>
+            <span class="career-skill-chip">Power BI</span>
+            <span class="career-skill-chip">Python</span>
+            <span class="career-skill-chip">Statistics</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">Deloitte, EY, Fractal Analytics, Mu Sigma, JPMorgan</div>
+        </div>
+
+        <!-- Career 5 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-cloud"></i></div>
+            <span class="career-package-pill">₹7 - 22 LPA</span>
+          </div>
+          <h3 class="career-cat-title">Cloud & DevOps Engineer</h3>
+          <p class="career-cat-desc">Automate zero-downtime CI/CD deployment pipelines and container orchestrations on AWS and Azure.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">Docker</span>
+            <span class="career-skill-chip">Kubernetes</span>
+            <span class="career-skill-chip">AWS</span>
+            <span class="career-skill-chip">Linux Bash</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">Amazon AWS, Red Hat, Infosys, Capgemini, IBM</div>
+        </div>
+
+        <!-- Career 6 -->
+        <div class="career-cat-card">
+          <div class="career-cat-header">
+            <div class="career-cat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <span class="career-package-pill">₹7 - 24 LPA</span>
+          </div>
+          <h3 class="career-cat-title">Cybersecurity Analyst</h3>
+          <p class="career-cat-desc">Audit networks, perform penetration tests, identify vulnerabilities, and enforce threat defenses.</p>
+          <div class="career-skill-chips">
+            <span class="career-skill-chip">Network Security</span>
+            <span class="career-skill-chip">Ethical Hacking</span>
+            <span class="career-skill-chip">Linux</span>
+            <span class="career-skill-chip">Wireshark</span>
+          </div>
+          <div class="career-companies-label">Top Hiring Companies</div>
+          <div class="career-companies-list">Palo Alto Networks, CrowdStrike, TCS Cyber, PwC</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       HOW IT WORKS SECTION
+       ========================================================================== -->
+  <section class="how-it-works-section" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">System Workflow</span>
+        <h2 class="section-title">How CareerPulse Guides You from Campus to Offer Letter</h2>
+        <p class="section-description">
+          A clear, scientifically backed four-step methodology designed for engineering graduates.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon"><i class="fa-solid fa-id-card"></i></div>
+          <h3 class="step-title">Build Student Profile</h3>
+          <p class="step-text">Input CGPA, academic scores, technical skills, projects, and previous internship credentials.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon"><i class="fa-solid fa-calculator"></i></div>
+          <h3 class="step-title">Run Predictive Engine</h3>
+          <p class="step-text">Our weighted algorithm calculates your placement probability and assigns you to a readiness tier.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon"><i class="fa-solid fa-crosshairs"></i></div>
+          <h3 class="step-title">Bridge Skill Gaps</h3>
+          <p class="step-text">Compare yourself against role benchmarks to identify missing technical skills and obtain tailored advice.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <div class="step-icon"><i class="fa-solid fa-trophy"></i></div>
+          <h3 class="step-title">Ace Mock Interviews</h3>
+          <p class="step-text">Practice timed aptitude tests, technical flashcards, and simulate interactive AI behavioral rounds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       ALUMNI TESTIMONIALS
+       ========================================================================== -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Success Stories</span>
+        <h2 class="section-title">Placed Alumni Who Trusted The Framework</h2>
+        <p class="section-description">
+          Hear how our engineering peers leveraged data-driven placement preparation to secure offers at dream tech firms.
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "My initial CGPA was 7.4 and I was anxious about product company cutoffs. The Placement Predictor accurately highlighted that boosting LeetCode problem solving and adding a microservices capstone project would offset it. I secured a 24 LPA SDE offer at Amazon!"
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RP</div>
+            <div class="author-info">
+              <h4>Rohit Prakash</h4>
+              <p>SDE-1 @ Amazon (Batch 2025)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "The Skill Gap Analysis was an eye-opener. It pinpointed Docker and SQL indexing as my missing gaps for Cloud Engineering. Following the 3-stage roadmap saved me months of aimless tutorial watching."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: var(--grad-accent);">SN</div>
+            <div class="author-info">
+              <h4>Sneha Nambiar</h4>
+              <p>Cloud Associate @ Microsoft (Batch 2025)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "The interactive Mock Interview Simulator with the STAR technique guide transformed my HR answers. I avoided nervous ramblings and spoke with clarity during the final director round at TCS Digital Prime."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: var(--grad-success);">VK</div>
+            <div class="author-info">
+              <h4>Varun Kulkarni</h4>
+              <p>Systems Engineer @ TCS Digital (Batch 2025)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       ACADEMIC PROJECT ACKNOWLEDGEMENT SECTION
+       ========================================================================== -->
+  <section class="academic-section" id="academic">
+    <div class="container">
+      <div class="academic-card">
+        <span class="academic-badge">Academic Project Information</span>
+        <h2 class="text-2xl mb-2" style="margin-bottom: 0.5rem;">B.Tech 7th Semester Mini Project / Capstone</h2>
+        <p class="text-muted" style="max-width: 600px; margin: 0 auto;">
+          Submitted in partial fulfillment of the academic requirements for the Bachelor of Technology degree in Computer Science and Engineering.
+        </p>
+
+        <div class="academic-details-grid">
+          <div class="academic-item">
+            <h5>Project Title</h5>
+            <p>Smart Placement Prediction & Career Coach</p>
+          </div>
+          <div class="academic-item">
+            <h5>Technology Stack</h5>
+            <p>HTML5, Modern CSS3, JavaScript ES6+, LocalStorage API</p>
+          </div>
+          <div class="academic-item">
+            <h5>Academic Session</h5>
+            <p>2026 - 2027 (Final Year)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       CALL TO ACTION BANNER
+       ========================================================================== -->
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Ready to Discover Your Placement Probability?</h2>
+      <p>
+        Step into the student dashboard, input your profile credentials, and calculate your personalized career readiness score today.
+      </p>
+      <div class="flex justify-center gap-3" style="display: flex; justify-content: center; gap: 1rem;">
+        <a href="app.html#prediction" class="btn btn-secondary btn-lg" style="color: var(--primary); font-weight: 700;">
+          <i class="fa-solid fa-bolt"></i> Predict Now (Instant)
+        </a>
+        <a href="app.html#dashboard" class="btn btn-outline btn-lg" style="border-color: #ffffff; color: #ffffff;">
+          <i class="fa-solid fa-door-open"></i> Launch Student Portal
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 1rem;">
+            <div class="brand-icon-box">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <span>CareerPulse<span style="color: var(--primary);">.AI</span></span>
+          </div>
+          <p style="font-size: 0.875rem; margin-bottom: 1.25rem;">
+            A modern, client-side engineering final-year project designed to assist students and placement cells with intelligent career roadmapping and predictive probability modeling.
+          </p>
+          <div class="flex gap-2" style="display: flex; gap: 0.5rem;">
+            <span class="badge badge-primary">HTML5</span>
+            <span class="badge badge-info">CSS3 Vanilla</span>
+            <span class="badge badge-success">ES6 JavaScript</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Portal Modules</h4>
+          <ul class="footer-links">
+            <li><a href="app.html#dashboard">Dashboard</a></li>
+            <li><a href="app.html#profile">Student Profile</a></li>
+            <li><a href="app.html#prediction">Placement Predictor</a></li>
+            <li><a href="app.html#coach">AI Career Coach</a></li>
+            <li><a href="app.html#skillgap">Skill Gap Analysis</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Preparation Hub</h4>
+          <ul class="footer-links">
+            <li><a href="app.html#roadmap">3-Stage Roadmap</a></li>
+            <li><a href="app.html#interview">Aptitude Quiz</a></li>
+            <li><a href="app.html#interview">Technical Flashcards</a></li>
+            <li><a href="app.html#interview">HR STAR Playbook</a></li>
+            <li><a href="app.html#interview">Mock Simulator</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Academic Credits</h4>
+          <ul class="footer-links">
+            <li><a href="#academic">Department of CSE</a></li>
+            <li><a href="#academic">Project Guide</a></li>
+            <li><a href="#academic">Documentation</a></li>
+            <li><a href="#academic">GitHub Repository</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026-2027 Smart Placement Prediction & Career Coach. Final Year Engineering Project.</div>
+        <div>Built with pure HTML, CSS & JavaScript • Client-side LocalStorage Persistence</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       AUTHENTICATION MODAL (SIGN IN / REGISTER)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="auth-modal">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
+          <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1rem;">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <h3 style="font-size: 1.15rem;" id="auth-modal-title">Student Portal Authentication</h3>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="closeAuthModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Auth Subtab Switcher -->
+      <div style="padding: 1rem 1.5rem 0 1.5rem;">
+        <div class="tabs-nav" style="margin-bottom: 1rem;">
+          <button class="tab-btn active w-full justify-center" id="tab-login-btn" onclick="switchAuthTab('login')">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+          </button>
+          <button class="tab-btn w-full justify-center" id="tab-register-btn" onclick="switchAuthTab('register')">
+            <i class="fa-solid fa-user-plus"></i> Create Account
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding-top: 0;">
+        <!-- Sign In Form -->
+        <form id="form-login" onsubmit="handleAuthLogin(event)">
+          <div class="form-group">
+            <label class="form-label">College Email Address <span class="required">*</span></label>
+            <div class="input-group">
+              <i class="fa-regular fa-envelope input-icon-left"></i>
+              <input type="email" id="login-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password <span class="required">*</span></label>
+            <div class="input-group">
+              <i class="fa-solid fa-lock input-icon-left"></i>
+              <input type="password" id="login-password" class="form-control input-with-icon-left" placeholder="Enter password" required autocomplete="current-password">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full btn-lg" id="login-submit-btn">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
+          </button>
+
+          <!-- Quick Test Accounts Helper -->
+          <div style="margin-top: 1rem; padding: 0.6rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.75rem; color: var(--text-secondary); text-align: center;">
+            <i class="fa-solid fa-key" style="margin-right: 4px; color: var(--primary);"></i>
+            <span>Test accounts: </span>
+            <a href="javascript:void(0)" onclick="quickFillAccount('samiksha')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Samiksha</a>
+            <span style="margin: 0 4px; color: var(--border-color);">|</span>
+            <a href="javascript:void(0)" onclick="quickFillAccount('jyoti')" style="color: var(--accent-emerald); font-weight: 600; text-decoration: underline;">Jyoti</a>
+            <span style="margin: 0 4px; color: var(--border-color);">|</span>
+            <span>Pass: <code>password123</code></span>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="form-register" style="display: none;" onsubmit="handleAuthRegister(event)">
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="required">*</span></label>
+            <input type="text" id="reg-name" class="form-control" placeholder="e.g. Rahul Sharma" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">College Email <span class="required">*</span></label>
+            <input type="email" id="reg-email" class="form-control" placeholder="student@engg.edu" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password (min 6 characters) <span class="required">*</span></label>
+            <input type="password" id="reg-password" class="form-control" minlength="6" placeholder="Create strong password" required>
+          </div>
+
+          <div class="grid gap-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group">
+              <label class="form-label">Branch</label>
+              <select id="reg-branch" class="form-control">
+                <option value="Computer Science & Engineering">CSE</option>
+                <option value="Information Technology">IT</option>
+                <option value="AI & Data Science">AI & DS</option>
+                <option value="Electronics & Communication">ECE</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current CGPA</label>
+              <input type="number" id="reg-cgpa" step="0.01" min="0" max="10" class="form-control" value="8.0" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full btn-lg" id="reg-submit-btn">
+            <i class="fa-solid fa-user-plus"></i> Create Student Account
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="text-xs text-muted" id="auth-backend-status">
+          <i class="fa-solid fa-server text-success"></i> Backend: SQLite + Flask
+        </span>
+        <button class="btn btn-secondary btn-sm" onclick="closeAuthModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Inline Auth Modal Logic -->
+  <script>
+    function openAuthModal(mode = 'login') {
+      const modal = document.getElementById('auth-modal');
+      if (modal) {
+        modal.classList.add('open');
+        switchAuthTab(mode);
+      }
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function switchAuthTab(tab) {
+      const loginForm = document.getElementById('form-login');
+      const regForm = document.getElementById('form-register');
+      const loginBtn = document.getElementById('tab-login-btn');
+      const regBtn = document.getElementById('tab-register-btn');
+
+      if (tab === 'login') {
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        loginBtn.classList.add('active');
+        regBtn.classList.remove('active');
+      } else {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        loginBtn.classList.remove('active');
+        regBtn.classList.add('active');
+      }
+    }
+
+    function quickFillAccount(type) {
+      const emailInput = document.getElementById('login-email');
+      const passwordInput = document.getElementById('login-password');
+      if (type === 'samiksha') {
+        if (emailInput) emailInput.value = 'samiksha.walbe@engg.edu';
+        if (passwordInput) passwordInput.value = 'password123';
+      } else if (type === 'jyoti') {
+        if (emailInput) emailInput.value = 'jyoti.kore@engg.edu';
+        if (passwordInput) passwordInput.value = 'password123';
+      }
+    }
+
+    async function handleAuthLogin(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const emailInput = document.getElementById('login-email');
+      const passwordInput = document.getElementById('login-password');
+      const email = emailInput ? emailInput.value.trim() : '';
+      const password = passwordInput ? passwordInput.value.trim() : '';
+      const btn = document.getElementById('login-submit-btn');
+
+      if (!email || !password) {
+        if (typeof showToast === 'function') {
+          showToast('Please enter your email and password.', 'warning');
+        }
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+      }
+
+      try {
+        const res = await authManager.login(email, password);
+        if (res && res.success) {
+          closeAuthModal();
+          setTimeout(() => {
+            window.location.href = 'app.html#dashboard';
+          }, 350);
+        } else {
+          if (typeof showToast === 'function') {
+            showToast((res && res.message) || 'Invalid email or password.', 'danger');
+          }
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        if (typeof showToast === 'function') {
+          showToast('Authentication error. Please try again.', 'danger');
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal';
+        }
+      }
+    }
+
+    async function handleAuthRegister(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value.trim();
+      const branch = document.getElementById('reg-branch').value;
+      const cgpa = document.getElementById('reg-cgpa').value;
+      const btn = document.getElementById('reg-submit-btn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...';
+
+      const res = await authManager.register({ fullName, email, password, branch, cgpa });
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Student Account';
+
+      if (res.success) {
+        closeAuthModal();
+        setTimeout(() => {
+          window.location.href = 'app.html#dashboard';
+        }, 600);
+      } else {
+        showToast(res.message || 'Registration failed', 'danger');
+      }
+    }
+
+    // Toast helper for landing page
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.innerHTML = `<span class="toast-message">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+  </script>
+
+  <!-- Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/landing.js"></script>
+</body>
+</html>
