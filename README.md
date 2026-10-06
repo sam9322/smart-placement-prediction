@@ -195,9 +195,25 @@ Open **`http://localhost:8080`** in your browser.
 
 ---
 
+## 🚀 Deploying to Vercel
+
+This repository is pre-configured with `vercel.json` and `api/index.py` for **zero-configuration deployment on Vercel**:
+
+1. Push code to GitHub:
+   ```bash
+   git push origin main
+   ```
+2. Navigate to **[vercel.com/new](https://vercel.com/new)** and sign in with your GitHub account (`sam9322`).
+3. Under **Import Git Repository**, select **`smart-placement-prediction`**.
+4. Click **Deploy** (no build settings changes required).
+5. Vercel will build and assign a free global live URL (e.g., `https://smart-placement-prediction.vercel.app`).
+
+---
+
 ## 🎓 Academic Submission Metadata
 - **Project Name**: Smart Placement Prediction & Career Coach
 - **Academic Degree**: Bachelor of Technology (B.Tech)
 - **Department**: Computer Science & Engineering
 - **Semester**: 7th Semester (Mini Project / Capstone)
 - **Academic Year**: 2026 – 2027
+
