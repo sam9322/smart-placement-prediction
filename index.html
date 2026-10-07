@@ -76,6 +76,72 @@
     </div>
   </nav>
 
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav-drawer" id="mobile-nav-drawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-header">
+      <a href="index.html" class="brand-logo" onclick="closeLandingMobileMenu()">
+        <div class="brand-icon-box">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <span>CareerPulse<span style="color: var(--primary);">.AI</span></span>
+      </a>
+      <button class="mobile-drawer-close" id="mobile-drawer-close-btn" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="mobile-drawer-body">
+      <ul class="mobile-nav-links">
+        <li><a href="#features" class="mobile-nav-link"><i class="fa-solid fa-cube text-primary"></i> Features</a></li>
+        <li><a href="#careers" class="mobile-nav-link"><i class="fa-solid fa-compass" style="color: var(--secondary);"></i> Career Paths</a></li>
+        <li><a href="#how-it-works" class="mobile-nav-link"><i class="fa-solid fa-circle-nodes" style="color: var(--accent-cyan);"></i> How It Works</a></li>
+        <li><a href="#testimonials" class="mobile-nav-link"><i class="fa-solid fa-user-graduate" style="color: var(--accent-emerald);"></i> Alumni Stories</a></li>
+        <li><a href="#academic" class="mobile-nav-link"><i class="fa-solid fa-book-open" style="color: var(--accent-amber);"></i> Academic Info</a></li>
+      </ul>
+
+      <div class="mobile-drawer-divider"></div>
+
+      <div class="mobile-drawer-actions">
+        <!-- Guest Actions -->
+        <div id="mobile-guest-actions" class="flex flex-col gap-2">
+          <button class="btn btn-outline w-full" onclick="closeLandingMobileMenu(); openAuthModal('login');">
+            <i class="fa-solid fa-user-lock"></i> Sign In
+          </button>
+          <button class="btn btn-primary w-full" onclick="closeLandingMobileMenu(); openAuthModal('register');">
+            <i class="fa-solid fa-user-plus"></i> Register
+          </button>
+        </div>
+
+        <!-- Authenticated Actions -->
+        <div id="mobile-auth-actions" class="flex flex-col gap-2" style="display: none;">
+          <div class="mobile-user-card">
+            <div class="user-avatar-circle" id="mobile-user-avatar">--</div>
+            <div style="flex: 1; min-width: 0;">
+              <div class="font-bold text-sm" id="mobile-user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Student</div>
+              <div class="text-xs text-muted" id="mobile-user-email" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">email@engg.edu</div>
+            </div>
+          </div>
+          <a href="app.html#dashboard" class="btn btn-primary w-full" onclick="closeLandingMobileMenu()">
+            <i class="fa-solid fa-gauge-high"></i> Go to Dashboard
+          </a>
+          <button class="btn btn-secondary w-full" onclick="closeLandingMobileMenu(); openAuthModal('login');">
+            <i class="fa-solid fa-users"></i> Switch Account
+          </button>
+          <button class="btn btn-ghost w-full" onclick="closeLandingMobileMenu(); authManager.logout();" style="color: var(--accent-rose);">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
+
+        <div class="mobile-theme-row">
+          <span>Dark / Light Mode</span>
+          <button class="btn btn-secondary btn-icon" onclick="handleLandingThemeToggle()" title="Toggle Dark/Light Mode">
+            <i class="fa-solid fa-moon mobile-theme-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
   <!-- ==========================================================================
        HERO SECTION WITH LIVE TEASER CALCULATOR
        ========================================================================== -->
@@ -84,6 +150,7 @@
       <div class="hero-grid">
         <!-- Left Content -->
         <div>
+
           <div class="hero-badge animate-fade-in">
             <i class="fa-solid fa-certificate"></i>
             <span>Department of CSE • B.Tech Final Year Capstone Project (2026-27)</span>
@@ -151,7 +218,7 @@
               <input type="range" id="hero-cgpa-slider" min="5.0" max="10.0" step="0.1" value="8.4" class="range-slider">
             </div>
 
-            <div class="grid gap-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div class="grid-responsive-2 gap-2" style="margin-bottom: 1.25rem;">
               <div>
                 <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Internship Status:</label>
                 <select id="hero-intern-select" class="form-control text-xs" style="padding: 0.45rem;">
@@ -717,7 +784,7 @@
             <input type="password" id="reg-password" class="form-control" minlength="6" placeholder="Create strong password" required>
           </div>
 
-          <div class="grid gap-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="grid-responsive-2 gap-2">
             <div class="form-group">
               <label class="form-label">Branch</label>
               <select id="reg-branch" class="form-control">

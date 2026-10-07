@@ -8,25 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentTheme = initTheme();
   updateThemeIcon(currentTheme);
 
-  // Setup mobile nav toggle
-  const mobileBtn = document.getElementById('landing-mobile-btn');
-  const navLinks = document.getElementById('landing-nav-links');
-  if (mobileBtn && navLinks) {
-    mobileBtn.addEventListener('click', () => {
-      const isOpen = navLinks.style.display === 'flex';
-      navLinks.style.display = isOpen ? 'none' : 'flex';
-      if (!isOpen) {
-        navLinks.style.flexDirection = 'column';
-        navLinks.style.position = 'absolute';
-        navLinks.style.top = '76px';
-        navLinks.style.left = '0';
-        navLinks.style.right = '0';
-        navLinks.style.background = 'var(--bg-card)';
-        navLinks.style.padding = '1.5rem';
-        navLinks.style.boxShadow = 'var(--shadow-lg)';
-      }
-    });
-  }
+  // Setup mobile nav drawer
+  initLandingMobileDrawer();
 
   // Interactive Hero Teaser Calculator
   initHeroPreviewCalculator();
@@ -35,16 +18,79 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatsCounter();
 });
 
+function initLandingMobileDrawer() {
+  const mobileBtn = document.getElementById('landing-mobile-btn');
+  const overlay = document.getElementById('mobile-nav-overlay');
+  const closeBtn = document.getElementById('mobile-drawer-close-btn');
+  const drawerLinks = document.querySelectorAll('.mobile-nav-link');
+
+  if (mobileBtn) {
+    mobileBtn.addEventListener('click', openLandingMobileMenu);
+  }
+  if (overlay) {
+    overlay.addEventListener('click', closeLandingMobileMenu);
+  }
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeLandingMobileMenu);
+  }
+  drawerLinks.forEach(link => {
+    link.addEventListener('click', closeLandingMobileMenu);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLandingMobileMenu();
+  });
+}
+
+function openLandingMobileMenu() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const overlay = document.getElementById('mobile-nav-overlay');
+  if (drawer) drawer.classList.add('open');
+  if (overlay) overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Sync mobile drawer auth view
+  syncMobileDrawerAuth();
+}
+
+function closeLandingMobileMenu() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const overlay = document.getElementById('mobile-nav-overlay');
+  if (drawer) drawer.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function syncMobileDrawerAuth() {
+  const guestBox = document.getElementById('mobile-guest-actions');
+  const authBox = document.getElementById('mobile-auth-actions');
+  const user = window.authManager && authManager.getCurrentUser ? authManager.getCurrentUser() : null;
+
+  if (user && authBox && guestBox) {
+    guestBox.style.display = 'none';
+    authBox.style.display = 'flex';
+    const avatar = document.getElementById('mobile-user-avatar');
+    const nameEl = document.getElementById('mobile-user-name');
+    const emailEl = document.getElementById('mobile-user-email');
+    if (avatar) avatar.innerText = user.name ? user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : 'ST';
+    if (nameEl) nameEl.innerText = user.name || 'Student';
+    if (emailEl) emailEl.innerText = user.email || '';
+  } else if (guestBox && authBox) {
+    guestBox.style.display = 'flex';
+    authBox.style.display = 'none';
+  }
+}
+
 function handleLandingThemeToggle() {
   const newTheme = toggleTheme();
   updateThemeIcon(newTheme);
 }
 
 function updateThemeIcon(theme) {
-  const icon = document.getElementById('landing-theme-icon');
-  if (icon) {
+  const icons = document.querySelectorAll('#landing-theme-icon, .mobile-theme-icon');
+  icons.forEach(icon => {
     icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
+  });
 }
 
 function initHeroPreviewCalculator() {

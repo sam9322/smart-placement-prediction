@@ -745,10 +745,94 @@
   gap: 0.75rem;
 }
 
-/* Responsive Rules for App */
+/* Sidebar Backdrop Overlay */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 85;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.sidebar-locked {
+  overflow: hidden;
+}
+
+/* Header Responsive Tokens */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.header-title-box {
+  min-width: 0;
+}
+
+.header-title-box h2 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(1rem, 3.2vw, 1.35rem);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.account-switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 2px 4px;
+  gap: 4px;
+  transition: all var(--transition-fast);
+}
+
+.account-btn-avatar {
+  width: 18px;
+  height: 18px;
+  font-size: 0.6rem;
+  background: rgba(255, 255, 255, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.account-btn-avatar-jyoti {
+  background: var(--accent-emerald);
+  color: #fff;
+}
+
+/* ==========================================================================
+   APP SAAS PORTAL RESPONSIVE MEDIA QUERIES (320px -> 1440px+)
+   ========================================================================== */
+
+/* 1. Laptops and Tablets Landscape (max-width: 1024px) */
 @media (max-width: 1024px) {
+  .app-content {
+    padding: 1.5rem;
+  }
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
   .dashboard-charts-grid,
   .dashboard-bottom-grid,
@@ -756,35 +840,217 @@
   .profile-grid,
   .gap-analysis-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   .career-grid-portal {
     grid-template-columns: repeat(2, 1fr);
   }
+  .account-switcher-title {
+    display: none !important;
+  }
 }
 
+/* 2. Tablets Portrait (max-width: 768px) */
 @media (max-width: 768px) {
   .app-sidebar {
     transform: translateX(-100%);
+    width: min(290px, 82vw);
+    box-shadow: var(--shadow-xl);
   }
   .app-sidebar.mobile-open {
     transform: translateX(0);
   }
   .sidebar-close-btn {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--bg-hover);
+    cursor: pointer;
   }
   .app-main {
     margin-left: 0;
   }
   .app-header {
+    height: 64px;
     padding: 0 1rem;
   }
+  .header-view-desc,
+  .header-title-box p {
+    display: none;
+  }
+  .header-btn-label {
+    display: none !important;
+  }
   .app-content {
-    padding: 1rem;
+    padding: 1.15rem 1rem;
+  }
+  .welcome-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.5rem 1.25rem;
+  }
+  .welcome-info h1 {
+    font-size: 1.45rem;
   }
   .kpi-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .kpi-card {
+    padding: 1rem;
+    gap: 0.85rem;
+  }
+  .kpi-icon-box {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+  .kpi-value {
+    font-size: 1.45rem;
   }
   .career-grid-portal {
     grid-template-columns: 1fr;
   }
+  .profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+  .mock-chat-container {
+    height: 420px;
+  }
 }
+
+/* 3. Phablets and Large Mobiles (max-width: 640px) */
+@media (max-width: 640px) {
+  .account-btn-name {
+    display: none !important;
+  }
+  .account-btn-avatar {
+    margin-right: 0 !important;
+  }
+  .account-switcher-pill {
+    padding: 3px 6px;
+    gap: 6px;
+  }
+  .account-switcher-pill .btn {
+    padding: 0.3rem 0.5rem !important;
+    min-height: 32px;
+  }
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-right {
+    gap: 0.35rem;
+  }
+  .profile-metric-pill-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .metric-pill {
+    padding: 0.5rem 0.65rem;
+  }
+  .metric-pill-val {
+    font-size: 1rem;
+  }
+  .quiz-option-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* 4. Small Mobiles (max-width: 425px) */
+@media (max-width: 425px) {
+  .app-header {
+    height: 58px;
+    padding: 0 0.65rem;
+  }
+  .header-left {
+    gap: 0.5rem;
+  }
+  .sidebar-toggle-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  .header-title-box h2 {
+    font-size: 1.05rem;
+  }
+  .btn-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .app-content {
+    padding: 0.85rem 0.65rem;
+  }
+  .welcome-banner {
+    padding: 1.15rem 1rem;
+  }
+  .welcome-info h1 {
+    font-size: 1.25rem;
+  }
+  .result-hero-box {
+    padding: 1.25rem 1rem;
+  }
+  .profile-card-summary {
+    padding: 1.25rem 1rem;
+  }
+  .mock-chat-input-bar {
+    padding: 0.65rem;
+    gap: 0.5rem;
+  }
+  .roadmap-timeline {
+    padding-left: 1.25rem;
+    gap: 1.25rem;
+  }
+  .roadmap-timeline::before {
+    left: 4px;
+  }
+  .roadmap-stage {
+    padding: 1.15rem 0.85rem;
+  }
+  .roadmap-stage-node {
+    left: -1.5rem;
+    width: 18px;
+    height: 18px;
+    top: 1.25rem;
+  }
+  .checklist-item {
+    padding: 0.5rem 0.35rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* 5. Ultra Compact Mobiles (max-width: 320px) */
+@media (max-width: 320px) {
+  .app-header {
+    padding: 0 0.4rem;
+  }
+  .header-title-box {
+    max-width: 90px;
+  }
+  .header-title-box h2 {
+    font-size: 0.95rem;
+  }
+  .account-switcher-pill {
+    gap: 3px;
+    padding: 2px 3px;
+  }
+  .profile-metric-pill-grid {
+    grid-template-columns: 1fr;
+  }
+  .tabs-nav {
+    gap: 0.2rem;
+  }
+  .tab-btn {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.75rem;
+  }
+}
+

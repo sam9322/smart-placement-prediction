@@ -659,3 +659,93 @@ textarea.form-control {
   display: block;
   animation: fadeIn 0.25s ease;
 }
+
+/* ==========================================================================
+   Responsive Component Rules & Touch Optimizations
+   ========================================================================== */
+@media (max-width: 768px) {
+  .btn {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+  }
+  .btn-sm {
+    min-height: 38px;
+    padding: 0.35rem 0.75rem;
+  }
+  .btn-icon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .form-control {
+    min-height: 44px;
+    font-size: 16px; /* Prevents auto-zoom on mobile safari */
+    padding: 0.7rem 0.85rem;
+  }
+  .range-slider::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+  .modal-backdrop {
+    padding: 1rem;
+    align-items: flex-end; /* Mobile bottom sheet style or centered */
+  }
+  .modal-card {
+    max-height: 88vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 1.15rem 1rem;
+  }
+  .card {
+    padding: 1.15rem;
+  }
+  .toast-container {
+    right: 1rem;
+    left: 1rem;
+    bottom: 1rem;
+  }
+  .toast {
+    min-width: 0;
+    width: 100%;
+  }
+  .gauge-container {
+    width: 180px;
+    height: 180px;
+  }
+  .gauge-percentage {
+    font-size: 2.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-group-responsive {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-group-responsive .btn {
+    width: 100%;
+  }
+  .modal-backdrop {
+    padding: 0.5rem;
+  }
+  .modal-card {
+    border-radius: var(--radius-md);
+  }
+  .tabs-nav {
+    padding: 0.25rem;
+    gap: 0.35rem;
+  }
+  .tab-btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8125rem;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+

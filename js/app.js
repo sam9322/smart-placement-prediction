@@ -92,16 +92,34 @@ function switchView(viewName) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Sidebar toggle logic
+// Sidebar toggle logic with backdrop overlay sync
 function toggleSidebar() {
   const sidebar = document.getElementById('app-sidebar');
-  if (sidebar) sidebar.classList.toggle('mobile-open');
+  const backdrop = document.getElementById('sidebar-backdrop');
+  if (sidebar) {
+    const isOpen = sidebar.classList.toggle('mobile-open');
+    if (backdrop) backdrop.classList.toggle('active', isOpen);
+    if (isOpen) {
+      document.body.classList.add('sidebar-locked');
+    } else {
+      document.body.classList.remove('sidebar-locked');
+    }
+  }
 }
 
 function closeMobileSidebar() {
   const sidebar = document.getElementById('app-sidebar');
+  const backdrop = document.getElementById('sidebar-backdrop');
   if (sidebar) sidebar.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+  document.body.classList.remove('sidebar-locked');
 }
+
+// Close sidebar on escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMobileSidebar();
+});
+
 
 // Theme Toggle
 function handleThemeToggle() {

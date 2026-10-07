@@ -638,6 +638,29 @@ class AuthManager {
       }
     }
 
+    // Mobile nav drawer elements
+    const mobileGuestActions = document.getElementById('mobile-guest-actions');
+    const mobileAuthActions = document.getElementById('mobile-auth-actions');
+    const mobileUserName = document.getElementById('mobile-user-name');
+    const mobileUserEmail = document.getElementById('mobile-user-email');
+    const mobileUserAvatar = document.getElementById('mobile-user-avatar');
+
+    if (mobileGuestActions && mobileAuthActions) {
+      if (isAuth && this.currentUser) {
+        mobileGuestActions.style.display = 'none';
+        mobileAuthActions.style.display = 'flex';
+        const name = this.currentUser.fullName || this.currentUser.fullname || 'Student';
+        const email = this.currentUser.email || '';
+        const inits = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        if (mobileUserName) mobileUserName.innerText = name;
+        if (mobileUserEmail) mobileUserEmail.innerText = email;
+        if (mobileUserAvatar) mobileUserAvatar.innerText = inits;
+      } else {
+        mobileGuestActions.style.display = 'flex';
+        mobileAuthActions.style.display = 'none';
+      }
+    }
+
     // App shell user indicators
     const state = getAppState();
     const currentName = this.currentUser ? (this.currentUser.fullName || this.currentUser.fullname || 'Student') : (state ? state.getProfile().fullName : 'Student');
