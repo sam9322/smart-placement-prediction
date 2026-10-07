@@ -6,9 +6,17 @@
 
 const TOKEN_KEY = 'smart_placement_auth_token';
 const SESSION_KEY = 'smart_placement_auth_user';
+const USER_ID_KEY = 'smart_placement_user_id';
+const USER_EMAIL_KEY = 'smart_placement_user_email';
 const API_BASE_URL = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
   ? (window.location.port === '5000' ? '' : 'http://localhost:5000')
   : '';
+
+function getAppState() {
+  if (typeof window !== 'undefined' && window.appState) return window.appState;
+  if (typeof appState !== 'undefined') return appState;
+  return null;
+}
 
 // Canonical Student Data for Samiksha & Jyoti
 const SEEDED_STUDENTS = {
@@ -130,13 +138,14 @@ const SEEDED_STUDENTS = {
 
 class AuthManager {
   constructor() {
-    this.token = localStorage.getItem(TOKEN_KEY) || null;
+    this.token = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || null;
     this.currentUser = null;
     this.isBackendOnline = false;
+    this.apiBaseUrl = API_BASE_URL;
   }
 
   isAuthenticated() {
-    return !!(this.currentUser && (this.token || localStorage.getItem(SESSION_KEY)));
+    return !!(this.currentUser && (this.token || localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY)));
   }
 
   async checkBackendHealth() {
@@ -166,49 +175,78 @@ class AuthManager {
   normalizeUser(user) {
     if (!user) return null;
     const norm = { ...user };
+    norm.id = user.id || null;
     norm.fullName = user.fullName || user.fullname || 'Student';
     norm.rollNumber = user.rollNumber || user.roll_number || 'CS22B1000';
     norm.gradYear = user.gradYear || user.grad_year || '2026';
     norm.college = user.college || 'National Institute of Engineering & Technology';
     norm.degree = user.degree || 'B.Tech';
     norm.branch = user.branch || 'Computer Science & Engineering';
-    norm.cgpa = parseFloat(user.cgpa || 8.0);
-    norm.tenthMarks = parseFloat(user.tenthMarks || user.tenth_marks || 90.0);
-    norm.twelfthMarks = parseFloat(user.twelfthMarks || user.twelfth_marks || 88.0);
+    norm.phone = user.phone || '+91 98765 00000';
+    norm.cgpa = parseFloat(user.cgpa !== undefined ? user.cgpa : 8.0);
+    norm.tenthMarks = parseFloat(user.tenthMarks !== undefined ? user.tenthMarks : (user.tenth_marks || 90.0));
+    norm.twelfthMarks = parseFloat(user.twelfthMarks !== undefined ? user.twelfthMarks : (user.twelfth_marks || 88.0));
     norm.backlogs = parseInt(user.backlogs !== undefined ? user.backlogs : 0);
-    norm.aptitudeScore = parseInt(user.aptitudeScore || user.aptitude_score || 80);
-    norm.codingRating = parseInt(user.codingRating || user.coding_rating || 1600);
+    norm.aptitudeScore = parseInt(user.aptitudeScore !== undefined ? user.aptitudeScore : (user.aptitude_score || 80));
+    norm.codingRating = parseInt(user.codingRating !== undefined ? user.codingRating : (user.coding_rating || 1600));
     norm.targetCareerId = user.targetCareerId || user.target_career_id || 'sde';
     norm.targetCareerTitle = user.targetCareerTitle || user.target_career_title || 'Software Development Engineer';
 
-    // Parse array properties
+    // Parse array and object properties
     norm.skills = Array.isArray(user.skills) ? user.skills : (typeof user.skills === 'string' ? JSON.parse(user.skills || '[]') : []);
     norm.certifications = Array.isArray(user.certifications) ? user.certifications : (typeof user.certifications === 'string' ? JSON.parse(user.certifications || '[]') : []);
     norm.projects = Array.isArray(user.projects) ? user.projects : (typeof user.projects === 'string' ? JSON.parse(user.projects || '[]') : []);
     norm.internships = Array.isArray(user.internships) ? user.internships : (typeof user.internships === 'string' ? JSON.parse(user.internships || '[]') : []);
+    norm.roadmapState = user.roadmapState || (typeof user.roadmap_state === 'string' ? JSON.parse(user.roadmap_state || '{}') : (user.roadmap_state || {}));
+    norm.interviewHistory = user.interviewHistory || (typeof user.interview_history === 'string' ? JSON.parse(user.interview_history || '{}') : (user.interview_history || {}));
 
     return norm;
   }
 
   async init() {
+    this.token = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || null;
+    const isAppPage = window.location.pathname.endsWith('app.html') || window.location.pathname.includes('app.html');
+
+    if (isAppPage && !this.token) {
+      window.location.replace('index.html');
+      return;
+    }
+
     await this.checkBackendHealth();
-    const savedUserJson = localStorage.getItem(SESSION_KEY);
+    const savedUserJson = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
 
     if (this.token && this.isBackendOnline) {
-      await this.fetchCurrentUser();
+      const user = await this.fetchCurrentUser();
+      if (!user && isAppPage) {
+        this.logout(false);
+        return;
+      }
     } else if (savedUserJson) {
       try {
-        this.currentUser = JSON.parse(savedUserJson);
+        const norm = this.normalizeUser(JSON.parse(savedUserJson));
+        this.currentUser = norm;
+        const state = getAppState();
+        if (state) {
+          state.initUser(norm);
+        }
       } catch (e) {
         this.currentUser = null;
-        localStorage.removeItem(SESSION_KEY);
+        this.logout(false);
+        return;
       }
     } else {
-      // User is a guest / not logged in!
       this.currentUser = null;
+      if (isAppPage) {
+        window.location.replace('index.html');
+        return;
+      }
     }
 
     this.updateNavbarAuthUI();
+    if (isAppPage) {
+      if (typeof renderAllAppViews === 'function') renderAllAppViews();
+      else if (window.renderAllAppViews) window.renderAllAppViews();
+    }
   }
 
   async fetchCurrentUser() {
@@ -222,16 +260,23 @@ class AuthManager {
         if (data.success && data.user) {
           const norm = this.normalizeUser(data.user);
           this.currentUser = norm;
-          if (window.appState) {
-            appState.updateProfile(norm);
-            if (data.prediction) {
-              appState.updatePrediction(data.prediction);
-            }
+
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          localStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          localStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          sessionStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          const state = getAppState();
+          if (state) {
+            state.initUser(norm, data.prediction);
           }
           this.updateNavbarAuthUI();
           return this.currentUser;
         }
-      } else {
+      } else if (res.status === 401) {
         this.logout(false);
       }
     } catch (err) {
@@ -255,19 +300,28 @@ class AuthManager {
 
         if (res.ok && data.success) {
           this.token = data.token;
-          localStorage.setItem(TOKEN_KEY, this.token);
           const norm = this.normalizeUser(data.user);
           this.currentUser = norm;
-          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
 
-          if (window.appState) {
-            appState.updateProfile(norm);
-            if (data.prediction) {
-              appState.updatePrediction(data.prediction);
-            }
+          localStorage.setItem(TOKEN_KEY, this.token);
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          localStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          localStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          sessionStorage.setItem(TOKEN_KEY, this.token);
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          sessionStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          const state = getAppState();
+          if (state) {
+            state.initUser(norm, data.prediction);
           }
 
           this.updateNavbarAuthUI();
+          if (typeof renderAllAppViews === 'function') renderAllAppViews();
+          else if (window.renderAllAppViews) window.renderAllAppViews();
+
           if (typeof showToast === 'function') {
             showToast(`Welcome back, ${norm.fullName}!`, 'success');
           }
@@ -284,12 +338,22 @@ class AuthManager {
     if (cleanEmail.includes('samiksha')) {
       const student = SEEDED_STUDENTS.samiksha;
       this.currentUser = { ...student };
+      localStorage.setItem(TOKEN_KEY, 'demo_token_samiksha');
       localStorage.setItem(SESSION_KEY, JSON.stringify(student));
-      if (window.appState) {
-        appState.updateProfile(student);
-        appState.updatePrediction(student.prediction);
+      localStorage.setItem(USER_ID_KEY, '5');
+      localStorage.setItem(USER_EMAIL_KEY, student.email);
+      sessionStorage.setItem(TOKEN_KEY, 'demo_token_samiksha');
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(student));
+      sessionStorage.setItem(USER_ID_KEY, '5');
+      sessionStorage.setItem(USER_EMAIL_KEY, student.email);
+
+      const state = getAppState();
+      if (state) {
+        state.initUser(student, student.prediction);
       }
       this.updateNavbarAuthUI();
+      if (typeof renderAllAppViews === 'function') renderAllAppViews();
+      else if (window.renderAllAppViews) window.renderAllAppViews();
       if (typeof showToast === 'function') {
         showToast('Signed in as Samiksha Walbe! (B.Tech CSE • SDE Profile)', 'success');
       }
@@ -299,12 +363,22 @@ class AuthManager {
     if (cleanEmail.includes('jyoti')) {
       const student = SEEDED_STUDENTS.jyoti;
       this.currentUser = { ...student };
+      localStorage.setItem(TOKEN_KEY, 'demo_token_jyoti');
       localStorage.setItem(SESSION_KEY, JSON.stringify(student));
-      if (window.appState) {
-        appState.updateProfile(student);
-        appState.updatePrediction(student.prediction);
+      localStorage.setItem(USER_ID_KEY, '6');
+      localStorage.setItem(USER_EMAIL_KEY, student.email);
+      sessionStorage.setItem(TOKEN_KEY, 'demo_token_jyoti');
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(student));
+      sessionStorage.setItem(USER_ID_KEY, '6');
+      sessionStorage.setItem(USER_EMAIL_KEY, student.email);
+
+      const state = getAppState();
+      if (state) {
+        state.initUser(student, student.prediction);
       }
       this.updateNavbarAuthUI();
+      if (typeof renderAllAppViews === 'function') renderAllAppViews();
+      else if (window.renderAllAppViews) window.renderAllAppViews();
       if (typeof showToast === 'function') {
         showToast('Signed in as Jyoti Kore! (B.Tech IT • Web Dev Profile)', 'success');
       }
@@ -312,7 +386,8 @@ class AuthManager {
     }
 
     if (cleanEmail.includes('aarav') || cleanEmail === 'demo@student.edu') {
-      const demoUser = appState.getProfile();
+      const state = getAppState();
+      const demoUser = state ? state.getProfile() : { fullName: 'Demo Student' };
       this.currentUser = demoUser;
       localStorage.setItem(SESSION_KEY, JSON.stringify(demoUser));
       this.updateNavbarAuthUI();
@@ -327,47 +402,86 @@ class AuthManager {
 
   async switchTo(accountKey) {
     const key = accountKey.toLowerCase();
-    const student = SEEDED_STUDENTS[key];
-    if (!student) return;
+    const targetEmail = key.includes('jyoti') ? 'jyoti@engg.edu' : 'samiksha@engg.edu';
 
-    // Immediately replace full student profile in current user and appState
-    this.currentUser = JSON.parse(JSON.stringify(student));
-    if (window.appState) {
-      appState.data.profile = JSON.parse(JSON.stringify(student));
-      if (student.prediction) {
-        appState.data.prediction = JSON.parse(JSON.stringify(student.prediction));
-      }
-      appState.saveState();
-    }
-
-    // Immediately update header badge, avatar, and sidebar
-    this.updateNavbarAuthUI();
-
-    // Immediately re-render all views (Dashboard, Welcome Banner, KPIs, Profile, Prediction, Skill Gap, Roadmap)
-    if (window.renderAllAppViews) {
-      window.renderAllAppViews();
-    }
-
-    if (typeof showToast === 'function') {
-      showToast(`Active Account: ${student.fullName} (${student.branch} • CGPA: ${student.cgpa})`, 'success');
-    }
-
-    // Sync session token with backend SQLite in background
+    await this.checkBackendHealth();
     if (this.isBackendOnline) {
       try {
         const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: student.email, password: 'password123' })
+          body: JSON.stringify({ email: targetEmail, password: 'password123' })
         });
         const data = await res.json();
-        if (res.ok && data.token) {
+        if (res.ok && data.success) {
           this.token = data.token;
+          const norm = this.normalizeUser(data.user);
+          this.currentUser = norm;
+
           localStorage.setItem(TOKEN_KEY, this.token);
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          localStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          localStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          sessionStorage.setItem(TOKEN_KEY, this.token);
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          sessionStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          const state = getAppState();
+          if (state) {
+            state.initUser(norm, data.prediction);
+          }
+
+          this.updateNavbarAuthUI();
+          if (typeof renderAllAppViews === 'function') renderAllAppViews();
+          else if (window.renderAllAppViews) window.renderAllAppViews();
+
+          if (typeof showToast === 'function') {
+            showToast(`Active Account: ${norm.fullName} (${norm.branch} • CGPA: ${norm.cgpa})`, 'success');
+          }
+          return;
         }
       } catch (e) {
-        console.warn('Backend session sync:', e);
+        console.warn('Backend login switch failed, falling back:', e);
       }
+    }
+
+    // Fallback if offline
+    const student = SEEDED_STUDENTS[key.includes('jyoti') ? 'jyoti' : 'samiksha'];
+    if (!student) return;
+    this.currentUser = JSON.parse(JSON.stringify(student));
+    localStorage.setItem(SESSION_KEY, JSON.stringify(this.currentUser));
+    localStorage.setItem(USER_ID_KEY, String(this.currentUser.id || (key.includes('jyoti') ? '6' : '5')));
+    localStorage.setItem(USER_EMAIL_KEY, this.currentUser.email);
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(this.currentUser));
+    sessionStorage.setItem(USER_ID_KEY, String(this.currentUser.id || (key.includes('jyoti') ? '6' : '5')));
+    sessionStorage.setItem(USER_EMAIL_KEY, this.currentUser.email);
+
+    const state = getAppState();
+    if (state) {
+      state.initUser(this.currentUser, student.prediction);
+    }
+    this.updateNavbarAuthUI();
+    if (typeof renderAllAppViews === 'function') renderAllAppViews();
+    else if (window.renderAllAppViews) window.renderAllAppViews();
+    if (typeof showToast === 'function') {
+      showToast(`Active Account: ${student.fullName} (${student.branch} • CGPA: ${student.cgpa})`, 'success');
+    }
+  }
+
+  async refreshUserProfile() {
+    if (!this.token) {
+      showToast('No active session token.', 'warning');
+      return;
+    }
+    showToast('Syncing profile from SQLite database...', 'info');
+    const user = await this.fetchCurrentUser();
+    if (user) {
+      if (window.renderAllAppViews) window.renderAllAppViews();
+      showToast(`Profile re-synced from database for ${user.fullName}!`, 'success');
+    } else {
+      showToast('Failed to sync profile from database.', 'danger');
     }
   }
 
@@ -385,12 +499,21 @@ class AuthManager {
 
         if (res.ok && data.success) {
           this.token = data.token;
-          localStorage.setItem(TOKEN_KEY, this.token);
           const norm = this.normalizeUser(data.user);
           this.currentUser = norm;
 
+          localStorage.setItem(TOKEN_KEY, this.token);
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          localStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          localStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
+          sessionStorage.setItem(TOKEN_KEY, this.token);
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(USER_ID_KEY, String(norm.id || ''));
+          sessionStorage.setItem(USER_EMAIL_KEY, norm.email || '');
+
           if (window.appState) {
-            appState.updateProfile(norm);
+            appState.initUser(norm);
           }
 
           this.updateNavbarAuthUI();
@@ -423,7 +546,7 @@ class AuthManager {
       certifications: [],
       internships: []
     };
-    if (window.appState) appState.updateProfile(fallbackUser);
+    if (window.appState) appState.initUser(fallbackUser);
     this.currentUser = fallbackUser;
     this.updateNavbarAuthUI();
     if (typeof showToast === 'function') {
@@ -444,11 +567,22 @@ class AuthManager {
     this.currentUser = null;
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(USER_ID_KEY);
+    localStorage.removeItem(USER_EMAIL_KEY);
+
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(USER_ID_KEY);
+    sessionStorage.removeItem(USER_EMAIL_KEY);
+
     this.updateNavbarAuthUI();
 
     if (showNotice && typeof showToast === 'function') {
       showToast('Logged out successfully.', 'info');
     }
+
+    // Always redirect to Login / Landing page
+    window.location.replace('index.html');
   }
 
   async syncProfileToBackend(profileData) {
@@ -505,9 +639,10 @@ class AuthManager {
     }
 
     // App shell user indicators
-    const currentName = this.currentUser ? (this.currentUser.fullName || this.currentUser.fullname || 'Samiksha Walbe') : (window.appState ? appState.getProfile().fullName : 'Samiksha Walbe');
-    const currentBranch = this.currentUser ? `${this.currentUser.degree || 'B.Tech'} ${this.currentUser.branch ? this.currentUser.branch.split(' ')[0] : 'CSE'} '26` : (window.appState ? `${appState.getProfile().degree || 'B.Tech'} ${appState.getProfile().branch ? appState.getProfile().branch.split(' ')[0] : 'CSE'} '26` : "B.Tech CSE '26");
-    const initials = (currentName || 'SW').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const state = getAppState();
+    const currentName = this.currentUser ? (this.currentUser.fullName || this.currentUser.fullname || 'Student') : (state ? state.getProfile().fullName : 'Student');
+    const currentBranch = this.currentUser ? `${this.currentUser.degree || 'B.Tech'} ${this.currentUser.branch ? this.currentUser.branch.split(' ')[0] : 'CSE'} '26` : (state ? `${state.getProfile().degree || 'B.Tech'} ${state.getProfile().branch ? state.getProfile().branch.split(' ')[0] : 'CSE'} '26` : "B.Tech '26");
+    const initials = (currentName || 'ST').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
     const appUserName = document.getElementById('sidebar-user-name');
     const appUserBranch = document.querySelector('.user-meta-branch');

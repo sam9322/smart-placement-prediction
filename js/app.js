@@ -556,9 +556,15 @@ function renderAllAppViews() {
   if (typeof renderProfileView === 'function') renderProfileView();
   if (typeof renderDashboard === 'function') renderDashboard();
   if (typeof syncPredictionFormWithProfile === 'function') syncPredictionFormWithProfile();
-  if (typeof renderSkillGapView === 'function') renderSkillGapView();
+  if (typeof renderSkillGapAnalysis === 'function') renderSkillGapAnalysis();
   if (typeof renderRoadmapView === 'function') renderRoadmapView();
-  if (typeof renderCoachView === 'function') renderCoachView();
+  if (window.careerCoach) {
+    if (document.getElementById('coach-quiz-root')) careerCoach.renderQuizContainer('coach-quiz-root');
+    if (document.getElementById('coach-careers-root')) careerCoach.renderCareersCatalog('coach-careers-root');
+  }
+  if (window.interviewManager && typeof interviewManager.init === 'function') {
+    interviewManager.init();
+  }
   if (window.authManager && typeof authManager.updateNavbarAuthUI === 'function') {
     authManager.updateNavbarAuthUI();
   }

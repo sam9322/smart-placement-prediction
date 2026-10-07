@@ -240,13 +240,20 @@ const UPCOMING_DRIVES = [
 // State Manager Class
 class StateManager {
   constructor() {
-    this.data = this.loadState();
+    this.userId = null;
     this.listeners = [];
+    this.data = this.loadState();
+  }
+
+  getUserStorageKey(uid = null) {
+    const id = uid || this.userId || (window.authManager && window.authManager.currentUser ? window.authManager.currentUser.id : null) || localStorage.getItem('smart_placement_user_id') || sessionStorage.getItem('smart_placement_user_id');
+    return id ? `smart_placement_state_user_${id}` : STORAGE_KEY;
   }
 
   loadState() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const key = this.getUserStorageKey();
+      const saved = localStorage.getItem(key);
       if (saved) {
         return JSON.parse(saved);
       }
@@ -259,11 +266,92 @@ class StateManager {
 
   saveState() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+      const key = this.getUserStorageKey();
+      localStorage.setItem(key, JSON.stringify(this.data));
       this.notifyListeners();
     } catch (e) {
       console.error('Error saving state to localStorage:', e);
     }
+  }
+
+  initUser(user, prediction = null) {
+    if (!user) return;
+    this.userId = user.id || user.email;
+    const key = this.getUserStorageKey(this.userId);
+    let localData = null;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) localData = JSON.parse(saved);
+    } catch (e) {
+      console.warn('Error reading user state:', e);
+    }
+
+    const baseProfile = {
+      id: user.id,
+      fullName: user.fullName || user.fullname || 'Student',
+      email: user.email || '',
+      phone: user.phone || '+91 98765 00000',
+      college: user.college || 'National Institute of Engineering & Technology',
+      degree: user.degree || 'B.Tech',
+      branch: user.branch || 'Computer Science & Engineering',
+      gradYear: user.gradYear || user.grad_year || '2026',
+      rollNumber: user.rollNumber || user.roll_number || 'CS22B1000',
+      cgpa: parseFloat(user.cgpa !== undefined ? user.cgpa : 8.0),
+      tenthMarks: parseFloat(user.tenthMarks !== undefined ? user.tenthMarks : (user.tenth_marks || 90.0)),
+      twelfthMarks: parseFloat(user.twelfthMarks !== undefined ? user.twelfthMarks : (user.twelfth_marks || 88.0)),
+      backlogs: parseInt(user.backlogs !== undefined ? user.backlogs : 0),
+      aptitudeScore: parseInt(user.aptitudeScore !== undefined ? user.aptitudeScore : (user.aptitude_score || 80)),
+      codingRating: parseInt(user.codingRating !== undefined ? user.codingRating : (user.coding_rating || 1600)),
+      targetCareerId: user.targetCareerId || user.target_career_id || 'sde',
+      targetCareerTitle: user.targetCareerTitle || user.target_career_title || 'Software Development Engineer',
+      skills: Array.isArray(user.skills) ? user.skills : (typeof user.skills === 'string' ? JSON.parse(user.skills || '[]') : []),
+      certifications: Array.isArray(user.certifications) ? user.certifications : (typeof user.certifications === 'string' ? JSON.parse(user.certifications || '[]') : []),
+      projects: Array.isArray(user.projects) ? user.projects : (typeof user.projects === 'string' ? JSON.parse(user.projects || '[]') : []),
+      internships: Array.isArray(user.internships) ? user.internships : (typeof user.internships === 'string' ? JSON.parse(user.internships || '[]') : [])
+    };
+
+    let activePrediction = prediction || (localData && localData.prediction ? localData.prediction : null);
+    if (!activePrediction) {
+      activePrediction = {
+        probability: Math.round(Math.min(98, Math.max(45, (baseProfile.cgpa * 8) + (baseProfile.skills.length * 2)))),
+        tier: baseProfile.cgpa >= 8.5 ? 'High' : 'Medium',
+        tierLabel: baseProfile.cgpa >= 8.5 ? 'High Readiness - Tier 1 Candidate' : 'Moderate Readiness - Tier 2 Candidate',
+        factors: {
+          academics: Math.round(baseProfile.cgpa * 10),
+          technicalDSA: Math.min(95, baseProfile.skills.length * 9),
+          projects: Math.min(95, baseProfile.projects.length * 40 + 20),
+          internships: Math.min(95, baseProfile.internships.length * 45 + 30),
+          aptitude: baseProfile.aptitudeScore
+        },
+        lastCalculated: new Date().toISOString().split('T')[0]
+      };
+    }
+
+    const roadmapMilestones = (user.roadmapState && Object.keys(user.roadmapState).length > 0)
+      ? user.roadmapState
+      : (localData && localData.roadmap && localData.roadmap.checkedMilestones ? localData.roadmap.checkedMilestones : {});
+
+    const apt10 = Math.min(10, Math.max(0, Math.round(baseProfile.aptitudeScore / 10)));
+    const interviewHist = (user.interviewHistory && (user.interviewHistory.aptitudeScore !== undefined || (user.interviewHistory.mockAttempts && user.interviewHistory.mockAttempts.length)))
+      ? user.interviewHistory
+      : (localData && localData.interviewHistory ? localData.interviewHistory : {
+          aptitudeScore: apt10,
+          aptitudeTotal: 10,
+          technicalScore: Math.min(10, Math.max(5, apt10)),
+          technicalTotal: 10,
+          mockAttempts: []
+        });
+
+    this.data = {
+      profile: baseProfile,
+      prediction: activePrediction,
+      roadmap: {
+        checkedMilestones: roadmapMilestones
+      },
+      interviewHistory: interviewHist
+    };
+
+    this.saveState();
   }
 
   resetToDefault() {
@@ -285,43 +373,81 @@ class StateManager {
   }
 
   getProfile() {
-    return this.data.profile;
+    return this.data.profile || {};
   }
 
   updateProfile(newProfile) {
     this.data.profile = { ...this.data.profile, ...newProfile };
     this.saveState();
+    if (window.authManager && authManager.syncProfileToBackend) {
+      authManager.syncProfileToBackend(this.data.profile);
+    }
   }
 
   getPrediction() {
-    return this.data.prediction;
+    return this.data.prediction || { probability: 85, tier: 'High', factors: {} };
   }
 
   updatePrediction(predictionData) {
     this.data.prediction = { ...this.data.prediction, ...predictionData };
     this.saveState();
+    if (window.authManager && authManager.syncPredictionToBackend) {
+      authManager.syncPredictionToBackend(this.data.prediction);
+    }
   }
 
   getRoadmapChecklist() {
-    return this.data.roadmap.checkedMilestones;
+    return (this.data.roadmap && this.data.roadmap.checkedMilestones) ? this.data.roadmap.checkedMilestones : {};
   }
 
   toggleRoadmapMilestone(milestoneId) {
+    if (!this.data.roadmap) this.data.roadmap = { checkedMilestones: {} };
+    if (!this.data.roadmap.checkedMilestones) this.data.roadmap.checkedMilestones = {};
+
     const current = !!this.data.roadmap.checkedMilestones[milestoneId];
     this.data.roadmap.checkedMilestones[milestoneId] = !current;
     this.saveState();
+
+    const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    if (token) {
+      fetch(`${apiBase}/api/user/roadmap`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(this.data.roadmap.checkedMilestones)
+      }).catch(e => console.warn('Roadmap sync:', e));
+    }
+
     return !current;
   }
 
   saveInterviewAttempt(attempt) {
+    if (!this.data.interviewHistory) this.data.interviewHistory = { mockAttempts: [] };
     if (!this.data.interviewHistory.mockAttempts) {
       this.data.interviewHistory.mockAttempts = [];
     }
     this.data.interviewHistory.mockAttempts.unshift(attempt);
     this.saveState();
+
+    const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    if (token) {
+      fetch(`${apiBase}/api/user/interview`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(this.data.interviewHistory)
+      }).catch(e => console.warn('Interview sync:', e));
+    }
   }
 
   updateQuizScore(type, score, total) {
+    if (!this.data.interviewHistory) this.data.interviewHistory = {};
     if (type === 'aptitude') {
       this.data.interviewHistory.aptitudeScore = score;
       this.data.interviewHistory.aptitudeTotal = total;
@@ -330,11 +456,25 @@ class StateManager {
       this.data.interviewHistory.technicalTotal = total;
     }
     this.saveState();
+
+    const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    if (token) {
+      fetch(`${apiBase}/api/user/interview`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(this.data.interviewHistory)
+      }).catch(e => console.warn('Interview quiz sync:', e));
+    }
   }
 }
 
 // Global App State Instance
 const appState = new StateManager();
+window.appState = appState;
 
 // Theme Controller
 function initTheme() {

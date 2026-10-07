@@ -22,6 +22,16 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/app.css">
+
+  <!-- Authentication Route Guard -->
+  <script>
+    (function() {
+      const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+      if (!token) {
+        window.location.replace('index.html');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -94,12 +104,12 @@
 
       <div class="sidebar-footer">
         <div class="user-snippet">
-          <div class="user-avatar-circle" id="sidebar-user-avatar">SW</div>
+          <div class="user-avatar-circle" id="sidebar-user-avatar">--</div>
           <div style="flex: 1; min-width: 0;">
-            <div class="user-meta-name" id="sidebar-user-name">Samiksha Walbe</div>
-            <div class="user-meta-branch">B.Tech CSE '26</div>
+            <div class="user-meta-name" id="sidebar-user-name">Loading...</div>
+            <div class="user-meta-branch">...</div>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="authManager.logout(); window.location.href='index.html';" title="Sign Out">
+          <button class="btn btn-ghost btn-sm" onclick="authManager.logout();" title="Sign Out">
             <i class="fa-solid fa-right-from-bracket" style="color: var(--accent-rose);"></i>
           </button>
         </div>
@@ -152,7 +162,7 @@
 
           <!-- User Quick Pill -->
           <a href="#profile" class="btn btn-ghost btn-sm" onclick="switchView('profile')" style="padding: 0.35rem 0.65rem;" title="Go to Profile">
-            <span class="user-avatar-circle" id="header-user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">SW</span>
+            <span class="user-avatar-circle" id="header-user-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;">--</span>
           </a>
         </div>
       </header>
@@ -167,9 +177,9 @@
           <!-- Welcome Banner -->
           <div class="welcome-banner">
             <div class="welcome-info">
-              <h1>Welcome back, <span class="text-gradient" id="dash-welcome-name">Samiksha Walbe</span> 👋</h1>
+              <h1>Welcome back, <span class="text-gradient" id="dash-welcome-name">Student</span> 👋</h1>
               <p id="dash-welcome-sub">
-                B.Tech in Computer Science & Engineering • Batch of 2026 • CGPA: 8.85
+                Academic Profile
               </p>
             </div>
             <div class="flex gap-2" style="display: flex; gap: 0.75rem;">
@@ -304,31 +314,31 @@
             <!-- Left Summary Column -->
             <div>
               <div class="profile-card-summary">
-                <div class="profile-avatar-large" id="profile-summary-avatar">SW</div>
-                <h3 class="text-xl" id="profile-summary-name">Samiksha Walbe</h3>
-                <p class="text-sm text-muted" id="profile-summary-roll">CS22B1052 • B.Tech CSE</p>
+                <div class="profile-avatar-large" id="profile-summary-avatar">--</div>
+                <h3 class="text-xl" id="profile-summary-name">Student</h3>
+                <p class="text-sm text-muted" id="profile-summary-roll">Roll No • Branch</p>
 
                 <div class="profile-metric-pill-grid">
                   <div class="metric-pill">
                     <div class="metric-pill-label">CGPA</div>
-                    <div class="metric-pill-val" id="profile-summary-cgpa">8.85</div>
+                    <div class="metric-pill-val" id="profile-summary-cgpa">--</div>
                   </div>
                   <div class="metric-pill">
                     <div class="metric-pill-label">Skills Logged</div>
-                    <div class="metric-pill-val" id="profile-summary-skills-count">10</div>
+                    <div class="metric-pill-val" id="profile-summary-skills-count">--</div>
                   </div>
                   <div class="metric-pill">
                     <div class="metric-pill-label">Projects</div>
-                    <div class="metric-pill-val" id="profile-summary-projects-count">2</div>
+                    <div class="metric-pill-val" id="profile-summary-projects-count">--</div>
                   </div>
                   <div class="metric-pill">
                     <div class="metric-pill-label">Aptitude</div>
-                    <div class="metric-pill-val" id="profile-summary-aptitude">88%</div>
+                    <div class="metric-pill-val" id="profile-summary-aptitude">--</div>
                   </div>
                 </div>
 
-                <button class="btn btn-secondary btn-sm w-full mb-2" onclick="switchToAccount('samiksha')">
-                  <i class="fa-solid fa-rotate-left"></i> Reload Samiksha Profile
+                <button class="btn btn-secondary btn-sm w-full mb-2" onclick="authManager.refreshUserProfile()" id="refresh-profile-btn">
+                  <i class="fa-solid fa-rotate"></i> Refresh Profile from Database
                 </button>
               </div>
 
@@ -519,11 +529,11 @@
               <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc,.txt" style="display: none;">
               
               <div class="flex justify-center gap-2" style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;" onclick="event.stopPropagation()">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="resumeAnalyzer.loadSampleResume('sde')">
-                  <i class="fa-solid fa-bolt text-amber"></i> Test with Sample SDE Resume
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resumeAnalyzer.loadSampleResume('current')">
+                  <i class="fa-solid fa-file-invoice text-primary"></i> Analyze My Student Profile Resume
                 </button>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="resumeAnalyzer.loadSampleResume('aiml')">
-                  <i class="fa-solid fa-brain text-primary"></i> Test with Sample AI/ML Resume
+                  <i class="fa-solid fa-brain text-amber"></i> Test with Sample AI/ML Resume
                 </button>
               </div>
             </div>

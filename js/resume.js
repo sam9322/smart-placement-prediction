@@ -110,10 +110,41 @@ class ResumeAnalyzerManager {
     });
   }
 
-  loadSampleResume(type = 'sde') {
-    const text = type === 'aiml' ? SAMPLE_AIML_RESUME_TEXT : SAMPLE_SDE_RESUME_TEXT;
-    const fileName = type === 'aiml' ? 'Priya_Sharma_AIML_Resume.pdf' : 'Samiksha_Walbe_SDE_Resume.pdf';
-    this.analyzeResumeText(text, fileName);
+  generateCurrentStudentResume() {
+    const profile = appState.getProfile();
+    const skillsStr = (profile.skills || []).join(', ');
+    const certsStr = (profile.certifications || []).map(c => `• ${c.title} - ${c.issuer} (${c.year})`).join('\n');
+    const projsStr = (profile.projects || []).map(p => `${p.title} (${p.stack || ''})\n• ${p.desc || ''}`).join('\n\n');
+    const internsStr = (profile.internships || []).map(i => `${i.role} - ${i.company} (${i.duration})\n• ${i.desc || ''}`).join('\n\n');
+
+    return `
+${(profile.fullName || 'Student').toUpperCase()}
+Email: ${profile.email || 'student@engg.edu'} | Phone: ${profile.phone || '+91 98765 00000'}
+${profile.degree} in ${profile.branch} | ${profile.college} | CGPA: ${profile.cgpa}/10
+
+TECHNICAL SKILLS:
+${skillsStr}
+
+WORK EXPERIENCE / INTERNSHIPS:
+${internsStr || 'Software Engineering Intern\n• Developed and deployed backend REST APIs and optimized system queries.'}
+
+KEY PROJECTS:
+${projsStr || 'Full-Stack Application\n• Engineered scalable services and real-time frontend components.'}
+
+CERTIFICATIONS:
+${certsStr || '• Professional Certification in Software Engineering (2025)'}
+`;
+  }
+
+  loadSampleResume(type = 'current') {
+    if (type === 'aiml') {
+      this.analyzeResumeText(SAMPLE_AIML_RESUME_TEXT, 'Priya_Sharma_AIML_Resume.pdf');
+    } else {
+      const currentProfile = appState.getProfile();
+      const text = this.generateCurrentStudentResume();
+      const cleanName = (currentProfile.fullName || 'Student').replace(/\s+/g, '_');
+      this.analyzeResumeText(text, `${cleanName}_Profile_Resume.pdf`);
+    }
   }
 
   async processFile(file) {

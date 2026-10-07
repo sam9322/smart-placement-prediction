@@ -281,9 +281,77 @@ def init_db():
             jyoti_skills, jyoti_certs, jyoti_projects, jyoti_internships
         ))
 
-    # Ensure canonical names for existing user accounts
-    cursor.execute("UPDATE users SET fullname = 'Samiksha Walbe' WHERE email LIKE '%samiksha%'")
-    cursor.execute("UPDATE users SET fullname = 'Jyoti Kore' WHERE email LIKE '%jyoti%'")
+    # Add missing columns if upgrading database
+    for col in [
+        ('phone', "TEXT DEFAULT '+91 98765 00000'"),
+        ('roadmap_state', "TEXT DEFAULT '{}'"),
+        ('interview_history', "TEXT DEFAULT '{}'")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE users ADD COLUMN {col[0]} {col[1]}")
+        except Exception:
+            pass
+
+    # Ensure canonical names & distinct profiles for existing accounts
+    sam_roadmap = json.dumps({
+        "s1_m1": True, "s1_m2": True, "s1_m3": True,
+        "s2_m1": True, "s2_m2": True, "s2_m3": True,
+        "s3_m1": True, "s3_m2": False, "s3_m3": True,
+        "s4_m1": False, "s4_m2": False, "s4_m3": False
+    })
+    sam_interview = json.dumps({
+        "aptitudeScore": 9, "aptitudeTotal": 10, "technicalScore": 9, "technicalTotal": 10,
+        "mockAttempts": [{"date": "2026-10-05", "role": "Software Development Engineer", "score": 92, "feedback": "Solid grasp of distributed systems, concurrency, and tree traversals."}]
+    })
+    cursor.execute("""
+        UPDATE users SET
+            fullname = 'Samiksha Walbe',
+            phone = '+91 98765 11052',
+            degree = 'B.Tech',
+            branch = 'Computer Science & Engineering',
+            roll_number = 'CS22B1052',
+            cgpa = 8.85,
+            tenth_marks = 94.2,
+            twelfth_marks = 91.0,
+            backlogs = 0,
+            aptitude_score = 88,
+            coding_rating = 1740,
+            target_career_id = 'sde',
+            target_career_title = 'Software Development Engineer',
+            roadmap_state = ?,
+            interview_history = ?
+        WHERE email LIKE '%samiksha%'
+    """, (sam_roadmap, sam_interview))
+
+    jyo_roadmap = json.dumps({
+        "s1_m1": True, "s1_m2": True, "s1_m3": True,
+        "s2_m1": True, "s2_m2": False, "s2_m3": True,
+        "s3_m1": False, "s3_m2": False, "s3_m3": False,
+        "s4_m1": False, "s4_m2": False, "s4_m3": False
+    })
+    jyo_interview = json.dumps({
+        "aptitudeScore": 7, "aptitudeTotal": 10, "technicalScore": 8, "technicalTotal": 10,
+        "mockAttempts": [{"date": "2026-10-04", "role": "Full Stack Web Developer", "score": 84, "feedback": "Strong React architecture and REST design. Review Node event loop internals."}]
+    })
+    cursor.execute("""
+        UPDATE users SET
+            fullname = 'Jyoti Kore',
+            phone = '+91 98765 22038',
+            degree = 'B.Tech',
+            branch = 'Information Technology',
+            roll_number = 'IT22B1038',
+            cgpa = 8.40,
+            tenth_marks = 90.5,
+            twelfth_marks = 87.5,
+            backlogs = 0,
+            aptitude_score = 82,
+            coding_rating = 1620,
+            target_career_id = 'webdev',
+            target_career_title = 'Full Stack Web Developer',
+            roadmap_state = ?,
+            interview_history = ?
+        WHERE email LIKE '%jyoti%'
+    """, (jyo_roadmap, jyo_interview))
 
     # Seed Predictions for accounts if not present
     cursor.execute('SELECT id FROM users WHERE email = ?', ('samiksha@engg.edu',))
@@ -295,7 +363,7 @@ def init_db():
             cursor.execute('''
                 INSERT INTO predictions (user_id, probability, tier, tier_label, factors)
                 VALUES (?, ?, ?, ?, ?)
-            ''', (sam_row['id'], 92, 'High', 'High Readiness - Tier 1 Product Company (16 - 32 LPA)', sam_factors))
+            ''', (sam_row['id'], 92, 'High', 'High Readiness - Tier 1 Product Company Candidate (16 - 32 LPA)', sam_factors))
 
     cursor.execute('SELECT id FROM users WHERE email = ?', ('jyoti@engg.edu',))
     jyo_row = cursor.fetchone()
@@ -361,8 +429,19 @@ def user_to_dict(user_row):
         except Exception:
             d[field] = []
 
+    try:
+        d['roadmapState'] = json.loads(d.get('roadmap_state') or '{}')
+    except Exception:
+        d['roadmapState'] = {}
+
+    try:
+        d['interviewHistory'] = json.loads(d.get('interview_history') or '{}')
+    except Exception:
+        d['interviewHistory'] = {}
+
     # Provide camelCase aliases for seamless frontend compatibility
     d['fullName'] = d.get('fullname', '')
+    d['phone'] = d.get('phone', '+91 98765 00000')
     d['rollNumber'] = d.get('roll_number', '')
     d['gradYear'] = d.get('grad_year', '')
     d['tenthMarks'] = d.get('tenth_marks', 0)
@@ -557,7 +636,9 @@ def update_profile():
             skills = COALESCE(?, skills),
             certifications = COALESCE(?, certifications),
             projects = COALESCE(?, projects),
-            internships = COALESCE(?, internships)
+            internships = COALESCE(?, internships),
+            roadmap_state = COALESCE(?, roadmap_state),
+            interview_history = COALESCE(?, interview_history)
         WHERE id = ?
     ''', (
         data.get('fullName'),
@@ -579,6 +660,8 @@ def update_profile():
         json.dumps(data.get('certifications')) if 'certifications' in data else None,
         json.dumps(data.get('projects')) if 'projects' in data else None,
         json.dumps(data.get('internships')) if 'internships' in data else None,
+        json.dumps(data.get('roadmapState')) if 'roadmapState' in data else None,
+        json.dumps(data.get('interviewHistory')) if 'interviewHistory' in data else None,
         user['id']
     ))
     conn.commit()
@@ -592,6 +675,58 @@ def update_profile():
         'message': 'Profile successfully synchronized with backend database!',
         'user': user_to_dict(updated_user)
     }), 200
+
+@app.route('/api/user/roadmap', methods=['GET', 'PUT'])
+def user_roadmap():
+    user = get_current_user()
+    if not user:
+        return jsonify({'success': False, 'message': 'Unauthorized.'}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == 'PUT':
+        data = request.get_json() or {}
+        roadmap_json = json.dumps(data)
+        cursor.execute('UPDATE users SET roadmap_state = ? WHERE id = ?', (roadmap_json, user['id']))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Roadmap updated successfully', 'roadmapState': data}), 200
+
+    cursor.execute('SELECT roadmap_state FROM users WHERE id = ?', (user['id'],))
+    row = cursor.fetchone()
+    conn.close()
+    try:
+        r_state = json.loads(row['roadmap_state'] or '{}') if row else {}
+    except Exception:
+        r_state = {}
+    return jsonify({'success': True, 'roadmapState': r_state}), 200
+
+@app.route('/api/user/interview', methods=['GET', 'PUT'])
+def user_interview():
+    user = get_current_user()
+    if not user:
+        return jsonify({'success': False, 'message': 'Unauthorized.'}), 401
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == 'PUT':
+        data = request.get_json() or {}
+        interview_json = json.dumps(data)
+        cursor.execute('UPDATE users SET interview_history = ? WHERE id = ?', (interview_json, user['id']))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Interview history updated successfully', 'interviewHistory': data}), 200
+
+    cursor.execute('SELECT interview_history FROM users WHERE id = ?', (user['id'],))
+    row = cursor.fetchone()
+    conn.close()
+    try:
+        i_hist = json.loads(row['interview_history'] or '{}') if row else {}
+    except Exception:
+        i_hist = {}
+    return jsonify({'success': True, 'interviewHistory': i_hist}), 200
 
 @app.route('/api/user/prediction', methods=['POST'])
 def save_prediction():
