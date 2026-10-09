@@ -340,237 +340,1551 @@ const SIX_MONTH_ROADMAP_MASTER = [
       }
     ]
   },
-  {
-    "monthNum": 2,
-    "title": "MONTH 2: Arrays + Strings + Linked Lists",
-    "duration": "Month 2 (Weeks 5 - 8)",
-    "domain": "DSA",
-    "objective": "Master linear data structures, two-pointer techniques, sliding windows, and fast-slow pointer algorithms.",
-    "skills": [
-      "Arrays & Strings",
-      "Two Pointers & Sliding Window",
-      "Linked Lists",
-      "HashMaps & Hash Tables"
-    ],
-    "youtubeLectures": [
       {
-        "videoId": "3OamzN90kPg",
-        "title": "Contains Duplicate - Leetcode 217 - Python",
-        "channel": "NeetCode",
-        "url": "https://www.youtube.com/watch?v=3OamzN90kPg",
-        "level": "Beginner",
-        "duration": "7m 45s",
-        "skill": "Arrays & Strings",
-        "topic": "Arrays & Strings"
-      },
-      {
-        "videoId": "68isPRHgcFQ",
-        "title": "Concatenation of Array - Leetcode 1929 - Python",
-        "channel": "NeetCodeIO",
-        "url": "https://www.youtube.com/watch?v=68isPRHgcFQ",
-        "level": "Beginner",
-        "duration": "5m 12s",
-        "skill": "Arrays & Strings",
-        "topic": "Arrays & Strings"
-      },
-      {
-        "videoId": "jJXJ16kPFWg",
-        "title": "Valid Palindrome - Leetcode 125 - Python",
-        "channel": "NeetCode",
-        "url": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
-        "level": "Beginner",
-        "duration": "11m 30s",
-        "skill": "Two Pointers & Sliding Window",
-        "topic": "Two Pointers & Sliding Window"
-      },
-      {
-        "videoId": "1pkOgXD63yU",
-        "title": "Sliding Window: Best Time to Buy and Sell Stock - Leetcode 121 - Python",
-        "channel": "NeetCode",
-        "url": "https://www.youtube.com/watch?v=1pkOgXD63yU",
-        "level": "Intermediate",
-        "duration": "12m 40s",
-        "skill": "Two Pointers & Sliding Window",
-        "topic": "Two Pointers & Sliding Window"
-      },
-      {
-        "videoId": "wiGpQwVHdE0",
-        "title": "Longest Substring Without Repeating Characters - Leetcode 3 - Python",
-        "channel": "NeetCode",
-        "url": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
-        "level": "Intermediate",
-        "duration": "15m 15s",
-        "skill": "Two Pointers & Sliding Window",
-        "topic": "Two Pointers & Sliding Window"
-      },
-      {
-        "videoId": "Nq7ok-OyEpg",
-        "title": "L1. Introduction to LinkedList | Traversal | Length | Search an Element",
-        "channel": "take U forward",
-        "url": "https://www.youtube.com/watch?v=Nq7ok-OyEpg",
-        "level": "Beginner",
-        "duration": "35m 10s",
-        "skill": "Linked Lists",
-        "topic": "Linked Lists"
-      },
-      {
-        "videoId": "akErwS16DUg",
-        "title": "11.1 : Linked List Introduction & Concepts | DSA [Abdul Bari]",
-        "channel": "Hacktrickz",
-        "url": "https://www.youtube.com/watch?v=akErwS16DUg",
-        "level": "Intermediate",
-        "duration": "28m 33s",
-        "skill": "Linked Lists",
-        "topic": "Linked Lists"
-      },
-      {
-        "videoId": "shs0KM3wKv8",
-        "title": "Data Structures: Hash Tables",
-        "channel": "HackerRank",
-        "url": "https://www.youtube.com/watch?v=shs0KM3wKv8",
-        "level": "Beginner",
-        "duration": "6m 12s",
-        "skill": "HashMaps & Hash Tables",
-        "topic": "HashMaps & Hash Tables"
-      },
-      {
-        "videoId": "KLlXCFG5TnA",
-        "title": "Two Sum - Leetcode 1 - HashMap - Python",
-        "channel": "NeetCode",
-        "url": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
-        "level": "Intermediate",
-        "duration": "10m 22s",
-        "skill": "HashMaps & Hash Tables",
-        "topic": "HashMaps & Hash Tables"
-      }
-    ],
-    "practiceProblems": [
-      {
-        "id": "p_m2_1",
-        "name": "Best Time to Buy and Sell Stock (LeetCode #121)",
-        "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
-        "platform": "LeetCode",
-        "difficulty": "Easy",
-        "estimatedTime": "20 min"
-      },
-      {
-        "id": "p_m2_2",
-        "name": "Longest Substring Without Repeating Characters (LeetCode #3)",
-        "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
-        "platform": "LeetCode",
-        "difficulty": "Medium",
-        "estimatedTime": "30 min"
-      },
-      {
-        "id": "p_m2_3",
-        "name": "Reverse Linked List (LeetCode #206)",
-        "link": "https://leetcode.com/problems/reverse-linked-list/",
-        "platform": "LeetCode",
-        "difficulty": "Easy",
-        "estimatedTime": "20 min"
-      },
-      {
-        "id": "p_m2_4",
-        "name": "Linked List Cycle Detection (LeetCode #141)",
-        "link": "https://leetcode.com/problems/linked-list-cycle/",
-        "platform": "LeetCode",
-        "difficulty": "Easy",
-        "estimatedTime": "20 min"
-      }
-    ],
-    "quiz": {
-      "id": "quiz_m2",
-      "title": "Month 2 Knowledge Check: Linear Data Structures & Pointers",
-      "questions": [
+      "monthNum": 2,
+      "title": "MONTH 2: Linear Data Structures & Pointer Patterns",
+      "duration": "Month 2 (Weeks 5 - 8)",
+      "domain": "DSA",
+      "objective": "Master Arrays, Two Pointers, Strings, Hashmaps, Sliding Window, and progressive Linked Lists (Level 1 From Scratch to Level 4 Advanced) with zero topic mixing.",
+      "skills": [
+        "Arrays",
+        "Two Pointers",
+        "Strings",
+        "Hashmaps",
+        "Sliding Window",
+        "Linked Lists"
+      ],
+      "milestones": [
         {
-          "id": "q2_1",
-          "question": "What is the optimal time complexity to find if a pair exists with target sum in a sorted array using Two Pointers?",
-          "options": [
-            "O(N^2)",
-            "O(N log N)",
-            "O(N)",
-            "O(1)"
-          ],
-          "answer": 2,
-          "explanation": "With two pointers at opposite ends of a sorted array, each step advances one pointer, achieving O(N) linear time."
+          "id": "m2_1",
+          "title": "Master Array Traversal, Prefix Sums & Hash Map Pair Lookups (Two Sum)"
         },
         {
-          "id": "q2_2",
-          "question": "How does Floyd's Cycle-Finding Algorithm (Tortoise and Hare) detect a loop in a Linked List?",
-          "options": [
-            "Fast pointer moves 2 nodes, slow moves 1 node; they meet if a cycle exists",
-            "Both pointers move at the same speed from opposite ends",
-            "Using a hash set to store all visited memory addresses",
-            "Counting total node length until integer overflow"
-          ],
-          "answer": 0,
-          "explanation": "If a cycle exists, the distance between the fast pointer (2x) and slow pointer (1x) decreases by 1 each step until they meet."
+          "id": "m2_2",
+          "title": "Master Two Pointers & Sliding Window Patterns (Valid Palindrome, 3Sum, Container With Most Water)"
         },
         {
-          "id": "q2_3",
-          "question": "What is the average time complexity of insertion, deletion, and lookup in a Hash Table?",
-          "options": [
-            "O(log N)",
-            "O(N)",
-            "O(1)",
-            "O(N log N)"
+          "id": "m2_3",
+          "title": "Complete Dedicated Linked List Path (Levels 1–4) & Solve Easy/Medium/Hard LeetCode Problems"
+        }
+      ],
+      "topicSections": [
+        {
+          "id": "sec_arrays",
+          "name": "ARRAYS",
+          "skill": "Arrays",
+          "icon": "fa-solid fa-layer-group",
+          "accentColor": "#6366f1",
+          "tagline": "Array Fundamentals & Interview Patterns",
+          "concepts": [
+            "Array fundamentals",
+            "Array traversal",
+            "Searching",
+            "Sorting basics",
+            "Prefix/suffix concepts",
+            "Common Array interview patterns"
           ],
-          "answer": 2,
-          "explanation": "With a good hash function and proper load factor, hash table operations run in O(1) average time."
+          "lectures": [
+            {
+              "videoId": "37E9ckMDdTk",
+              "title": "Find Second Largest Element in Array | Remove duplicates from Sorted Array | Arrays Intro Video",
+              "channel": "take U forward",
+              "url": "https://www.youtube.com/watch?v=37E9ckMDdTk",
+              "level": "Beginner",
+              "duration": "14m 32s",
+              "skill": "Arrays",
+              "topic": "Arrays"
+            },
+            {
+              "videoId": "wvcQg43_V8U",
+              "title": "Rotate Array by K places | Union, Intersection of Sorted Arrays | Move Zeros to End | Arrays Part-2",
+              "channel": "take U forward",
+              "url": "https://www.youtube.com/watch?v=wvcQg43_V8U",
+              "level": "Beginner",
+              "duration": "20m 15s",
+              "skill": "Arrays",
+              "topic": "Arrays"
+            },
+            {
+              "videoId": "n60Dn0UsbEk",
+              "title": "Introduction to Arrays and ArrayList in Java",
+              "channel": "Kunal Kushwaha",
+              "url": "https://www.youtube.com/watch?v=n60Dn0UsbEk",
+              "level": "Beginner",
+              "duration": "1h 48m",
+              "skill": "Arrays",
+              "topic": "Arrays"
+            },
+            {
+              "videoId": "3OamzN90kPg",
+              "title": "Contains Duplicate - Leetcode 217 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=3OamzN90kPg",
+              "level": "Beginner",
+              "duration": "7m 45s",
+              "skill": "Arrays",
+              "topic": "Arrays"
+            },
+            {
+              "videoId": "KLlXCFG5TnA",
+              "title": "Two Sum - Leetcode 1 - HashMap - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+              "level": "Beginner",
+              "duration": "10m 22s",
+              "skill": "Arrays",
+              "topic": "Arrays"
+            }
+          ],
+          "practice": [
+            {
+              "id": "p_m2_arr_twosum",
+              "name": "Two Sum — LeetCode #1",
+              "link": "https://leetcode.com/problems/two-sum/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Array + HashMap",
+              "estimatedTime": "20 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+              "solutionTitle": "Two Sum Solution (NeetCode)",
+              "isTwoSumFeatured": true
+            },
+            {
+              "id": "p_m2_arr_217",
+              "name": "Contains Duplicate — LeetCode #217",
+              "link": "https://leetcode.com/problems/contains-duplicate/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Array",
+              "estimatedTime": "15 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=3OamzN90kPg"
+            },
+            {
+              "id": "p_m2_arr_189",
+              "name": "Rotate Array — LeetCode #189",
+              "link": "https://leetcode.com/problems/rotate-array/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "Array",
+              "estimatedTime": "25 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=BHr3SXQKymI"
+            }
+          ]
+        },
+        {
+          "id": "sec_two_pointers",
+          "name": "TWO POINTERS",
+          "skill": "Two Pointers",
+          "icon": "fa-solid fa-arrows-left-right-to-line",
+          "accentColor": "#06b6d4",
+          "tagline": "Opposite & Same-Direction Pointer Techniques",
+          "concepts": [
+            "Two Pointer fundamentals",
+            "Opposite-direction pointers",
+            "Same-direction pointers",
+            "Fast/slow pointers where appropriate",
+            "Two Pointer interview patterns"
+          ],
+          "lectures": [
+            {
+              "videoId": "9kdHxplyl5I",
+              "title": "L1. Introduction to Sliding Window and 2 Pointers | Templates | Patterns",
+              "channel": "take U forward",
+              "url": "https://www.youtube.com/watch?v=9kdHxplyl5I",
+              "level": "Beginner",
+              "duration": "25m 40s",
+              "skill": "Two Pointers",
+              "topic": "Two Pointers"
+            },
+            {
+              "videoId": "jJXJ16kPFWg",
+              "title": "Valid Palindrome - Leetcode 125 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
+              "level": "Beginner",
+              "duration": "11m 30s",
+              "skill": "Two Pointers",
+              "topic": "Two Pointers"
+            },
+            {
+              "videoId": "cQ1Oz4ckceM",
+              "title": "TWO SUM II - Amazon Coding Interview Question - Leetcode 167 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=cQ1Oz4ckceM",
+              "level": "Intermediate",
+              "duration": "9m 14s",
+              "skill": "Two Pointers",
+              "topic": "Two Pointers"
+            },
+            {
+              "videoId": "jzZsG8n2R9A",
+              "title": "3Sum - Leetcode 15 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
+              "level": "Intermediate",
+              "duration": "15m 32s",
+              "skill": "Two Pointers",
+              "topic": "Two Pointers"
+            },
+            {
+              "videoId": "UuiTKBwPgAo",
+              "title": "Container with Most Water - Leetcode 11 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
+              "level": "Intermediate",
+              "duration": "11m 05s",
+              "skill": "Two Pointers",
+              "topic": "Two Pointers"
+            }
+          ],
+          "practice": [
+            {
+              "id": "p_m2_tp_125",
+              "name": "Valid Palindrome — LeetCode #125",
+              "link": "https://leetcode.com/problems/valid-palindrome/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Two Pointers",
+              "estimatedTime": "15 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=jJXJ16kPFWg"
+            },
+            {
+              "id": "p_m2_tp_167",
+              "name": "Two Sum II — LeetCode #167",
+              "link": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "Two Pointers",
+              "estimatedTime": "20 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=cQ1Oz4ckceM"
+            },
+            {
+              "id": "p_m2_tp_15",
+              "name": "3Sum — LeetCode #15",
+              "link": "https://leetcode.com/problems/3sum/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "Two Pointers",
+              "estimatedTime": "30 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=jzZsG8n2R9A"
+            },
+            {
+              "id": "p_m2_tp_11",
+              "name": "Container With Most Water — LeetCode #11",
+              "link": "https://leetcode.com/problems/container-with-most-water/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "Two Pointers",
+              "estimatedTime": "25 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
+            }
+          ]
+        },
+        {
+          "id": "sec_strings",
+          "name": "STRINGS",
+          "skill": "Strings",
+          "icon": "fa-solid fa-font",
+          "accentColor": "#a855f7",
+          "tagline": "String Processing & Anagram Analysis",
+          "concepts": [
+            "String immutability and character buffers",
+            "Two pointer string reversal",
+            "Character frequency mapping & Anagrams",
+            "Prefix matching algorithms"
+          ],
+          "lectures": [
+            {
+              "videoId": "_d0T_2Lk2qA",
+              "title": "Reverse String - 3 Ways - Leetcode 344 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=_d0T_2Lk2qA",
+              "level": "Beginner",
+              "duration": "8m 42s",
+              "skill": "Strings",
+              "topic": "Strings"
+            },
+            {
+              "videoId": "9UtInBqnCgA",
+              "title": "Valid Anagram - Leetcode 242 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=9UtInBqnCgA",
+              "level": "Beginner",
+              "duration": "9m 15s",
+              "skill": "Strings",
+              "topic": "Strings"
+            },
+            {
+              "videoId": "0sWShKIJoo4",
+              "title": "Longest Common Prefix - Leetcode 14 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=0sWShKIJoo4",
+              "level": "Beginner",
+              "duration": "8m 55s",
+              "skill": "Strings",
+              "topic": "Strings"
+            }
+          ],
+          "practice": [
+            {
+              "id": "p_m2_str_242",
+              "name": "Valid Anagram — LeetCode #242",
+              "link": "https://leetcode.com/problems/valid-anagram/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Strings",
+              "estimatedTime": "15 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=9UtInBqnCgA"
+            },
+            {
+              "id": "p_m2_str_14",
+              "name": "Longest Common Prefix — LeetCode #14",
+              "link": "https://leetcode.com/problems/longest-common-prefix/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Strings",
+              "estimatedTime": "15 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=0sWShKIJoo4"
+            },
+            {
+              "id": "p_m2_str_344",
+              "name": "Reverse String — LeetCode #344",
+              "link": "https://leetcode.com/problems/reverse-string/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Strings",
+              "estimatedTime": "10 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=_d0T_2Lk2qA"
+            }
+          ]
+        },
+        {
+          "id": "sec_hashmaps",
+          "name": "HASHMAPS",
+          "skill": "Hashmaps",
+          "icon": "fa-solid fa-hashtag",
+          "accentColor": "#f59e0b",
+          "tagline": "Hash Tables, Collisions & O(1) Key Lookups",
+          "concepts": [
+            "Hash function design and internal buckets",
+            "Collision resolution (Chaining vs Open Addressing)",
+            "Frequency count mapping",
+            "Constant-time pair and anagram lookup"
+          ],
+          "lectures": [
+            {
+              "videoId": "shs0KM3wKv8",
+              "title": "Data Structures: Hash Tables",
+              "channel": "HackerRank",
+              "url": "https://www.youtube.com/watch?v=shs0KM3wKv8",
+              "level": "Beginner",
+              "duration": "6m 12s",
+              "skill": "Hashmaps",
+              "topic": "Hashmaps"
+            },
+            {
+              "videoId": "mFY0J5W8Udk",
+              "title": "Hashing Technique - Simplified",
+              "channel": "Abdul Bari",
+              "url": "https://www.youtube.com/watch?v=mFY0J5W8Udk",
+              "level": "Intermediate",
+              "duration": "44m 20s",
+              "skill": "Hashmaps",
+              "topic": "Hashmaps"
+            },
+            {
+              "videoId": "vzdNOK2oB2E",
+              "title": "Group Anagrams - Categorize Strings by Count - Leetcode 49",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
+              "level": "Intermediate",
+              "duration": "11m 20s",
+              "skill": "Hashmaps",
+              "topic": "Hashmaps"
+            }
+          ],
+          "practice": [
+            {
+              "id": "p_m2_hm_1",
+              "name": "Two Sum — LeetCode #1",
+              "link": "https://leetcode.com/problems/two-sum/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "HashMap",
+              "estimatedTime": "20 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
+            },
+            {
+              "id": "p_m2_hm_49",
+              "name": "Group Anagrams — LeetCode #49",
+              "link": "https://leetcode.com/problems/group-anagrams/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "HashMap",
+              "estimatedTime": "25 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
+            }
+          ]
+        },
+        {
+          "id": "sec_sliding_window",
+          "name": "SLIDING WINDOW",
+          "skill": "Sliding Window",
+          "icon": "fa-solid fa-sliders",
+          "accentColor": "#10b981",
+          "tagline": "Dynamic & Fixed Subarray Windows",
+          "concepts": [
+            "Sliding Window identification & pattern types",
+            "Fixed-length window template",
+            "Dynamic-length window with character counts",
+            "Monotonic queue for sliding window maximum"
+          ],
+          "lectures": [
+            {
+              "videoId": "EHCGAZBbB88",
+              "title": "Sliding Window Introduction Identification And Types",
+              "channel": "Aditya Verma",
+              "url": "https://www.youtube.com/watch?v=EHCGAZBbB88",
+              "level": "Beginner",
+              "duration": "17m 10s",
+              "skill": "Sliding Window",
+              "topic": "Sliding Window"
+            },
+            {
+              "videoId": "1pkOgXD63yU",
+              "title": "Sliding Window: Best Time to Buy and Sell Stock - Leetcode 121 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=1pkOgXD63yU",
+              "level": "Intermediate",
+              "duration": "12m 40s",
+              "skill": "Sliding Window",
+              "topic": "Sliding Window"
+            },
+            {
+              "videoId": "wiGpQwVHdE0",
+              "title": "Longest Substring Without Repeating Characters - Leetcode 3 - Python",
+              "channel": "NeetCode",
+              "url": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
+              "level": "Intermediate",
+              "duration": "15m 15s",
+              "skill": "Sliding Window",
+              "topic": "Sliding Window"
+            },
+            {
+              "videoId": "NwBvene4Imo",
+              "title": "L16. Sliding Window Maximum | Stack and Queue Playlist",
+              "channel": "take U forward",
+              "url": "https://www.youtube.com/watch?v=NwBvene4Imo",
+              "level": "Advanced",
+              "duration": "32m 45s",
+              "skill": "Sliding Window",
+              "topic": "Sliding Window"
+            }
+          ],
+          "practice": [
+            {
+              "id": "p_m2_sw_121",
+              "name": "Best Time to Buy and Sell Stock — LeetCode #121",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+              "platform": "LeetCode",
+              "difficulty": "Easy",
+              "topic": "Sliding Window",
+              "estimatedTime": "20 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=1pkOgXD63yU"
+            },
+            {
+              "id": "p_m2_sw_3",
+              "name": "Longest Substring Without Repeating Characters — LeetCode #3",
+              "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+              "platform": "LeetCode",
+              "difficulty": "Medium",
+              "topic": "Sliding Window",
+              "estimatedTime": "30 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=wiGpQwVHdE0"
+            },
+            {
+              "id": "p_m2_sw_239",
+              "name": "Sliding Window Maximum — LeetCode #239",
+              "link": "https://leetcode.com/problems/sliding-window-maximum/",
+              "platform": "LeetCode",
+              "difficulty": "Hard",
+              "topic": "Sliding Window",
+              "estimatedTime": "40 min",
+              "solutionUrl": "https://www.youtube.com/watch?v=DfljaUwZsOk"
+            }
+          ]
+        },
+        {
+          "id": "sec_linked_lists",
+          "name": "LINKED LISTS",
+          "skill": "Linked Lists",
+          "isDedicatedLinkedList": true,
+          "icon": "fa-solid fa-link",
+          "accentColor": "#f43f5e",
+          "tagline": "Dedicated Learning Path: Beginner → Advanced",
+          "abdulBariNote": "Algorithmic theory by Abdul Bari • Implementations by CodeHelp & Kunal Kushwaha • Patterns by take U forward & NeetCode",
+          "levels": [
+            {
+              "levelNum": 1,
+              "levelId": "ll_level_1",
+              "title": "LEVEL 1 — FROM SCRATCH",
+              "subtitle": "Beginner Linked List: Node Architecture & Primitives",
+              "concepts": [
+                "What is a Linked List?",
+                "Node structure",
+                "Head and tail",
+                "Creating a Linked List from scratch",
+                "Traversal",
+                "Searching",
+                "Insertion",
+                "Deletion"
+              ],
+              "lectures": [
+                {
+                  "videoId": "akErwS16DUg",
+                  "title": "11.1 : Linked List Introduction & Concepts | DSA [Abdul Bari]",
+                  "channel": "Abdul Bari",
+                  "url": "https://www.youtube.com/watch?v=akErwS16DUg",
+                  "level": "Beginner",
+                  "duration": "28m 33s",
+                  "skill": "Linked Lists",
+                  "topic": "Theory & Node Structure",
+                  "specialBadge": "Abdul Bari Theory"
+                },
+                {
+                  "videoId": "Nq7ok-OyEpg",
+                  "title": "L1. Introduction to LinkedList | Traversal | Length | Search an Element",
+                  "channel": "take U forward",
+                  "url": "https://www.youtube.com/watch?v=Nq7ok-OyEpg",
+                  "level": "Beginner",
+                  "duration": "35m 10s",
+                  "skill": "Linked Lists",
+                  "topic": "Traversal & Search",
+                  "specialBadge": "Striver / TUF"
+                },
+                {
+                  "videoId": "q8gdBn9RPeI",
+                  "title": "Lecture 44: Linked List & its types - Singly, Doubly, Circular etc.",
+                  "channel": "CodeHelp - by Babbar",
+                  "url": "https://www.youtube.com/watch?v=q8gdBn9RPeI",
+                  "level": "Beginner",
+                  "duration": "1h 38m",
+                  "skill": "Linked Lists",
+                  "topic": "Node Types & Pointer Linking",
+                  "specialBadge": "CodeHelp / Babbar"
+                },
+                {
+                  "videoId": "58YbpRDc4yw",
+                  "title": "Linked List Tutorial - Singly + Doubly + Circular (Theory + Code + Implementation)",
+                  "channel": "Kunal Kushwaha",
+                  "url": "https://www.youtube.com/watch?v=58YbpRDc4yw",
+                  "level": "Beginner",
+                  "duration": "2h 15m",
+                  "skill": "Linked Lists",
+                  "topic": "Creation from Scratch",
+                  "specialBadge": "Kunal Kushwaha"
+                },
+                {
+                  "videoId": "NFjoQ8Sr5Js",
+                  "title": "11.6 : Insert in Linked List (Theory + Code) | DSA [Abdul Bari]",
+                  "channel": "Abdul Bari",
+                  "url": "https://www.youtube.com/watch?v=NFjoQ8Sr5Js",
+                  "level": "Beginner",
+                  "duration": "21m 15s",
+                  "skill": "Linked Lists",
+                  "topic": "Insertion & Deletion Operations",
+                  "specialBadge": "Abdul Bari Theory"
+                }
+              ]
+            },
+            {
+              "levelNum": 2,
+              "levelId": "ll_level_2",
+              "title": "LEVEL 2 — CORE LINKED LIST",
+              "subtitle": "Pointer Manipulation, Reversal & Merging",
+              "concepts": [
+                "Singly Linked List",
+                "Doubly Linked List",
+                "Circular Linked List",
+                "Reverse Linked List",
+                "Find middle node",
+                "Merge two sorted lists"
+              ],
+              "lectures": [
+                {
+                  "videoId": "Z-F1UYNWEFk",
+                  "title": "Lecture 79: All about Doubly Linked List || Linked List Series Day - 2",
+                  "channel": "CodeHelp - by Babbar",
+                  "url": "https://www.youtube.com/watch?v=Z-F1UYNWEFk",
+                  "level": "Intermediate",
+                  "duration": "48m 20s",
+                  "skill": "Linked Lists",
+                  "topic": "Doubly Linked List Mechanics",
+                  "specialBadge": "CodeHelp / Babbar"
+                },
+                {
+                  "videoId": "wZ9xxBqukaA",
+                  "title": "11.13 : Concatenation & Merging of Linked Lists | DSA [Abdul Bari]",
+                  "channel": "Abdul Bari",
+                  "url": "https://www.youtube.com/watch?v=wZ9xxBqukaA",
+                  "level": "Intermediate",
+                  "duration": "18m 42s",
+                  "skill": "Linked Lists",
+                  "topic": "Merging Sorted Lists Algorithmic Analysis",
+                  "specialBadge": "Abdul Bari Theory"
+                },
+                {
+                  "videoId": "G0_I-ZF0S38",
+                  "title": "Reverse Linked List - Iterative AND Recursive - Leetcode 206 - Python",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
+                  "level": "Beginner",
+                  "duration": "8m 22s",
+                  "skill": "Linked Lists",
+                  "topic": "In-place Reversal Pattern",
+                  "specialBadge": "NeetCode Pattern"
+                },
+                {
+                  "videoId": "XIdigk956u0",
+                  "title": "Merge Two Sorted Lists - Leetcode 21 - Python",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=XIdigk956u0",
+                  "level": "Beginner",
+                  "duration": "10m 15s",
+                  "skill": "Linked Lists",
+                  "topic": "Merging Two Lists",
+                  "specialBadge": "NeetCode Pattern"
+                }
+              ]
+            },
+            {
+              "levelNum": 3,
+              "levelId": "ll_level_3",
+              "title": "LEVEL 3 — LINKED LIST ALGORITHMS",
+              "subtitle": "Fast & Slow Pointers, Floyd's Cycle & Intersecting Lists",
+              "concepts": [
+                "Fast and slow pointer",
+                "Floyd's Cycle Detection",
+                "Detect cycle",
+                "Find cycle starting point",
+                "Remove Nth node",
+                "Intersection of linked lists",
+                "Palindrome linked list"
+              ],
+              "lectures": [
+                {
+                  "videoId": "70tx7KcMROc",
+                  "title": "Linked List Interview Questions - Google, Facebook, Amazon, Microsoft",
+                  "channel": "Kunal Kushwaha",
+                  "url": "https://www.youtube.com/watch?v=70tx7KcMROc",
+                  "level": "Intermediate",
+                  "duration": "1h 52m",
+                  "skill": "Linked Lists",
+                  "topic": "Cycle Detection & Fast/Slow Pointers",
+                  "specialBadge": "FAANG Questions"
+                },
+                {
+                  "videoId": "gBTe7lFR3vc",
+                  "title": "Linked List Cycle - Floyd's Tortoise and Hare - Leetcode 141 - Python",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
+                  "level": "Intermediate",
+                  "duration": "7m 30s",
+                  "skill": "Linked Lists",
+                  "topic": "Floyd's Tortoise & Hare Cycle Finding",
+                  "specialBadge": "NeetCode Pattern"
+                },
+                {
+                  "videoId": "XVuQxVej6y8",
+                  "title": "Remove Nth Node from End of List - Oracle Interview Question - Leetcode 19",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=XVuQxVej6y8",
+                  "level": "Intermediate",
+                  "duration": "10m 05s",
+                  "skill": "Linked Lists",
+                  "topic": "Two-Pointer Gap Technique",
+                  "specialBadge": "NeetCode Pattern"
+                },
+                {
+                  "videoId": "S5bfdUTrKLM",
+                  "title": "Linkedin Interview Question - Reorder List - Leetcode 143 - Python",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+                  "level": "Intermediate",
+                  "duration": "13m 48s",
+                  "skill": "Linked Lists",
+                  "topic": "Mid-point + Reversal + Interleaving",
+                  "specialBadge": "NeetCode Pattern"
+                }
+              ]
+            },
+            {
+              "levelNum": 4,
+              "levelId": "ll_level_4",
+              "title": "LEVEL 4 — ADVANCED",
+              "subtitle": "K-Group Inversion, Merge K Lists & LRU Cache",
+              "concepts": [
+                "Reverse Linked List II",
+                "Reorder List",
+                "Add Two Numbers",
+                "Copy List with Random Pointer",
+                "Reverse Nodes in K-Group",
+                "Merge K Sorted Lists",
+                "LRU Cache using Doubly Linked List + HashMap"
+              ],
+              "lectures": [
+                {
+                  "videoId": "5Y2EiZST97Y",
+                  "title": "Copy List with Random Pointer - Linked List - Leetcode 138",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=5Y2EiZST97Y",
+                  "level": "Advanced",
+                  "duration": "15m 12s",
+                  "skill": "Linked Lists",
+                  "topic": "Deep Copy with Hash Map & Interleaving",
+                  "specialBadge": "NeetCode Pattern"
+                },
+                {
+                  "videoId": "1UOPsfP85V4",
+                  "title": "Reverse Nodes in K-Group - Linked List - Leetcode 25",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=1UOPsfP85V4",
+                  "level": "Advanced",
+                  "duration": "21m 30s",
+                  "skill": "Linked Lists",
+                  "topic": "K-Group Block Reversal",
+                  "specialBadge": "NeetCode Pattern"
+                },
+                {
+                  "videoId": "q5a5OiGbT6Q",
+                  "title": "Merge K Sorted Lists - Leetcode 23 - Python",
+                  "channel": "NeetCode",
+                  "url": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
+                  "level": "Advanced",
+                  "duration": "17m 45s",
+                  "skill": "Linked Lists",
+                  "topic": "Divide & Conquer / Min-Heap with Lists",
+                  "specialBadge": "NeetCode Pattern"
+                }
+              ]
+            }
+          ],
+          "practiceGroups": [
+            {
+              "difficulty": "Easy",
+              "badgeClass": "badge-success",
+              "icon": "fa-solid fa-leaf",
+              "problems": [
+                {
+                  "id": "p_m2_ll_206",
+                  "name": "Reverse Linked List — LeetCode #206",
+                  "link": "https://leetcode.com/problems/reverse-linked-list/",
+                  "platform": "LeetCode",
+                  "difficulty": "Easy",
+                  "topic": "Linked List",
+                  "estimatedTime": "15 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=G0_I-ZF0S38"
+                },
+                {
+                  "id": "p_m2_ll_21",
+                  "name": "Merge Two Sorted Lists — LeetCode #21",
+                  "link": "https://leetcode.com/problems/merge-two-sorted-lists/",
+                  "platform": "LeetCode",
+                  "difficulty": "Easy",
+                  "topic": "Linked List",
+                  "estimatedTime": "15 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=XIdigk956u0"
+                },
+                {
+                  "id": "p_m2_ll_141",
+                  "name": "Linked List Cycle — LeetCode #141",
+                  "link": "https://leetcode.com/problems/linked-list-cycle/",
+                  "platform": "LeetCode",
+                  "difficulty": "Easy",
+                  "topic": "Linked List",
+                  "estimatedTime": "15 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=gBTe7lFR3vc"
+                }
+              ]
+            },
+            {
+              "difficulty": "Medium",
+              "badgeClass": "badge-warning",
+              "icon": "fa-solid fa-fire",
+              "problems": [
+                {
+                  "id": "p_m2_ll_19",
+                  "name": "Remove Nth Node From End — LeetCode #19",
+                  "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+                  "platform": "LeetCode",
+                  "difficulty": "Medium",
+                  "topic": "Linked List",
+                  "estimatedTime": "25 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=XVuQxVej6y8"
+                },
+                {
+                  "id": "p_m2_ll_143",
+                  "name": "Reorder List — LeetCode #143",
+                  "link": "https://leetcode.com/problems/reorder-list/",
+                  "platform": "LeetCode",
+                  "difficulty": "Medium",
+                  "topic": "Linked List",
+                  "estimatedTime": "25 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=S5bfdUTrKLM"
+                },
+                {
+                  "id": "p_m2_ll_2",
+                  "name": "Add Two Numbers — LeetCode #2",
+                  "link": "https://leetcode.com/problems/add-two-numbers/",
+                  "platform": "LeetCode",
+                  "difficulty": "Medium",
+                  "topic": "Linked List",
+                  "estimatedTime": "30 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=wgFPrzTjm7s"
+                },
+                {
+                  "id": "p_m2_ll_138",
+                  "name": "Copy List with Random Pointer — LeetCode #138",
+                  "link": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+                  "platform": "LeetCode",
+                  "difficulty": "Medium",
+                  "topic": "Linked List",
+                  "estimatedTime": "30 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=5Y2EiZST97Y"
+                }
+              ]
+            },
+            {
+              "difficulty": "Hard",
+              "badgeClass": "badge-danger",
+              "icon": "fa-solid fa-bolt",
+              "problems": [
+                {
+                  "id": "p_m2_ll_25",
+                  "name": "Reverse Nodes in K-Group — LeetCode #25",
+                  "link": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+                  "platform": "LeetCode",
+                  "difficulty": "Hard",
+                  "topic": "Linked List",
+                  "estimatedTime": "45 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=1UOPsfP85V4"
+                },
+                {
+                  "id": "p_m2_ll_23",
+                  "name": "Merge K Sorted Lists — LeetCode #23",
+                  "link": "https://leetcode.com/problems/merge-k-sorted-lists/",
+                  "platform": "LeetCode",
+                  "difficulty": "Hard",
+                  "topic": "Linked List",
+                  "estimatedTime": "45 min",
+                  "solutionUrl": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "quiz": {
+        "id": "quiz_m2",
+        "title": "Month 2 Knowledge Check: Linear Data Structures, Pointers & Linked Lists",
+        "questions": [
+          {
+            "id": "q2_1",
+            "question": "What is the optimal time complexity to find if a pair exists with target sum in a sorted array using Two Pointers?",
+            "options": [
+              "O(N^2)",
+              "O(N log N)",
+              "O(N)",
+              "O(1)"
+            ],
+            "answer": 2,
+            "explanation": "With two pointers starting at opposite ends of a sorted array, each step increments or decrements one pointer, guaranteeing O(N) linear time."
+          },
+          {
+            "id": "q2_2",
+            "question": "How does Floyd's Cycle-Finding Algorithm (Tortoise and Hare) detect a loop in a Linked List?",
+            "options": [
+              "Fast pointer moves 2 nodes, slow moves 1 node; they meet if a cycle exists",
+              "Both pointers move at the same speed from opposite ends",
+              "Using a hash set to store all visited memory addresses",
+              "Counting total node length until integer overflow"
+            ],
+            "answer": 0,
+            "explanation": "If a cycle exists, the gap between the fast pointer (moving 2 steps) and slow pointer (moving 1 step) shrinks by exactly 1 node per iteration until they collide."
+          },
+          {
+            "id": "q2_3",
+            "question": "What is the average time complexity of insertion, deletion, and lookup in a Hash Table?",
+            "options": [
+              "O(log N)",
+              "O(N)",
+              "O(1)",
+              "O(N log N)"
+            ],
+            "answer": 2,
+            "explanation": "With an effective hash function and uniform distribution, hash table lookup, insertion, and deletion operate in O(1) average time."
+          }
+        ]
+      },
+      "project": {
+        "id": "proj_m2",
+        "title": "Custom In-Memory Cache with LRU Eviction",
+        "desc": "Implement Least Recently Used (LRU) Cache using Doubly Linked List and HashMap achieving O(1) get and put operations.",
+        "techStack": [
+          "Doubly Linked List",
+          "HashMap",
+          "Concurrency Controls",
+          "Benchmarking"
+        ],
+        "difficulty": "Intermediate",
+        "estimatedTime": "1 - 2 Weeks",
+        "requirements": [
+          "Implement Doubly Linked List node structure with previous and next pointer management",
+          "Integrate HashMap storing key-to-node references for O(1) lookup",
+          "Implement get(key) with automatic promotion of accessed node to head",
+          "Implement put(key, value) with eviction of least recently used node from tail when capacity is exceeded"
+        ]
+      },
+      "interviewQuestions": [
+        {
+          "q": "How does a HashMap resolve hash collisions internally?",
+          "answer": "HashMaps use: 1. Separate Chaining (each bucket stores a linked list; converts to balanced Red-Black tree in Java 8+ when bucket length exceeds 8). 2. Open Addressing (linear probing, quadratic probing, or double hashing where collided keys probe alternative empty array slots).",
+          "difficulty": "High Frequency"
+        },
+        {
+          "q": "Explain Floyd's Cycle-Finding Algorithm (Tortoise and Hare) and how to find the cycle start node.",
+          "answer": "Fast pointer moves 2 steps, slow pointer moves 1 step. If they meet, a cycle exists. To find the entrance node, reset slow pointer to head while leaving fast at the meeting node, then advance both at 1 step per turn; their new meeting point is the exact cycle entrance.",
+          "difficulty": "Core Technical"
+        },
+        {
+          "q": "What are the trade-offs between an Array and a Linked List in memory and cache performance?",
+          "answer": "Arrays provide O(1) random index access and superior CPU cache locality due to contiguous memory allocation. Linked Lists have non-contiguous node allocations with pointer overhead (8 bytes per pointer on 64-bit systems) leading to frequent cache misses, but provide O(1) insertions/deletions once a node pointer is located.",
+          "difficulty": "High Frequency"
+        }
+      ],
+      "youtubeLectures": [
+        {
+          "videoId": "37E9ckMDdTk",
+          "title": "Find Second Largest Element in Array | Remove duplicates from Sorted Array | Arrays Intro Video",
+          "channel": "take U forward",
+          "url": "https://www.youtube.com/watch?v=37E9ckMDdTk",
+          "level": "Beginner",
+          "duration": "14m 32s",
+          "skill": "Arrays",
+          "topic": "Arrays"
+        },
+        {
+          "videoId": "wvcQg43_V8U",
+          "title": "Rotate Array by K places | Union, Intersection of Sorted Arrays | Move Zeros to End | Arrays Part-2",
+          "channel": "take U forward",
+          "url": "https://www.youtube.com/watch?v=wvcQg43_V8U",
+          "level": "Beginner",
+          "duration": "20m 15s",
+          "skill": "Arrays",
+          "topic": "Arrays"
+        },
+        {
+          "videoId": "n60Dn0UsbEk",
+          "title": "Introduction to Arrays and ArrayList in Java",
+          "channel": "Kunal Kushwaha",
+          "url": "https://www.youtube.com/watch?v=n60Dn0UsbEk",
+          "level": "Beginner",
+          "duration": "1h 48m",
+          "skill": "Arrays",
+          "topic": "Arrays"
+        },
+        {
+          "videoId": "3OamzN90kPg",
+          "title": "Contains Duplicate - Leetcode 217 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=3OamzN90kPg",
+          "level": "Beginner",
+          "duration": "7m 45s",
+          "skill": "Arrays",
+          "topic": "Arrays"
+        },
+        {
+          "videoId": "KLlXCFG5TnA",
+          "title": "Two Sum - Leetcode 1 - HashMap - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+          "level": "Beginner",
+          "duration": "10m 22s",
+          "skill": "Arrays",
+          "topic": "Arrays"
+        },
+        {
+          "videoId": "9kdHxplyl5I",
+          "title": "L1. Introduction to Sliding Window and 2 Pointers | Templates | Patterns",
+          "channel": "take U forward",
+          "url": "https://www.youtube.com/watch?v=9kdHxplyl5I",
+          "level": "Beginner",
+          "duration": "25m 40s",
+          "skill": "Two Pointers",
+          "topic": "Two Pointers"
+        },
+        {
+          "videoId": "jJXJ16kPFWg",
+          "title": "Valid Palindrome - Leetcode 125 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=jJXJ16kPFWg",
+          "level": "Beginner",
+          "duration": "11m 30s",
+          "skill": "Two Pointers",
+          "topic": "Two Pointers"
+        },
+        {
+          "videoId": "cQ1Oz4ckceM",
+          "title": "TWO SUM II - Amazon Coding Interview Question - Leetcode 167 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=cQ1Oz4ckceM",
+          "level": "Intermediate",
+          "duration": "9m 14s",
+          "skill": "Two Pointers",
+          "topic": "Two Pointers"
+        },
+        {
+          "videoId": "jzZsG8n2R9A",
+          "title": "3Sum - Leetcode 15 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=jzZsG8n2R9A",
+          "level": "Intermediate",
+          "duration": "15m 32s",
+          "skill": "Two Pointers",
+          "topic": "Two Pointers"
+        },
+        {
+          "videoId": "UuiTKBwPgAo",
+          "title": "Container with Most Water - Leetcode 11 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=UuiTKBwPgAo",
+          "level": "Intermediate",
+          "duration": "11m 05s",
+          "skill": "Two Pointers",
+          "topic": "Two Pointers"
+        },
+        {
+          "videoId": "_d0T_2Lk2qA",
+          "title": "Reverse String - 3 Ways - Leetcode 344 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=_d0T_2Lk2qA",
+          "level": "Beginner",
+          "duration": "8m 42s",
+          "skill": "Strings",
+          "topic": "Strings"
+        },
+        {
+          "videoId": "9UtInBqnCgA",
+          "title": "Valid Anagram - Leetcode 242 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=9UtInBqnCgA",
+          "level": "Beginner",
+          "duration": "9m 15s",
+          "skill": "Strings",
+          "topic": "Strings"
+        },
+        {
+          "videoId": "0sWShKIJoo4",
+          "title": "Longest Common Prefix - Leetcode 14 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=0sWShKIJoo4",
+          "level": "Beginner",
+          "duration": "8m 55s",
+          "skill": "Strings",
+          "topic": "Strings"
+        },
+        {
+          "videoId": "shs0KM3wKv8",
+          "title": "Data Structures: Hash Tables",
+          "channel": "HackerRank",
+          "url": "https://www.youtube.com/watch?v=shs0KM3wKv8",
+          "level": "Beginner",
+          "duration": "6m 12s",
+          "skill": "Hashmaps",
+          "topic": "Hashmaps"
+        },
+        {
+          "videoId": "mFY0J5W8Udk",
+          "title": "Hashing Technique - Simplified",
+          "channel": "Abdul Bari",
+          "url": "https://www.youtube.com/watch?v=mFY0J5W8Udk",
+          "level": "Intermediate",
+          "duration": "44m 20s",
+          "skill": "Hashmaps",
+          "topic": "Hashmaps"
+        },
+        {
+          "videoId": "vzdNOK2oB2E",
+          "title": "Group Anagrams - Categorize Strings by Count - Leetcode 49",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=vzdNOK2oB2E",
+          "level": "Intermediate",
+          "duration": "11m 20s",
+          "skill": "Hashmaps",
+          "topic": "Hashmaps"
+        },
+        {
+          "videoId": "EHCGAZBbB88",
+          "title": "Sliding Window Introduction Identification And Types",
+          "channel": "Aditya Verma",
+          "url": "https://www.youtube.com/watch?v=EHCGAZBbB88",
+          "level": "Beginner",
+          "duration": "17m 10s",
+          "skill": "Sliding Window",
+          "topic": "Sliding Window"
+        },
+        {
+          "videoId": "1pkOgXD63yU",
+          "title": "Sliding Window: Best Time to Buy and Sell Stock - Leetcode 121 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=1pkOgXD63yU",
+          "level": "Intermediate",
+          "duration": "12m 40s",
+          "skill": "Sliding Window",
+          "topic": "Sliding Window"
+        },
+        {
+          "videoId": "wiGpQwVHdE0",
+          "title": "Longest Substring Without Repeating Characters - Leetcode 3 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=wiGpQwVHdE0",
+          "level": "Intermediate",
+          "duration": "15m 15s",
+          "skill": "Sliding Window",
+          "topic": "Sliding Window"
+        },
+        {
+          "videoId": "NwBvene4Imo",
+          "title": "L16. Sliding Window Maximum | Stack and Queue Playlist",
+          "channel": "take U forward",
+          "url": "https://www.youtube.com/watch?v=NwBvene4Imo",
+          "level": "Advanced",
+          "duration": "32m 45s",
+          "skill": "Sliding Window",
+          "topic": "Sliding Window"
+        },
+        {
+          "videoId": "akErwS16DUg",
+          "title": "11.1 : Linked List Introduction & Concepts | DSA [Abdul Bari]",
+          "channel": "Abdul Bari",
+          "url": "https://www.youtube.com/watch?v=akErwS16DUg",
+          "level": "Beginner",
+          "duration": "28m 33s",
+          "skill": "Linked Lists",
+          "topic": "Theory & Node Structure",
+          "specialBadge": "Abdul Bari Theory"
+        },
+        {
+          "videoId": "Nq7ok-OyEpg",
+          "title": "L1. Introduction to LinkedList | Traversal | Length | Search an Element",
+          "channel": "take U forward",
+          "url": "https://www.youtube.com/watch?v=Nq7ok-OyEpg",
+          "level": "Beginner",
+          "duration": "35m 10s",
+          "skill": "Linked Lists",
+          "topic": "Traversal & Search",
+          "specialBadge": "Striver / TUF"
+        },
+        {
+          "videoId": "q8gdBn9RPeI",
+          "title": "Lecture 44: Linked List & its types - Singly, Doubly, Circular etc.",
+          "channel": "CodeHelp - by Babbar",
+          "url": "https://www.youtube.com/watch?v=q8gdBn9RPeI",
+          "level": "Beginner",
+          "duration": "1h 38m",
+          "skill": "Linked Lists",
+          "topic": "Node Types & Pointer Linking",
+          "specialBadge": "CodeHelp / Babbar"
+        },
+        {
+          "videoId": "58YbpRDc4yw",
+          "title": "Linked List Tutorial - Singly + Doubly + Circular (Theory + Code + Implementation)",
+          "channel": "Kunal Kushwaha",
+          "url": "https://www.youtube.com/watch?v=58YbpRDc4yw",
+          "level": "Beginner",
+          "duration": "2h 15m",
+          "skill": "Linked Lists",
+          "topic": "Creation from Scratch",
+          "specialBadge": "Kunal Kushwaha"
+        },
+        {
+          "videoId": "NFjoQ8Sr5Js",
+          "title": "11.6 : Insert in Linked List (Theory + Code) | DSA [Abdul Bari]",
+          "channel": "Abdul Bari",
+          "url": "https://www.youtube.com/watch?v=NFjoQ8Sr5Js",
+          "level": "Beginner",
+          "duration": "21m 15s",
+          "skill": "Linked Lists",
+          "topic": "Insertion & Deletion Operations",
+          "specialBadge": "Abdul Bari Theory"
+        },
+        {
+          "videoId": "Z-F1UYNWEFk",
+          "title": "Lecture 79: All about Doubly Linked List || Linked List Series Day - 2",
+          "channel": "CodeHelp - by Babbar",
+          "url": "https://www.youtube.com/watch?v=Z-F1UYNWEFk",
+          "level": "Intermediate",
+          "duration": "48m 20s",
+          "skill": "Linked Lists",
+          "topic": "Doubly Linked List Mechanics",
+          "specialBadge": "CodeHelp / Babbar"
+        },
+        {
+          "videoId": "wZ9xxBqukaA",
+          "title": "11.13 : Concatenation & Merging of Linked Lists | DSA [Abdul Bari]",
+          "channel": "Abdul Bari",
+          "url": "https://www.youtube.com/watch?v=wZ9xxBqukaA",
+          "level": "Intermediate",
+          "duration": "18m 42s",
+          "skill": "Linked Lists",
+          "topic": "Merging Sorted Lists Algorithmic Analysis",
+          "specialBadge": "Abdul Bari Theory"
+        },
+        {
+          "videoId": "G0_I-ZF0S38",
+          "title": "Reverse Linked List - Iterative AND Recursive - Leetcode 206 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=G0_I-ZF0S38",
+          "level": "Beginner",
+          "duration": "8m 22s",
+          "skill": "Linked Lists",
+          "topic": "In-place Reversal Pattern",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "XIdigk956u0",
+          "title": "Merge Two Sorted Lists - Leetcode 21 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=XIdigk956u0",
+          "level": "Beginner",
+          "duration": "10m 15s",
+          "skill": "Linked Lists",
+          "topic": "Merging Two Lists",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "70tx7KcMROc",
+          "title": "Linked List Interview Questions - Google, Facebook, Amazon, Microsoft",
+          "channel": "Kunal Kushwaha",
+          "url": "https://www.youtube.com/watch?v=70tx7KcMROc",
+          "level": "Intermediate",
+          "duration": "1h 52m",
+          "skill": "Linked Lists",
+          "topic": "Cycle Detection & Fast/Slow Pointers",
+          "specialBadge": "FAANG Questions"
+        },
+        {
+          "videoId": "gBTe7lFR3vc",
+          "title": "Linked List Cycle - Floyd's Tortoise and Hare - Leetcode 141 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=gBTe7lFR3vc",
+          "level": "Intermediate",
+          "duration": "7m 30s",
+          "skill": "Linked Lists",
+          "topic": "Floyd's Tortoise & Hare Cycle Finding",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "XVuQxVej6y8",
+          "title": "Remove Nth Node from End of List - Oracle Interview Question - Leetcode 19",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=XVuQxVej6y8",
+          "level": "Intermediate",
+          "duration": "10m 05s",
+          "skill": "Linked Lists",
+          "topic": "Two-Pointer Gap Technique",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "S5bfdUTrKLM",
+          "title": "Linkedin Interview Question - Reorder List - Leetcode 143 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=S5bfdUTrKLM",
+          "level": "Intermediate",
+          "duration": "13m 48s",
+          "skill": "Linked Lists",
+          "topic": "Mid-point + Reversal + Interleaving",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "5Y2EiZST97Y",
+          "title": "Copy List with Random Pointer - Linked List - Leetcode 138",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=5Y2EiZST97Y",
+          "level": "Advanced",
+          "duration": "15m 12s",
+          "skill": "Linked Lists",
+          "topic": "Deep Copy with Hash Map & Interleaving",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "1UOPsfP85V4",
+          "title": "Reverse Nodes in K-Group - Linked List - Leetcode 25",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=1UOPsfP85V4",
+          "level": "Advanced",
+          "duration": "21m 30s",
+          "skill": "Linked Lists",
+          "topic": "K-Group Block Reversal",
+          "specialBadge": "NeetCode Pattern"
+        },
+        {
+          "videoId": "q5a5OiGbT6Q",
+          "title": "Merge K Sorted Lists - Leetcode 23 - Python",
+          "channel": "NeetCode",
+          "url": "https://www.youtube.com/watch?v=q5a5OiGbT6Q",
+          "level": "Advanced",
+          "duration": "17m 45s",
+          "skill": "Linked Lists",
+          "topic": "Divide & Conquer / Min-Heap with Lists",
+          "specialBadge": "NeetCode Pattern"
+        }
+      ],
+      "practiceProblems": [
+        {
+          "id": "p_m2_arr_twosum",
+          "name": "Two Sum — LeetCode #1",
+          "link": "https://leetcode.com/problems/two-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Array + HashMap",
+          "estimatedTime": "20 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=KLlXCFG5TnA",
+          "solutionTitle": "Two Sum Solution (NeetCode)",
+          "isTwoSumFeatured": true
+        },
+        {
+          "id": "p_m2_arr_217",
+          "name": "Contains Duplicate — LeetCode #217",
+          "link": "https://leetcode.com/problems/contains-duplicate/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Array",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=3OamzN90kPg"
+        },
+        {
+          "id": "p_m2_arr_189",
+          "name": "Rotate Array — LeetCode #189",
+          "link": "https://leetcode.com/problems/rotate-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Array",
+          "estimatedTime": "25 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=BHr3SXQKymI"
+        },
+        {
+          "id": "p_m2_tp_125",
+          "name": "Valid Palindrome — LeetCode #125",
+          "link": "https://leetcode.com/problems/valid-palindrome/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Two Pointers",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=jJXJ16kPFWg"
+        },
+        {
+          "id": "p_m2_tp_167",
+          "name": "Two Sum II — LeetCode #167",
+          "link": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Two Pointers",
+          "estimatedTime": "20 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=cQ1Oz4ckceM"
+        },
+        {
+          "id": "p_m2_tp_15",
+          "name": "3Sum — LeetCode #15",
+          "link": "https://leetcode.com/problems/3sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Two Pointers",
+          "estimatedTime": "30 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=jzZsG8n2R9A"
+        },
+        {
+          "id": "p_m2_tp_11",
+          "name": "Container With Most Water — LeetCode #11",
+          "link": "https://leetcode.com/problems/container-with-most-water/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Two Pointers",
+          "estimatedTime": "25 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
+        },
+        {
+          "id": "p_m2_str_242",
+          "name": "Valid Anagram — LeetCode #242",
+          "link": "https://leetcode.com/problems/valid-anagram/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Strings",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=9UtInBqnCgA"
+        },
+        {
+          "id": "p_m2_str_14",
+          "name": "Longest Common Prefix — LeetCode #14",
+          "link": "https://leetcode.com/problems/longest-common-prefix/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Strings",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=0sWShKIJoo4"
+        },
+        {
+          "id": "p_m2_str_344",
+          "name": "Reverse String — LeetCode #344",
+          "link": "https://leetcode.com/problems/reverse-string/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Strings",
+          "estimatedTime": "10 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=_d0T_2Lk2qA"
+        },
+        {
+          "id": "p_m2_hm_1",
+          "name": "Two Sum — LeetCode #1",
+          "link": "https://leetcode.com/problems/two-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "HashMap",
+          "estimatedTime": "20 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
+        },
+        {
+          "id": "p_m2_hm_49",
+          "name": "Group Anagrams — LeetCode #49",
+          "link": "https://leetcode.com/problems/group-anagrams/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "HashMap",
+          "estimatedTime": "25 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
+        },
+        {
+          "id": "p_m2_sw_121",
+          "name": "Best Time to Buy and Sell Stock — LeetCode #121",
+          "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Sliding Window",
+          "estimatedTime": "20 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=1pkOgXD63yU"
+        },
+        {
+          "id": "p_m2_sw_3",
+          "name": "Longest Substring Without Repeating Characters — LeetCode #3",
+          "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Sliding Window",
+          "estimatedTime": "30 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=wiGpQwVHdE0"
+        },
+        {
+          "id": "p_m2_sw_239",
+          "name": "Sliding Window Maximum — LeetCode #239",
+          "link": "https://leetcode.com/problems/sliding-window-maximum/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "topic": "Sliding Window",
+          "estimatedTime": "40 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=DfljaUwZsOk"
+        },
+        {
+          "id": "p_m2_ll_206",
+          "name": "Reverse Linked List — LeetCode #206",
+          "link": "https://leetcode.com/problems/reverse-linked-list/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Linked List",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=G0_I-ZF0S38"
+        },
+        {
+          "id": "p_m2_ll_21",
+          "name": "Merge Two Sorted Lists — LeetCode #21",
+          "link": "https://leetcode.com/problems/merge-two-sorted-lists/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Linked List",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=XIdigk956u0"
+        },
+        {
+          "id": "p_m2_ll_141",
+          "name": "Linked List Cycle — LeetCode #141",
+          "link": "https://leetcode.com/problems/linked-list-cycle/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "topic": "Linked List",
+          "estimatedTime": "15 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=gBTe7lFR3vc"
+        },
+        {
+          "id": "p_m2_ll_19",
+          "name": "Remove Nth Node From End — LeetCode #19",
+          "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Linked List",
+          "estimatedTime": "25 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=XVuQxVej6y8"
+        },
+        {
+          "id": "p_m2_ll_143",
+          "name": "Reorder List — LeetCode #143",
+          "link": "https://leetcode.com/problems/reorder-list/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Linked List",
+          "estimatedTime": "25 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=S5bfdUTrKLM"
+        },
+        {
+          "id": "p_m2_ll_2",
+          "name": "Add Two Numbers — LeetCode #2",
+          "link": "https://leetcode.com/problems/add-two-numbers/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Linked List",
+          "estimatedTime": "30 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=wgFPrzTjm7s"
+        },
+        {
+          "id": "p_m2_ll_138",
+          "name": "Copy List with Random Pointer — LeetCode #138",
+          "link": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "topic": "Linked List",
+          "estimatedTime": "30 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=5Y2EiZST97Y"
+        },
+        {
+          "id": "p_m2_ll_25",
+          "name": "Reverse Nodes in K-Group — LeetCode #25",
+          "link": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "topic": "Linked List",
+          "estimatedTime": "45 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=1UOPsfP85V4"
+        },
+        {
+          "id": "p_m2_ll_23",
+          "name": "Merge K Sorted Lists — LeetCode #23",
+          "link": "https://leetcode.com/problems/merge-k-sorted-lists/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "topic": "Linked List",
+          "estimatedTime": "45 min",
+          "solutionUrl": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
         }
       ]
     },
-    "project": {
-      "id": "proj_m2",
-      "title": "Custom In-Memory Cache with LRU Eviction",
-      "desc": "Implement Least Recently Used (LRU) Cache using Doubly Linked List and HashMap achieving O(1) get and put operations.",
-      "techStack": [
-        "Doubly Linked List",
-        "HashMap",
-        "Concurrency Controls",
-        "Benchmarking"
-      ],
-      "difficulty": "Intermediate",
-      "estimatedTime": "1 - 2 Weeks",
-      "requirements": [
-        "Implement Doubly Linked List node structure with previous and next pointer management",
-        "Integrate HashMap storing key-to-node references for O(1) lookup",
-        "Implement get(key) with automatic promotion of accessed node to head",
-        "Implement put(key, value) with eviction of least recently used node from tail when capacity is exceeded"
-      ]
-    },
-    "interviewQuestions": [
-      {
-        "q": "How does a HashMap resolve hash collisions internally?",
-        "answer": "HashMaps use: 1. Separate Chaining (each bucket stores a linked list; converts to balanced Red-Black tree in Java 8+ when bucket length exceeds 8). 2. Open Addressing (linear probing, quadratic probing, or double hashing where collided keys probe alternative empty array slots).",
-        "difficulty": "High Frequency"
-      },
-      {
-        "q": "Explain Floyd's Cycle-Finding Algorithm (Tortoise and Hare) and how to find the cycle start node.",
-        "answer": "Fast pointer moves 2 steps, slow pointer moves 1 step. If they meet, a cycle exists. To find the entrance node, reset slow pointer to head while leaving fast at the meeting node, then advance both at 1 step per turn; their new meeting point is the exact cycle entrance.",
-        "difficulty": "High Frequency"
-      },
-      {
-        "q": "Compare Array vs Linked List in terms of CPU memory cache locality.",
-        "answer": "Arrays store elements contiguously in memory, leveraging CPU spatial locality: fetching one element pulls subsequent elements into L1/L2 cache lines. Linked lists allocate nodes scattered across heap memory, leading to frequent CPU cache misses on sequential traversal.",
-        "difficulty": "Core Technical"
-      }
-    ],
-    "milestones": [
-      {
-        "id": "m2_1",
-        "title": "Solve 30 LeetCode Mediums on Two Pointers & Sliding Window"
-      },
-      {
-        "id": "m2_2",
-        "title": "Implement Singly & Doubly Linked List operations from scratch"
-      },
-      {
-        "id": "m2_3",
-        "title": "Complete LRU Cache Implementation (LeetCode #146)"
-      }
-    ]
-  },
   {
     "monthNum": 3,
     "title": "MONTH 3: Trees + Graphs + Recursion",
@@ -1697,6 +3011,117 @@ class RoadmapManager {
     return tasks;
   }
 
+
+  // Helper to render individual lecture card
+  renderLectureCard(lec, rState) {
+    const isWatched = !!((rState && rState.completedLectures) || {})[lec.videoId];
+    const levelClass = (lec.level || 'Beginner').toLowerCase();
+    const fallbackSearch = getSafeYouTubeSearchUrl(lec.topic || lec.skill);
+
+    return `
+      <div class="roadmap-lecture-card ${isWatched ? 'lecture-watched' : ''}" id="lecture-card-${lec.videoId}">
+        <div class="roadmap-lecture-thumb-wrapper">
+          <img src="https://img.youtube.com/vi/${lec.videoId}/mqdefault.jpg" 
+               alt="${escapeHtml(lec.title)}" 
+               class="roadmap-lecture-thumb"
+               loading="lazy"
+               onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=480&auto=format&fit=crop&q=60';" />
+          <span class="roadmap-level-badge level-${levelClass}">
+            ${lec.level || 'Beginner'}
+          </span>
+          <span class="roadmap-duration-badge">
+            <i class="fa-regular fa-clock"></i> ${lec.duration || '30 min'}
+          </span>
+          <a href="${lec.url}" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="roadmap-play-overlay" 
+             title="Watch on YouTube: ${escapeHtml(lec.title)}">
+            <div class="roadmap-play-btn">
+              <i class="fa-solid fa-play"></i>
+            </div>
+          </a>
+        </div>
+
+        <div class="roadmap-lecture-body">
+          <div class="roadmap-lecture-meta-top">
+            <span class="roadmap-topic-pill">
+              <i class="fa-solid fa-graduation-cap"></i> ${escapeHtml(lec.topic || lec.skill)}
+            </span>
+            ${lec.specialBadge ? `<span class="badge badge-primary badge-xs font-bold">${escapeHtml(lec.specialBadge)}</span>` : ''}
+            ${isWatched ? '<span class="badge badge-success badge-xs font-bold"><i class="fa-solid fa-check"></i> Watched</span>' : ''}
+          </div>
+
+          <h4 class="roadmap-lecture-title" title="${escapeHtml(lec.title)}">
+            <a href="${lec.url}" target="_blank" rel="noopener noreferrer">
+              ${escapeHtml(lec.title)}
+            </a>
+          </h4>
+
+          <div class="roadmap-lecture-channel">
+            <i class="fa-brands fa-youtube text-rose"></i>
+            <span class="channel-name">${escapeHtml(lec.channel)}</span>
+            <i class="fa-solid fa-circle-check text-primary verified-icon" title="Verified Creator"></i>
+          </div>
+
+          <div class="roadmap-lecture-actions">
+            <a href="${lec.url}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="btn btn-sm btn-primary roadmap-watch-btn">
+              <i class="fa-brands fa-youtube"></i> Watch Lecture <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+            <button type="button" 
+                    class="btn btn-sm ${isWatched ? 'btn-success' : 'btn-outline-secondary'}" 
+                    onclick="roadmapManager.toggleLecture('${lec.videoId}')"
+                    title="${isWatched ? 'Marked as Watched' : 'Mark as Complete'}">
+              <i class="fa-solid ${isWatched ? 'fa-check-circle' : 'fa-circle'}"></i> ${isWatched ? 'Done' : 'Mark Complete'}
+            </button>
+            <a href="${fallbackSearch}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="btn btn-sm btn-outline-secondary roadmap-fallback-search" 
+               title="Search more lectures on ${escapeHtml(lec.topic || lec.skill)}">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Helper to render individual problem card
+  renderProblemCard(p, rState) {
+    const isSolved = !!((rState && rState.solvedProblems) || {})[p.id];
+    const diffBadgeClass = p.difficulty === 'Easy' ? 'badge-success' : p.difficulty === 'Medium' ? 'badge-warning' : 'badge-danger';
+
+    return `
+      <div class="roadmap-problem-card ${isSolved ? 'problem-solved' : ''}">
+        <div class="flex items-center gap-2" style="flex: 1; min-width: 0;">
+          <input type="checkbox" ${isSolved ? 'checked' : ''} onclick="roadmapManager.toggleProblem('${p.id}')" title="Mark Solved" />
+          <div style="flex: 1; min-width: 0;">
+            <div class="text-xs font-bold text-main truncate">${escapeHtml(p.name)}</div>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+              <span class="badge badge-xs ${diffBadgeClass}">${p.difficulty}</span>
+              <span class="text-xs text-muted">${escapeHtml(p.topic || p.platform)}</span>
+              <span class="text-xs text-muted">• ${p.estimatedTime || '20 min'}</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 flex-wrap">
+          ${p.solutionUrl ? `
+            <a href="${p.solutionUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-rose" title="Watch Video Solution: ${escapeHtml(p.solutionTitle || p.name)}">
+              <i class="fa-brands fa-youtube"></i> Watch Solution
+            </a>
+          ` : ''}
+          <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="btn btn-xs btn-outline-secondary" title="Practice on LeetCode: ${escapeHtml(p.name)}">
+            ${p.isTwoSumFeatured ? 'Practice on LeetCode ↗' : 'Solve Problem ↗'}
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   // Render the entire Roadmap View
   renderRoadmapView() {
     const container = document.getElementById('roadmap-timeline-root');
@@ -1992,6 +3417,180 @@ class RoadmapManager {
                   </div>
                 </div>
 
+                ${m.topicSections ? `
+                <!-- ==========================================
+                     TOPIC-SPECIFIC RESOURCE SECTIONS (NO TOPIC MIXING)
+                     ========================================== -->
+                <div class="roadmap-topic-hub mb-4">
+                  <div class="roadmap-phase-header mb-3">
+                    <div class="flex items-center gap-2">
+                      <span class="badge badge-primary font-bold">TOPIC SECTIONS</span>
+                      <h4 class="text-sm font-bold text-main uppercase tracking-wide">
+                        <i class="fa-solid fa-layer-group text-primary"></i> Month 2 Core Topics: Pure Topic-Isolated Lectures & Practice
+                      </h4>
+                    </div>
+                    <span class="text-xs text-muted font-medium">Zero Mixed Topics • Abdul Bari Algorithmic Path • Dedicated LeetCode Practice</span>
+                  </div>
+
+                  <!-- Topic Switcher Pills Bar -->
+                  <div class="roadmap-skill-filters flex flex-wrap gap-1 mb-3">
+                    <button type="button" 
+                            class="btn btn-xs ${(this.activeSkillFilters[m.monthNum] || 'ALL') === 'ALL' ? 'btn-primary' : 'btn-outline-secondary'}"
+                            onclick="roadmapManager.setSkillFilter(${m.monthNum}, 'ALL')">
+                      All 6 Topics (${m.youtubeLectures.length} Lectures)
+                    </button>
+                    ${m.topicSections.map(sec => {
+                      const count = sec.isDedicatedLinkedList 
+                        ? sec.levels.reduce((acc, lvl) => acc + lvl.lectures.length, 0)
+                        : (sec.lectures || []).length;
+                      const isActive = (this.activeSkillFilters[m.monthNum] || 'ALL') === sec.skill;
+                      return `
+                        <button type="button" 
+                                class="btn btn-xs ${isActive ? 'btn-primary' : 'btn-outline-secondary'}"
+                                onclick="roadmapManager.setSkillFilter(${m.monthNum}, '${escapeHtml(sec.skill)}')">
+                          <i class="${sec.icon} mr-1"></i> ${escapeHtml(sec.name)} (${count})
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+
+                  <!-- Container for Topic Sections -->
+                  <div class="roadmap-topic-sections-container grid gap-4">
+                    ${m.topicSections.filter(sec => {
+                      const f = this.activeSkillFilters[m.monthNum] || 'ALL';
+                      return f === 'ALL' || sec.skill === f;
+                    }).map(sec => {
+                      if (sec.isDedicatedLinkedList) {
+                        return `
+                          <div class="roadmap-topic-section card p-3" id="${sec.id}">
+                            <div class="topic-section-header mb-3">
+                              <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-2">
+                                  <div class="topic-icon-badge" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose);">
+                                    <i class="${sec.icon}"></i>
+                                  </div>
+                                  <div>
+                                    <h3 class="text-base font-bold text-main mb-0 flex items-center gap-2">
+                                      ${sec.name}
+                                      <span class="badge badge-danger text-xs font-bold">BEGINNER → ADVANCED</span>
+                                    </h3>
+                                    <p class="text-xs text-muted mb-0">${sec.tagline}</p>
+                                  </div>
+                                </div>
+                                <span class="badge badge-outline text-xs">Different Reputable Channels</span>
+                              </div>
+
+                              <div class="ll-educator-callout mt-2 p-2">
+                                <i class="fa-solid fa-graduation-cap text-rose"></i>
+                                <span><strong>Educator Coverage:</strong> ${sec.abdulBariNote}</span>
+                              </div>
+                            </div>
+
+                            <!-- Levels 1 to 4 Grid -->
+                            <div class="ll-levels-container grid gap-3 mb-4">
+                              ${sec.levels.map(lvl => `
+                                <div class="ll-level-card card p-3" id="${lvl.levelId}">
+                                  <div class="ll-level-header mb-2">
+                                    <div class="flex items-center justify-between flex-wrap gap-2">
+                                      <div class="flex items-center gap-2">
+                                        <span class="badge badge-primary font-bold">${lvl.title}</span>
+                                        <strong class="text-xs text-main">${lvl.subtitle}</strong>
+                                      </div>
+                                      <span class="text-xs text-muted font-medium">${lvl.lectures.length} Dedicated Lectures</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                      ${lvl.concepts.map(c => `<span class="badge badge-secondary badge-xs">${escapeHtml(c)}</span>`).join('')}
+                                    </div>
+                                  </div>
+
+                                  <div class="roadmap-lectures-grid mt-2">
+                                    ${lvl.lectures.map(lec => this.renderLectureCard(lec, rState)).join('')}
+                                  </div>
+                                </div>
+                              `).join('')}
+                            </div>
+
+                            <!-- Progressive Linked List Practice -->
+                            <div class="ll-practice-hub card p-3">
+                              <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+                                <div class="flex items-center gap-2">
+                                  <span class="badge badge-success font-bold">PRACTICE</span>
+                                  <h4 class="text-xs font-bold text-main uppercase tracking-wide">
+                                    <i class="fa-solid fa-code text-cyan"></i> Linked List Practice: Progressive Difficulty
+                                  </h4>
+                                </div>
+                                <span class="text-xs text-muted font-semibold">Easy • Medium • Hard Curated Problems</span>
+                              </div>
+
+                              <div class="grid gap-3">
+                                ${sec.practiceGroups.map(grp => `
+                                  <div class="practice-difficulty-group">
+                                    <div class="flex items-center gap-2 mb-2">
+                                      <span class="badge ${grp.badgeClass} badge-xs font-bold">
+                                        <i class="${grp.icon}"></i> ${grp.difficulty.toUpperCase()}
+                                      </span>
+                                      <span class="text-xs text-muted font-medium">${grp.problems.length} Problems</span>
+                                    </div>
+                                    <div class="grid-responsive-2 gap-2">
+                                      ${grp.problems.map(p => this.renderProblemCard(p, rState)).join('')}
+                                    </div>
+                                  </div>
+                                `).join('')}
+                              </div>
+                            </div>
+                          </div>
+                        `;
+                      }
+
+                      return `
+                        <div class="roadmap-topic-section card p-3" id="${sec.id}">
+                          <div class="topic-section-header mb-3">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                              <div class="flex items-center gap-2">
+                                <div class="topic-icon-badge" style="background: rgba(99, 102, 241, 0.15); color: ${sec.accentColor};">
+                                  <i class="${sec.icon}"></i>
+                                </div>
+                                <div>
+                                  <h3 class="text-base font-bold text-main mb-0 flex items-center gap-2">
+                                    ${sec.name}
+                                    <span class="badge badge-outline text-xs font-bold" style="color: ${sec.accentColor}; border-color: ${sec.accentColor};">${sec.skill}</span>
+                                  </h3>
+                                  <p class="text-xs text-muted mb-0">${sec.tagline}</p>
+                                </div>
+                              </div>
+                              <span class="text-xs text-muted font-semibold">${sec.lectures.length} Lectures • ${sec.practice.length} Practice Problems</span>
+                            </div>
+
+                            <div class="flex flex-wrap gap-1 mt-2">
+                              ${sec.concepts.map(c => `<span class="badge badge-secondary badge-xs">${escapeHtml(c)}</span>`).join('')}
+                            </div>
+                          </div>
+
+                          <!-- Subheading: Recommended Lectures -->
+                          <div class="topic-subhead mb-2 mt-2">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
+                              <i class="fa-brands fa-youtube text-rose"></i> Recommended ${sec.name === 'ARRAYS' ? 'Array' : sec.name === 'TWO POINTERS' ? 'Two Pointer' : sec.name.toLowerCase().replace(/\b\w/g, l => l.toUpperCase())} Lectures
+                            </h5>
+                          </div>
+                          <div class="roadmap-lectures-grid mb-3">
+                            ${sec.lectures.map(lec => this.renderLectureCard(lec, rState)).join('')}
+                          </div>
+
+                          <!-- Subheading: Practice Problems -->
+                          <div class="topic-subhead mb-2">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-muted flex items-center gap-2">
+                              <i class="fa-solid fa-code text-cyan"></i> Practice: ${sec.name === 'ARRAYS' ? 'Two Sum + Array Problems' : sec.name === 'TWO POINTERS' ? 'Two Pointer Problems' : sec.name + ' Problems'}
+                            </h5>
+                          </div>
+                          <div class="grid-responsive-2 gap-2">
+                            ${sec.practice.map(p => this.renderProblemCard(p, rState)).join('')}
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+                ` : `
                 <!-- ==========================================
                      PHASE 1: LEARN (Curated Real YouTube Lectures)
                      ========================================== -->
@@ -2147,7 +3746,7 @@ class RoadmapManager {
                     }).join('')}
                   </div>
                 </div>
-
+                `}
                 <!-- ==========================================
                      PHASE 3: QUIZ (Knowledge Check Assessment)
                      ========================================== -->
