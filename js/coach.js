@@ -1101,10 +1101,10 @@ class CareerCoachManager {
         <p style="font-weight: 600; color: var(--text-main); font-size: 0.9rem;">${career.learningPath}</p>
       </div>
 
-      <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">YouTube Search Topics for Campus Prep</h4>
-      <ul style="padding-left: 1.25rem; margin-bottom: 1.5rem; color: var(--text-muted); font-size: 0.9rem;">
-        ${(career.youtubeSearchTopics || []).map(t => `<li>${t}</li>`).join('')}
-      </ul>
+      <h4 style="margin-bottom: 0.75rem; font-size: 1rem;"><i class="fa-brands fa-youtube text-rose"></i> Recommended Real YouTube Lectures for Campus Prep</h4>
+      <div class="grid-responsive-2 gap-3 mb-4">
+        ${(window.ytService ? ytService.getRecommendations({ targetCareer: career.id, limit: 5 }) : []).map(v => ytService.renderResourceCardHtml(v)).join('')}
+      </div>
 
       <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Campus Hiring Majors</h4>
       <p style="color: var(--text-muted); font-size: 0.9rem;">${career.topCompanies.join(' • ')}</p>
