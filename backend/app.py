@@ -1409,6 +1409,78 @@ def feedback_youtube():
         'message': f"Recorded feedback: {action} for video {video_id}. Recommendation weighting dynamically adjusted."
     }), 200
 
+# Load Verified Skills Lectures Catalog
+VERIFIED_SKILLS_CATALOG = {}
+catalog_file = os.path.join(PROJECT_ROOT, 'verified_skills_catalog.json')
+if os.path.exists(catalog_file):
+    try:
+        with open(catalog_file, 'r', encoding='utf-8') as f:
+            VERIFIED_SKILLS_CATALOG = json.load(f)
+    except Exception as e:
+        print(f"Error loading verified_skills_catalog.json: {e}")
+
+@app.route('/api/youtube/skill-lecture', methods=['GET'])
+def get_skill_lecture_api():
+    skill = request.args.get('skill', '').strip()
+    career = request.args.get('career', '').strip()
+    if not skill:
+        return jsonify({'success': False, 'error': 'Skill parameter is required'}), 400
+
+    lower = skill.lower()
+    lecture = VERIFIED_SKILLS_CATALOG.get(skill)
+    if not lecture:
+        for k, v in VERIFIED_SKILLS_CATALOG.items():
+            if k.lower() == lower:
+                lecture = v
+                break
+
+    if lecture and lecture.get('videoId'):
+        return jsonify({
+            'success': True,
+            'verified': True,
+            'skill': skill,
+            'videoId': lecture['videoId'],
+            'youtubeUrl': lecture.get('youtubeUrl', f"https://www.youtube.com/watch?v={lecture['videoId']}"),
+            'title': lecture['title'],
+            'channel': lecture['channel']
+        }), 200
+
+    # Fallback to verified educational search URL
+    query = f"{career + ' ' if career else ''}{skill} tutorial full course".strip()
+    return jsonify({
+        'success': True,
+        'verified': False,
+        'skill': skill,
+        'videoId': None,
+        'youtubeUrl': f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}",
+        'title': f"{skill} Placement Preparation Tutorial",
+        'channel': 'Verified Educational Search'
+    }), 200
+
+@app.route('/api/youtube/skills-catalog', methods=['GET'])
+def get_skills_catalog_api():
+    return jsonify({
+        'success': True,
+        'totalSkills': len(VERIFIED_SKILLS_CATALOG),
+        'skills': VERIFIED_SKILLS_CATALOG
+    }), 200
+
+@app.route('/api/youtube/validate', methods=['GET'])
+def validate_youtube_video_api():
+    video_id = request.args.get('videoId', '').strip()
+    if not video_id:
+        return jsonify({'valid': False, 'error': 'videoId is required'}), 400
+
+    is_format_valid = bool(re.match(r'^[a-zA-Z0-9_-]{11}$', video_id))
+    is_in_catalog = any(v.get('videoId') == video_id for v in VERIFIED_SKILLS_CATALOG.values())
+    
+    return jsonify({
+        'videoId': video_id,
+        'valid': is_format_valid and is_in_catalog,
+        'formatValid': is_format_valid,
+        'inVerifiedCatalog': is_in_catalog
+    }), 200
+
 @app.route('/api/prediction/calculate', methods=['POST'])
 def calculate_prediction_api():
     params = request.get_json() or {}

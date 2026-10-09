@@ -318,6 +318,84 @@ app.get('/api/youtube/recommend', (req, res) => {
   });
 });
 
+// Load 100% Pre-Verified Skill Lectures Catalog
+let VERIFIED_SKILL_LECTURES_CATALOG = {};
+try {
+  const catPath = path.join(__dirname, 'verified_skills_catalog.json');
+  if (fs.existsSync(catPath)) {
+    VERIFIED_SKILL_LECTURES_CATALOG = JSON.parse(fs.readFileSync(catPath, 'utf8'));
+  }
+} catch (e) {
+  console.warn('Could not load verified_skills_catalog.json:', e);
+}
+
+// Get Verified YouTube Lecture for Any Skill
+app.get('/api/youtube/skill-lecture', (req, res) => {
+  const { skill = '', career = '' } = req.query;
+  if (!skill) {
+    return res.status(400).json({ success: false, error: 'Skill parameter is required' });
+  }
+
+  const cleanSkill = skill.trim();
+  const lower = cleanSkill.toLowerCase();
+  let lecture = VERIFIED_SKILL_LECTURES_CATALOG[cleanSkill];
+
+  if (!lecture) {
+    const foundKey = Object.keys(VERIFIED_SKILL_LECTURES_CATALOG).find(k => k.toLowerCase() === lower);
+    if (foundKey) lecture = VERIFIED_SKILL_LECTURES_CATALOG[foundKey];
+  }
+
+  if (lecture && lecture.videoId) {
+    return res.json({
+      success: true,
+      verified: true,
+      skill: cleanSkill,
+      videoId: lecture.videoId,
+      youtubeUrl: lecture.youtubeUrl || `https://www.youtube.com/watch?v=${lecture.videoId}`,
+      title: lecture.title,
+      channel: lecture.channel
+    });
+  }
+
+  // Fallback to verified educational search URL
+  const query = `${career ? career + ' ' : ''}${cleanSkill} tutorial full course`.trim();
+  res.json({
+    success: true,
+    verified: false,
+    skill: cleanSkill,
+    videoId: null,
+    youtubeUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+    title: `${cleanSkill} Placement Preparation Tutorial`,
+    channel: 'Verified Educational Search'
+  });
+});
+
+// Get Entire Catalog of Verified Skill Lectures
+app.get('/api/youtube/skills-catalog', (req, res) => {
+  res.json({
+    success: true,
+    totalSkills: Object.keys(VERIFIED_SKILL_LECTURES_CATALOG).length,
+    skills: VERIFIED_SKILL_LECTURES_CATALOG
+  });
+});
+
+// Validate YouTube Video ID (Format & Catalog Check)
+app.get('/api/youtube/validate', (req, res) => {
+  const { videoId } = req.query;
+  if (!videoId || typeof videoId !== 'string') {
+    return res.status(400).json({ valid: false, error: 'videoId is required' });
+  }
+  const cleanId = videoId.trim();
+  const isFormatValid = /^[a-zA-Z0-9_-]{11}$/.test(cleanId);
+  const isInCatalog = Object.values(VERIFIED_SKILL_LECTURES_CATALOG).some(v => v.videoId === cleanId);
+  res.json({
+    videoId: cleanId,
+    valid: isFormatValid && isInCatalog,
+    formatValid: isFormatValid,
+    inVerifiedCatalog: isInCatalog
+  });
+});
+
 // YouTube Video Feedback (Completed, Struggling, Interview, Project)
 app.post('/api/youtube/feedback', (req, res) => {
   const { videoId, action } = req.body;
