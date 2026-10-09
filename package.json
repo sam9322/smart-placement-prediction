@@ -2,11 +2,12 @@
   "name": "mini-project",
   "version": "1.0.0",
   "description": "> **Final Year Engineering Project (Academic Year 2026–2027)**   > **Department of Computer Science & Engineering**",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node -c server.js js/app.js js/skillgap.js js/roadmap.js js/coach.js js/youtube.js js/auth.js js/state.js",
+    "test": "node -c server.js"
   },
   "repository": {
     "type": "git",

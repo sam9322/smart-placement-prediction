@@ -29,14 +29,21 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 8080;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static frontend serving
-app.use(express.static(__dirname));
+// Static frontend serving with development cache busting
+app.use(express.static(__dirname, {
+  etag: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+}));
 
 // ==============================================================================
 // IN-MEMORY / JSON DATABASE STORAGE (Persistent & Fast)
@@ -386,11 +393,28 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Start listening
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🎓 CareerPulse.AI Server running at http://localhost:${PORT}`);
-  console.log(`   Interactive Student Portal: http://localhost:${PORT}/app.html`);
-  console.log(`   Landing Showcase:           http://localhost:${PORT}/index.html`);
-  console.log(`=======================================================`);
-});
+// Start listening dynamically
+function startServer(port, maxAttempts = 10) {
+  const server = app.listen(port, () => {
+    const actualPort = server.address().port;
+    console.log(`=======================================================`);
+    console.log(`🎓 CareerPulse.AI Server running at http://localhost:${actualPort}`);
+    console.log(`   Interactive Student Portal: http://localhost:${actualPort}/app.html`);
+    console.log(`   Skill Gap Analysis:         http://localhost:${actualPort}/app.html#skillgap`);
+    console.log(`   Landing Showcase:           http://localhost:${actualPort}/index.html`);
+    console.log(`=======================================================`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE' && maxAttempts > 0) {
+      console.warn(`⚠️  Port ${port} is currently in use, automatically trying port ${port + 1}...`);
+      startServer(port + 1, maxAttempts - 1);
+    } else {
+      console.error('❌ Server startup error:', err);
+    }
+  });
+
+  return server;
+}
+
+startServer(DEFAULT_PORT);

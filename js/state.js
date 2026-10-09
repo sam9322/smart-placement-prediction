@@ -776,7 +776,7 @@ class StateManager {
     this.saveState();
 
     const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
-    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : '';
     if (token) {
       fetch(`${apiBase}/api/user/roadmap`, {
         method: 'PUT',
@@ -800,7 +800,7 @@ class StateManager {
     this.saveState();
 
     const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
-    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : '';
     if (token) {
       fetch(`${apiBase}/api/user/interview`, {
         method: 'PUT',
@@ -825,7 +825,7 @@ class StateManager {
     this.saveState();
 
     const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
-    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : (window.location.port === '5000' ? '' : 'http://localhost:5000');
+    const apiBase = (window.authManager && authManager.apiBaseUrl !== undefined) ? authManager.apiBaseUrl : '';
     if (token) {
       fetch(`${apiBase}/api/user/interview`, {
         method: 'PUT',

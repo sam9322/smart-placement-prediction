@@ -3,8 +3,9 @@
  * Resume Upload & Analyzer Module
  */
 
-const RESUME_API_BASE = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
-  ? (window.location.port === '5000' ? '' : 'http://localhost:5000')
+// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment
+const RESUME_API_BASE = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'http:' || window.location.protocol === 'https:'))
+  ? ''
   : '';
 
 const SAMPLE_SDE_RESUME_TEXT = `

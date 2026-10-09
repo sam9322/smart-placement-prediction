@@ -114,11 +114,16 @@ function renderSkillGapAnalysis() {
         '<span class="badge badge-warning font-bold">High Priority</span>' :
         '<span class="badge badge-info">Medium</span>';
 
+      const iconClassStr = item.iconClass || 
+        (item.status === 'acquired' ? 'fa-solid fa-check text-emerald' : 
+         item.status === 'warning' ? 'fa-solid fa-triangle-exclamation text-amber' : 
+         'fa-solid fa-xmark text-rose');
+
       return `
         <div class="skill-gap-bar-card">
           <div class="skill-gap-header-row">
             <div class="flex items-center gap-2">
-              <span class="skill-status-icon">${item.icon}</span>
+              <span class="skill-status-icon"><i class="${iconClassStr}" aria-hidden="true"></i></span>
               <span class="skill-name font-bold">${escapeHtml(item.name)}</span>
               ${statusPill}
             </div>
@@ -259,4 +264,11 @@ function addSkillToProfile(skillName) {
     if (window.renderDashboard) window.renderDashboard();
     if (window.syncPredictionFormWithProfile) window.syncPredictionFormWithProfile();
   }
+}
+
+// Global window bindings
+if (typeof window !== 'undefined') {
+  window.renderSkillGapAnalysis = renderSkillGapAnalysis;
+  window.handleCareerSelectChange = handleCareerSelectChange;
+  window.addSkillToProfile = addSkillToProfile;
 }
