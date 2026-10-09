@@ -11,6 +11,16 @@
  * with single-click "Add to Profile" and "Watch YouTube Lecture" actions.
  */
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function renderSkillGapAnalysis() {
   const profile = appState.getProfile();
   const targetCareerId = profile.targetCareerId || 'sde';
@@ -39,17 +49,20 @@ function renderSkillGapAnalysis() {
 
     let status = 'missing'; // 'acquired', 'warning', 'missing'
     let progress = 15;
-    let icon = 'fa-solid fa-xmark text-rose';
+    let iconClass = 'fa-solid fa-xmark text-rose';
+    let icon = '<i class="fa-solid fa-xmark text-rose" aria-hidden="true"></i>';
 
     if (isExactMatch) {
       status = 'acquired';
       progress = 95;
-      icon = 'fa-solid fa-check text-emerald';
+      iconClass = 'fa-solid fa-check text-emerald';
+      icon = '<i class="fa-solid fa-check text-emerald" aria-hidden="true"></i>';
       matchedSkills.push(skill);
     } else if (isPartialMatch) {
       status = 'warning';
       progress = 60;
-      icon = 'fa-solid fa-triangle-exclamation text-amber';
+      iconClass = 'fa-solid fa-triangle-exclamation text-amber';
+      icon = '<i class="fa-solid fa-triangle-exclamation text-amber" aria-hidden="true"></i>';
       inProgressSkills.push(skill);
     } else {
       missingSkills.push(skill);
@@ -63,6 +76,7 @@ function renderSkillGapAnalysis() {
       status,
       progress,
       icon,
+      iconClass,
       priority,
       difficulty
     };
@@ -89,10 +103,10 @@ function renderSkillGapAnalysis() {
   if (breakdownRoot) {
     breakdownRoot.innerHTML = skillDetails.map(item => {
       const statusPill = item.status === 'acquired' ? 
-        '<span class="badge badge-success"><i class="fa-solid fa-check"></i> Acquired</span>' :
+        '<span class="badge badge-success"><i class="fa-solid fa-check" aria-hidden="true"></i> Acquired</span>' :
         item.status === 'warning' ?
-        '<span class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation"></i> In Progress</span>' :
-        '<span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> Missing Gap</span>';
+        '<span class="badge badge-warning"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> In Progress</span>' :
+        '<span class="badge badge-danger"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Missing Gap</span>';
 
       const priorityBadge = item.priority === 'Critical' ?
         '<span class="badge badge-danger font-bold">Critical</span>' :
@@ -105,7 +119,7 @@ function renderSkillGapAnalysis() {
           <div class="skill-gap-header-row">
             <div class="flex items-center gap-2">
               <span class="skill-status-icon">${item.icon}</span>
-              <span class="skill-name font-bold">${item.name}</span>
+              <span class="skill-name font-bold">${escapeHtml(item.name)}</span>
               ${statusPill}
             </div>
             <div class="flex items-center gap-2">
@@ -132,7 +146,7 @@ function renderSkillGapAnalysis() {
                 <i class="fa-brands fa-youtube text-rose"></i> Watch Lecture
               </a>
               ${item.status !== 'acquired' ? `
-                <button type="button" class="btn btn-primary btn-xs" onclick="addSkillToProfile('${item.name}')" title="Mark as acquired and add to student profile">
+                <button type="button" class="btn btn-primary btn-xs" onclick="addSkillToProfile('${escapeHtml(item.name)}')" title="Mark as acquired and add to student profile">
                   <i class="fa-solid fa-plus"></i> Add to Profile
                 </button>
               ` : ''}
@@ -170,13 +184,13 @@ function renderSkillGapAnalysis() {
       missingContainer.innerHTML = missingSkills.map(skill => `
         <div class="flex items-center justify-between p-2" style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
           <span class="tag-item skill-tag-missing">
-            <i class="fa-solid fa-triangle-exclamation"></i> ${skill}
+            <i class="fa-solid fa-triangle-exclamation"></i> ${escapeHtml(skill)}
           </span>
           <div class="flex gap-1">
-            <a href="${ytService.getSearchUrl(targetCareer.title + ' ' + skill)}" target="_blank" class="btn btn-ghost btn-xs text-rose" title="Watch lecture">
+            <a href="${ytService.getSearchUrl(targetCareer.title + ' ' + skill)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-xs text-rose" title="Watch lecture">
               <i class="fa-brands fa-youtube"></i>
             </a>
-            <button class="btn btn-secondary btn-sm" onclick="addSkillToProfile('${skill}')" title="Mark as acquired">
+            <button class="btn btn-secondary btn-sm" onclick="addSkillToProfile('${escapeHtml(skill)}')" title="Mark as acquired">
               <i class="fa-solid fa-plus"></i> Add
             </button>
           </div>
@@ -193,20 +207,20 @@ function renderSkillGapAnalysis() {
       recContainer.innerHTML = `
         <div class="card p-4" style="background: var(--bg-card); border-left: 4px solid var(--primary); border-radius: var(--radius-lg); padding: 1.25rem;">
           <div class="flex items-center justify-between mb-2">
-            <h4 style="font-size: 1rem;"><i class="fa-solid fa-lightbulb text-amber"></i> Highest Leverage Skill Gap: <strong class="text-gradient">${topPriority}</strong></h4>
+            <h4 style="font-size: 1rem;"><i class="fa-solid fa-lightbulb text-amber"></i> Highest Leverage Skill Gap: <strong class="text-gradient">${escapeHtml(topPriority)}</strong></h4>
             <span class="badge badge-danger">Critical Priority</span>
           </div>
           <p class="text-sm mb-3" style="margin-bottom: 0.75rem;">
-            Acquiring <strong>${topPriority}</strong> will immediately raise your qualification readiness to <strong>${Math.min(98, matchPercentage + 14)}%</strong> and unlock shortlists for visiting recruiters.
+            Acquiring <strong>${escapeHtml(topPriority)}</strong> will immediately raise your qualification readiness to <strong>${Math.min(98, matchPercentage + 14)}%</strong> and unlock shortlists for visiting recruiters.
           </p>
           <div class="flex gap-2" style="display: flex; gap: 0.5rem;">
-            <a href="${ytService.getSearchUrl(targetCareer.title + ' ' + topPriority)}" target="_blank" class="btn btn-primary btn-sm">
+            <a href="${ytService.getSearchUrl(targetCareer.title + ' ' + topPriority)}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
               <i class="fa-brands fa-youtube"></i> Recommended YouTube Lectures
             </a>
             <a href="#roadmap" class="btn btn-secondary btn-sm" onclick="switchView('roadmap')">
               <i class="fa-solid fa-route"></i> View Month-by-Month Roadmap
             </a>
-            <button class="btn btn-outline btn-sm" onclick="addSkillToProfile('${topPriority}')">
+            <button class="btn btn-outline btn-sm" onclick="addSkillToProfile('${escapeHtml(topPriority)}')">
               <i class="fa-solid fa-check"></i> Mark Acquired
             </button>
           </div>

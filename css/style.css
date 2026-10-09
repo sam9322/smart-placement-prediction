@@ -403,3 +403,32 @@ code, pre {
   }
 }
 
+.skill-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.skill-status-icon i {
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Font Awesome Brand & Solid YouTube Compatibility Aliases */
+.fa-solid.fa-youtube,
+.fa-regular.fa-youtube,
+.fa.fa-youtube {
+  font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands", "FontAwesome", sans-serif !important;
+  font-weight: 400 !important;
+}
+.fa-solid.fa-youtube::before,
+.fa-regular.fa-youtube::before,
+.fa.fa-youtube::before {
+  content: "\f167" !important;
+}
+
