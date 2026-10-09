@@ -377,13 +377,15 @@ class CareerCoachManager {
     const selectedAnswerMatch = this.quizAnswers[q.id];
     const selectedOption = q.options.find(opt => opt.match === selectedAnswerMatch);
 
-    // Fetch question-specific dynamic YouTube lectures if an option is selected (3-5 verified lectures)
+    // Fetch question-specific dynamic YouTube recommendations if an option is selected (2–3 verified videos)
     let previewLectures = [];
     if (selectedOption && window.ytService) {
       previewLectures = ytService.getRecommendations({
         targetCareer: selectedOption.match,
         studentLevel: 'Beginner',
-        limit: 5
+        selectedTopic: selectedOption.skillPath ? selectedOption.skillPath[0] : '',
+        missingSkills: selectedOption.skillPath || [],
+        limit: 3
       });
     }
 
@@ -462,8 +464,8 @@ class CareerCoachManager {
             ${previewLectures.length > 0 ? `
               <div class="coach-preview-yt-section">
                 <div class="text-xs font-bold text-muted mb-2 uppercase tracking-wider flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-                  <span><i class="fa-brands fa-youtube text-rose"></i> Recommended YouTube Lectures for this answer (${previewLectures.length} Verified Lectures):</span>
-                  <span class="text-xs text-primary font-normal"><i class="fa-solid fa-circle-check text-emerald"></i> Real Working Links • Trusted Channels</span>
+                  <span><i class="fa-brands fa-youtube text-rose"></i> Recommended YouTube Videos for this answer (${previewLectures.length} Top Rated Videos):</span>
+                  <span class="text-xs text-primary font-normal"><i class="fa-solid fa-circle-check text-emerald"></i> Verified Working • Trusted Channels</span>
                 </div>
                 <div class="grid-responsive-2 gap-3">
                   ${previewLectures.map(v => ytService.renderResourceCardHtml(v)).join('')}
