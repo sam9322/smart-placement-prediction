@@ -2365,4 +2365,284 @@ body.sidebar-locked {
   color: var(--accent-emerald);
 }
 
+/* ==========================================================================
+   IMPROVED ROADMAP YOUTUBE LECTURES SECTION & CARDS
+   ========================================================================== */
+.roadmap-lectures-container {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.roadmap-lectures-header {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.roadmap-skill-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.roadmap-skill-filters .btn-xs {
+  font-size: 0.72rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.roadmap-lectures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.roadmap-lecture-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+
+.roadmap-lecture-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.roadmap-lecture-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #090d16;
+  overflow: hidden;
+}
+
+.roadmap-lecture-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.roadmap-lecture-card:hover .roadmap-lecture-thumb {
+  transform: scale(1.06);
+}
+
+.roadmap-level-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
+  z-index: 2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.roadmap-level-badge.level-beginner {
+  background: rgba(16, 185, 129, 0.85);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.roadmap-level-badge.level-intermediate {
+  background: rgba(245, 158, 11, 0.85);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.roadmap-level-badge.level-advanced {
+  background: rgba(168, 85, 247, 0.85);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+}
+
+.roadmap-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 3;
+  text-decoration: none;
+}
+
+.roadmap-lecture-card:hover .roadmap-play-overlay {
+  opacity: 1;
+}
+
+.roadmap-play-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #ff0000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+  transition: transform 0.2s ease;
+  padding-left: 3px;
+}
+
+.roadmap-play-overlay:hover .roadmap-play-btn {
+  transform: scale(1.18);
+}
+
+.roadmap-lecture-body {
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.45rem;
+}
+
+.roadmap-lecture-meta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roadmap-topic-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.roadmap-lecture-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.3em;
+}
+
+.roadmap-lecture-title a {
+  color: var(--text-main);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.roadmap-lecture-title a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.roadmap-lecture-channel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.roadmap-lecture-channel .channel-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+}
+
+.roadmap-lecture-channel .verified-icon {
+  font-size: 0.7rem;
+}
+
+.roadmap-lecture-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+}
+
+.roadmap-watch-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: #ff0000;
+  border-color: #ff0000;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  transition: all var(--transition-fast);
+}
+
+.roadmap-watch-btn:hover {
+  background: #cc0000;
+  border-color: #cc0000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+}
+
+.roadmap-fallback-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.76rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  text-decoration: none !important;
+  transition: all var(--transition-fast);
+}
+
+.roadmap-fallback-search:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-hover);
+}
+
+@media (max-width: 768px) {
+  .roadmap-lectures-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 

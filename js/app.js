@@ -63,7 +63,7 @@ function switchView(viewName) {
     prediction: { title: 'Placement Probability Predictor', desc: 'Algorithmic multi-factor assessment engine for campus readiness' },
     coach: { title: 'AI Career Coach & Matcher', desc: 'Explore tech roles, take the career quiz, and discover target pathways' },
     skillgap: { title: 'Skill Gap Analysis & Roadmap', desc: 'Compare your skills against target role requirements and bridge deficiencies' },
-    roadmap: { title: 'Interactive Placement Roadmap', desc: '4-stage milestone checklist spanning beginner to job ready mastery' },
+    roadmap: { title: 'Interactive Placement Roadmap', desc: '6-month structured timeline with verified real YouTube lectures, practice problems, & milestone checklists' },
     interview: { title: 'Interview Preparation Hub', desc: 'Timed aptitude drill, core CS technical cards, HR STAR guide, & mock simulator' }
   };
 
