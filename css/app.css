@@ -2644,5 +2644,374 @@ body.sidebar-locked {
   }
 }
 
+/* ==========================================================================
+   PERSONALIZED ROADMAP SUITE: AI ACTION, DAILY PLAN, QUIZ, PHASES & ACHIEVEMENTS
+   ========================================================================== */
+
+/* AI Next Best Action Card */
+.roadmap-ai-action-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.04) 100%), var(--bg-card);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.1);
+  overflow: hidden;
+}
+
+.roadmap-ai-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--grad-primary);
+}
+
+.pulse-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-ring 1.8s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.highlight-action-pulse {
+  outline: 2px solid var(--primary) !important;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.6) !important;
+  transition: all 0.3s ease;
+}
+
+/* Daily Plan Card */
+.roadmap-daily-plan-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.roadmap-daily-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.daily-task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.daily-task-item:hover {
+  border-color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.daily-task-item.completed {
+  opacity: 0.7;
+}
+
+.daily-task-item.completed .daily-task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.daily-task-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.daily-task-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 2px;
+}
+
+/* Achievements Bar */
+.roadmap-achievements-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.roadmap-achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.achievement-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  transition: all var(--transition-fast);
+}
+
+.achievement-pill.unlocked {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.achievement-pill.locked {
+  opacity: 0.55;
+  filter: grayscale(0.8);
+}
+
+.achievement-pill i {
+  font-size: 1.1rem;
+}
+
+.achievement-pill-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.achievement-pill-text strong {
+  font-size: 0.75rem;
+  color: var(--text-main);
+}
+
+.achievement-pill-text span {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Filter Bar */
+.roadmap-filter-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+/* Expandable Month Cards */
+.roadmap-month-header.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.roadmap-month-header.clickable:hover {
+  background: var(--bg-hover);
+}
+
+.roadmap-month-content {
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.roadmap-month-content.collapsed {
+  display: none !important;
+}
+
+/* Skills Mastery Row & Feedback */
+.skill-mastery-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.roadmap-feedback-btns .btn-xs {
+  font-size: 0.68rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* 5 Phase Sections */
+.roadmap-phase-box {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.roadmap-phase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Lecture Watched & Duration Badge */
+.roadmap-lecture-card.lecture-watched {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.roadmap-duration-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #ffffff;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
+
+/* Practice Problem Cards */
+.roadmap-problem-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.roadmap-problem-card:hover {
+  border-color: var(--accent-cyan);
+  background: var(--bg-hover);
+}
+
+.roadmap-problem-card.problem-solved {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.roadmap-problem-card.problem-solved .text-main {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Interactive Quiz Options */
+.roadmap-quiz-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.quiz-opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quiz-opt-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--bg-hover);
+}
+
+.quiz-opt-btn.opt-selected {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.quiz-opt-btn.opt-correct {
+  border-color: var(--accent-emerald) !important;
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: var(--accent-emerald) !important;
+  font-weight: 700;
+}
+
+.quiz-opt-btn.opt-incorrect {
+  border-color: var(--accent-rose) !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: var(--accent-rose) !important;
+  font-weight: 700;
+}
+
+.opt-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.quiz-explanation-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+/* Project Card Body & Requirements */
+.project-card-body {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.project-requirements-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Interview Accordion Card */
+.interview-accordion-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.interview-accordion-card:hover {
+  border-color: var(--accent-emerald);
+}
+
+.badge-xs {
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+
 
 
