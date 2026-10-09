@@ -835,8 +835,8 @@
    LANDING RESPONSIVE MEDIA QUERIES (320px -> 1440px+)
    ========================================================================== */
 
-/* 1. Laptops and Tablets Landscape (max-width: 1024px) */
-@media (max-width: 1024px) {
+/* 1. Laptops and Tablets Landscape (max-width: 1199.98px) */
+@media (max-width: 1199.98px) {
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 2.75rem;

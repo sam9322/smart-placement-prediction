@@ -48,12 +48,14 @@ function renderDashboard() {
   // KPI 3: Milestones Completed
   let totalMilestones = 0;
   let doneMilestones = 0;
-  ROADMAP_DATA.forEach(stage => {
-    stage.milestones.forEach(m => {
+  const roadmapStages = (typeof SIX_MONTH_ROADMAP_MASTER !== 'undefined' ? SIX_MONTH_ROADMAP_MASTER : (typeof ROADMAP_DATA !== 'undefined' ? ROADMAP_DATA : (window.SIX_MONTH_ROADMAP_MASTER || window.ROADMAP_DATA || [])));
+  roadmapStages.forEach(stage => {
+    (stage.milestones || []).forEach(m => {
       totalMilestones++;
       if (roadmapState[m.id]) doneMilestones++;
     });
   });
+  if (totalMilestones === 0) totalMilestones = 18;
   const roadmapPct = Math.round((doneMilestones / totalMilestones) * 100);
 
   const milestoneValElem = document.getElementById('dash-kpi-milestones');

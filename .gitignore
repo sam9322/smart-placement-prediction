@@ -25,3 +25,6 @@ desktop.ini
 
 # Vercel build output
 .vercel/
+
+# Node dependencies
+node_modules/

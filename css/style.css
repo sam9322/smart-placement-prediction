@@ -51,7 +51,7 @@
   --grad-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.9) 100%);
 
   /* Layout dimensions */
-  --sidebar-width: 270px;
+  --sidebar-width: 290px;
   --sidebar-collapsed-width: 80px;
   --header-height: 72px;
   --radius-sm: 8px;
@@ -220,6 +220,10 @@ code, pre {
   flex-direction: column;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .items-center {
   align-items: center;
 }
@@ -320,27 +324,35 @@ code, pre {
    ========================================================================== */
 .table-responsive {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
 .grid-responsive-2 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .grid-responsive-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .grid-responsive-4 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Touch Friendly Targets */
@@ -350,26 +362,23 @@ code, pre {
 }
 
 /* Breakpoint-Specific Adjustments */
-@media (max-width: 1024px) {
+@media (max-width: 1199.98px) {
   .grid-responsive-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .grid-responsive-3 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
   .container {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.6rem; }
-  h3 { font-size: 1.25rem; }
-}
-
-@media (max-width: 640px) {
+  h1 { font-size: 1.85rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.2rem; }
   .grid-responsive-2,
   .grid-responsive-3,
   .grid-responsive-4 {
@@ -382,9 +391,9 @@ code, pre {
     padding-left: 0.875rem;
     padding-right: 0.875rem;
   }
-  .text-4xl { font-size: 1.85rem; }
-  .text-3xl { font-size: 1.55rem; }
-  .text-2xl { font-size: 1.35rem; }
+  .text-4xl { font-size: 1.75rem; }
+  .text-3xl { font-size: 1.45rem; }
+  .text-2xl { font-size: 1.25rem; }
 }
 
 @media (max-width: 360px) {

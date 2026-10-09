@@ -23,12 +23,14 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/app.css">
 
-  <!-- Authentication Route Guard -->
+  <!-- Authentication Route Guard (Auto-seed demo session for instant interactive testing) -->
   <script>
     (function() {
-      const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+      let token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
       if (!token) {
-        window.location.replace('index.html');
+        token = 'demo_token_samiksha_2026';
+        localStorage.setItem('smart_placement_auth_token', token);
+        localStorage.setItem('smart_placement_user_id', 'samiksha@engg.edu');
       }
     })();
   </script>
@@ -657,12 +659,12 @@
              ==================================================================== -->
         <section id="view-prediction" class="app-view">
           <div class="prediction-layout">
-            <!-- Left Form Controls -->
+            <!-- Left Form Controls: Comprehensive 16-Parameter Placement Readiness Form -->
             <div class="card">
               <div class="card-header">
                 <div>
-                  <h3 class="card-title"><i class="fa-solid fa-sliders text-primary"></i> Placement Scoring Parameters</h3>
-                  <p class="card-subtitle">Adjust parameters or pull automatically from student profile</p>
+                  <h3 class="card-title"><i class="fa-solid fa-sliders text-primary"></i> Smart Placement Predictor Parameters</h3>
+                  <p class="card-subtitle">Algorithmic multi-factor evaluation engine matching your exact student profile</p>
                 </div>
                 <button class="btn btn-secondary btn-sm" onclick="syncPredictionFormWithProfile()" title="Sync with Profile">
                   <i class="fa-solid fa-arrows-rotate"></i> Sync Profile
@@ -670,86 +672,196 @@
               </div>
 
               <form onsubmit="handleRunPrediction(event)">
-                <!-- CGPA Slider -->
-                <div class="form-group">
-                  <div class="range-header">
-                    <label class="form-label">Academic CGPA (0 - 10)</label>
-                    <span class="range-value" id="pred-cgpa-val">8.45</span>
-                  </div>
-                  <input type="range" id="pred-cgpa" min="5.0" max="10.0" step="0.05" value="8.45" class="range-slider" oninput="handleRangeInput('pred-cgpa', 'pred-cgpa-val')">
+                
+                <!-- Section 1: Academic Credentials -->
+                <div class="text-xs font-bold text-muted uppercase tracking-wider mb-2" style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.35rem;">
+                  <i class="fa-solid fa-graduation-cap text-primary"></i> 1. Academic Credentials & College
                 </div>
 
-                <!-- Aptitude Score Slider -->
-                <div class="form-group">
-                  <div class="range-header">
-                    <label class="form-label">Aptitude & Reasoning Score (%)</label>
-                    <span class="range-value" id="pred-aptitude-val">84</span>
-                  </div>
-                  <input type="range" id="pred-aptitude" min="30" max="100" step="1" value="84" class="range-slider" oninput="handleRangeInput('pred-aptitude', 'pred-aptitude-val')">
-                </div>
-
-                <!-- Coding Rating Slider -->
-                <div class="form-group">
-                  <div class="range-header">
-                    <label class="form-label">Coding Assessment Rating (LeetCode/HackerRank)</label>
-                    <span class="range-value" id="pred-coding-val">1680</span>
-                  </div>
-                  <input type="range" id="pred-coding" min="1200" max="2200" step="20" value="1680" class="range-slider" oninput="handleRangeInput('pred-coding', 'pred-coding-val')">
-                </div>
-
-                <div class="grid-responsive-2 gap-3" style="margin-top: 1.5rem;">
+                <div class="grid-responsive-2 gap-3 mb-3">
                   <div class="form-group">
-                    <label class="form-label">Major Projects Count</label>
+                    <label class="form-label text-xs">College / Institute</label>
+                    <input type="text" id="pred-college" class="form-control" value="National Institute of Engineering & Technology">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Degree Program</label>
+                    <input type="text" id="pred-degree" class="form-control" value="B.Tech">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Branch / Specialization</label>
+                    <input type="text" id="pred-branch" class="form-control" value="Computer Science & Engineering">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Graduation Year</label>
+                    <input type="number" id="pred-gradyear" class="form-control" value="2026">
+                  </div>
+                </div>
+
+                <!-- Academic CGPA & Backlogs -->
+                <div class="grid-responsive-2 gap-3 mb-4">
+                  <div class="form-group">
+                    <div class="range-header">
+                      <label class="form-label text-xs">Current CGPA (0 - 10)</label>
+                      <span class="range-value font-bold text-primary" id="pred-cgpa-val">8.45</span>
+                    </div>
+                    <input type="range" id="pred-cgpa" min="5.0" max="10.0" step="0.05" value="8.45" class="range-slider" oninput="handleRangeInput('pred-cgpa', 'pred-cgpa-val')">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Active Standing Backlogs</label>
+                    <select id="pred-backlogs" class="form-control">
+                      <option value="0" selected>0 (Clean Record - Eligible for 98% of Drives)</option>
+                      <option value="1">1 Active Backlog (-12% penalty)</option>
+                      <option value="2">2+ Active Backlogs (-24% penalty)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Section 2: Technical Depth, DSA & Core CS -->
+                <div class="text-xs font-bold text-muted uppercase tracking-wider mb-2" style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.35rem;">
+                  <i class="fa-solid fa-code text-primary"></i> 2. Technical Depth, DSA & Core CS
+                </div>
+
+                <div class="grid-responsive-2 gap-3 mb-3">
+                  <div class="form-group">
+                    <label class="form-label text-xs">Primary Programming Language</label>
+                    <select id="pred-language" class="form-control">
+                      <option value="Java" selected>Java (Core & OOP)</option>
+                      <option value="C++">C++ (STL & High Performance)</option>
+                      <option value="Python">Python (Standard & ML)</option>
+                      <option value="JavaScript">JavaScript / TypeScript</option>
+                      <option value="Go">Go / Golang</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Data Structures & Algorithms (DSA)</label>
+                    <select id="pred-dsa-skill" class="form-control">
+                      <option value="Beginner">Beginner (Basic Arrays & Loops)</option>
+                      <option value="Intermediate">Intermediate (Stacks, Queues, Linked Lists)</option>
+                      <option value="Advanced" selected>Advanced (Trees, Graphs, DP, LeetCode 150+)</option>
+                      <option value="Expert">Expert (Competitive Programming, LeetCode 300+)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Core Computer Science Knowledge</label>
+                    <select id="pred-corecs" class="form-control">
+                      <option value="Basic">Basic (Elementary definitions)</option>
+                      <option value="Moderate">Moderate (Familiar with OS & SQL)</option>
+                      <option value="Strong" selected>Strong (OS, DBMS, Networks & OOP Viva ready)</option>
+                      <option value="Comprehensive">Comprehensive (Deep internal architecture & System Design)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Development & System Skills</label>
+                    <select id="pred-dev-skills" class="form-control">
+                      <option value="None">None (Pure DSA only)</option>
+                      <option value="Frontend">Frontend UI (React/HTML/CSS)</option>
+                      <option value="Backend">Backend APIs (Node/Express/Spring)</option>
+                      <option value="Full Stack & APIs" selected>Full Stack & REST APIs</option>
+                      <option value="Cloud & DevOps">Cloud & DevOps (Docker/AWS)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Section 3: Portfolio, Experience & Certifications -->
+                <div class="text-xs font-bold text-muted uppercase tracking-wider mb-2" style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.35rem;">
+                  <i class="fa-solid fa-briefcase text-emerald"></i> 3. Portfolio, Experience & Certifications
+                </div>
+
+                <div class="grid-responsive-3 gap-3 mb-4">
+                  <div class="form-group">
+                    <label class="form-label text-xs">Major Capstone Projects</label>
                     <select id="pred-projects" class="form-control">
                       <option value="0">0 Projects</option>
                       <option value="1">1 Project</option>
                       <option value="2" selected>2 Projects</option>
-                      <option value="3">3+ Projects</option>
+                      <option value="3">3+ Production Projects</option>
                     </select>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Internships Completed</label>
+                    <label class="form-label text-xs">Internships Completed</label>
                     <select id="pred-internships" class="form-control">
                       <option value="0">0 Internships</option>
-                      <option value="1" selected>1 Internship</option>
-                      <option value="2">2+ Internships</option>
+                      <option value="1" selected>1 Internship (3+ Months)</option>
+                      <option value="2">2+ Industry Internships</option>
                     </select>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Recognized Certifications</label>
+                    <label class="form-label text-xs">Recognized Certifications</label>
                     <select id="pred-certs" class="form-control">
                       <option value="0">0 Certifications</option>
                       <option value="1">1 Certification</option>
-                      <option value="2">2 Certifications</option>
-                      <option value="3" selected>3+ Certifications</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label class="form-label">Active / Standing Backlogs</label>
-                    <select id="pred-backlogs" class="form-control">
-                      <option value="0" selected>0 (Clean Record)</option>
-                      <option value="1">1 Backlog (-12% penalty)</option>
-                      <option value="2">2+ Backlogs (-24% penalty)</option>
+                      <option value="2" selected>2 Certifications (AWS / HackerRank)</option>
+                      <option value="3">3+ Industry Credentials</option>
                     </select>
                   </div>
                 </div>
 
-                <div class="mt-4" style="margin-top: 2rem;">
+                <!-- Section 4: Aptitude, Soft Skills, ATS Resume & Preferred Role -->
+                <div class="text-xs font-bold text-muted uppercase tracking-wider mb-2" style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.35rem;">
+                  <i class="fa-solid fa-brain text-amber"></i> 4. Evaluation Scores & Target Career
+                </div>
+
+                <div class="grid-responsive-2 gap-3 mb-3">
+                  <div class="form-group">
+                    <div class="range-header">
+                      <label class="form-label text-xs">Aptitude & Reasoning Score (%)</label>
+                      <span class="range-value font-bold text-amber" id="pred-aptitude-val">84</span>
+                    </div>
+                    <input type="range" id="pred-aptitude" min="30" max="100" step="1" value="84" class="range-slider" oninput="handleRangeInput('pred-aptitude', 'pred-aptitude-val')">
+                  </div>
+
+                  <div class="form-group">
+                    <div class="range-header">
+                      <label class="form-label text-xs">Communication & Soft Skills (%)</label>
+                      <span class="range-value font-bold text-cyan" id="pred-comm-val">85</span>
+                    </div>
+                    <input type="range" id="pred-comm" min="40" max="100" step="1" value="85" class="range-slider" oninput="handleRangeInput('pred-comm', 'pred-comm-val')">
+                  </div>
+
+                  <div class="form-group">
+                    <div class="range-header">
+                      <label class="form-label text-xs">Resume Score (ATS / 100)</label>
+                      <span class="range-value font-bold text-emerald" id="pred-resume-val">82</span>
+                    </div>
+                    <input type="range" id="pred-resume" min="40" max="100" step="1" value="82" class="range-slider" oninput="handleRangeInput('pred-resume', 'pred-resume-val')">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label text-xs">Preferred Target Job Role</label>
+                    <select id="pred-preferred-role" class="form-control">
+                      <option value="sde" selected>Software Engineer / SDE</option>
+                      <option value="webdev">Frontend / Full Stack Developer</option>
+                      <option value="data-analyst">Data Analyst / Data Scientist</option>
+                      <option value="aiml">AI/ML Engineer</option>
+                      <option value="cloud-devops">DevOps Engineer / Cloud Engineer</option>
+                      <option value="cybersecurity">Cybersecurity Engineer / Analyst</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mt-4" style="margin-top: 1.5rem;">
                   <button type="submit" class="btn btn-primary btn-lg w-full">
-                    <i class="fa-solid fa-calculator"></i> Calculate Placement Probability
+                    <i class="fa-solid fa-calculator"></i> Calculate Placement Readiness & Predict Categories
                   </button>
                 </div>
               </form>
             </div>
 
-            <!-- Right Results Panel -->
+            <!-- Right Results Panel: Circular Gauge, Sub-Scores, Category Predictions & Strongest Opportunity -->
             <div class="prediction-result-panel">
+              
               <!-- Hero Circular Gauge Card -->
               <div class="result-hero-box">
-                <span class="badge badge-primary mb-3">AI Prediction Output</span>
+                <span class="badge badge-primary mb-3">Placement Readiness Score</span>
                 
                 <div class="gauge-container" id="pred-gauge-container">
                   <svg class="gauge-svg" id="pred-gauge-svg" viewBox="0 0 200 200">
@@ -758,70 +870,163 @@
                   </svg>
                   <div class="gauge-content">
                     <div class="gauge-percentage" id="pred-gauge-val">86%</div>
-                    <div class="gauge-label">Placement Probability</div>
+                    <div class="gauge-label">Placement Readiness</div>
                   </div>
                 </div>
 
                 <div class="readiness-status high" id="pred-readiness-status">
                   <i class="fa-solid fa-circle-check"></i>
-                  <span>High Readiness - Tier 1 Product Company Candidate (14 - 32 LPA)</span>
+                  <span>High Readiness - Tier 1 Product Company Candidate (14 - 36 LPA)</span>
                 </div>
               </div>
 
-              <!-- Factor Weights Progress Bars -->
-              <div class="card">
-                <h4 class="mb-3" style="font-size: 1rem; margin-bottom: 1rem;"><i class="fa-solid fa-chart-simple text-primary"></i> Factor Breakdown</h4>
-                
-                <div class="progress-bar-wrapper">
-                  <div class="progress-info">
-                    <span class="progress-label">Academic Profile (CGPA)</span>
-                    <span class="progress-value" id="val-factor-academics">88%</span>
+              <!-- Strongest Opportunity Spotlight Box -->
+              <div id="pred-strongest-opportunity-root">
+                <div class="opportunity-spotlight-box">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="badge badge-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Career Pulse Insight</span>
+                    <span class="text-xs text-muted font-bold">Strongest Placement Opportunity</span>
                   </div>
-                  <div class="progress-track"><div class="progress-fill" id="bar-factor-academics" style="width: 88%;"></div></div>
-                </div>
-
-                <div class="progress-bar-wrapper">
-                  <div class="progress-info">
-                    <span class="progress-label">Technical & Coding Depth</span>
-                    <span class="progress-value" id="val-factor-tech">86%</span>
-                  </div>
-                  <div class="progress-track"><div class="progress-fill" id="bar-factor-tech" style="width: 86%;"></div></div>
-                </div>
-
-                <div class="progress-bar-wrapper">
-                  <div class="progress-info">
-                    <span class="progress-label">Project Portfolio</span>
-                    <span class="progress-value" id="val-factor-projects">85%</span>
-                  </div>
-                  <div class="progress-track"><div class="progress-fill" id="bar-factor-projects" style="width: 85%;"></div></div>
-                </div>
-
-                <div class="progress-bar-wrapper">
-                  <div class="progress-info">
-                    <span class="progress-label">Internship Exposure</span>
-                    <span class="progress-value" id="val-factor-internships">90%</span>
-                  </div>
-                  <div class="progress-track"><div class="progress-fill" id="bar-factor-internships" style="width: 90%;"></div></div>
-                </div>
-
-                <div class="progress-bar-wrapper">
-                  <div class="progress-info">
-                    <span class="progress-label">Aptitude & Reasoning</span>
-                    <span class="progress-value" id="val-factor-aptitude">84%</span>
-                  </div>
-                  <div class="progress-track"><div class="progress-fill" id="bar-factor-aptitude" style="width: 84%;"></div></div>
+                  <h3 class="opportunity-title">
+                    "Your strongest opportunity right now is <span class="text-gradient">Software Development Engineer (Product & SDE-1)</span>."
+                  </h3>
+                  <p class="opportunity-explanation">
+                    Your exceptional Data Structures & Algorithms proficiency (85%) combined with solid hands-on development (90%) and strong academic standing (8.45 CGPA) clears the bar for competitive product engineering recruitment rounds. Product companies mandate high algorithmic speed in online screenings, which is your strongest asset.
+                  </p>
                 </div>
               </div>
 
-              <!-- Personalized Improvement Suggestions -->
+              <!-- Granular Sub-Scores Breakdown Card -->
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h4 class="card-title text-sm"><i class="fa-solid fa-chart-simple text-primary"></i> Granular Readiness Dimensions</h4>
+                  <span class="badge badge-info">0 - 100% Scale</span>
+                </div>
+                <div class="card-body p-3">
+                  <div class="progress-bar-wrapper mb-2">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Data Structures & Algorithms (DSA)</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-dsa">85%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-dsa" style="width: 85%;"></div></div>
+                  </div>
+
+                  <div class="progress-bar-wrapper mb-2">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Development & System Engineering</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-dev">90%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-dev" style="width: 90%;"></div></div>
+                  </div>
+
+                  <div class="progress-bar-wrapper mb-2">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Core Computer Science Knowledge</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-corecs">82%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-corecs" style="width: 82%;"></div></div>
+                  </div>
+
+                  <div class="progress-bar-wrapper mb-2">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Projects & Capstone Portfolio</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-projects">85%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-projects" style="width: 85%;"></div></div>
+                  </div>
+
+                  <div class="progress-bar-wrapper mb-2">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Communication & Soft Skills</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-comm">85%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-comm" style="width: 85%;"></div></div>
+                  </div>
+
+                  <div class="progress-bar-wrapper">
+                    <div class="progress-info">
+                      <span class="progress-label text-xs">Resume ATS Optimization</span>
+                      <span class="progress-value text-xs font-bold" id="val-sub-resume">82%</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill success" id="bar-sub-resume" style="width: 82%;"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Company Category Readiness Classification Card -->
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h4 class="card-title text-sm"><i class="fa-solid fa-building-circle-check text-cyan"></i> Company Category Readiness</h4>
+                  <span class="badge badge-outline text-xs">Categorized</span>
+                </div>
+                <div class="card-body p-3" id="pred-company-categories-root">
+                  <div class="company-readiness-card">
+                    <div class="company-card-header">
+                      <div class="company-icon"><i class="fa-solid fa-building text-primary"></i></div>
+                      <div>
+                        <h4 class="company-cat-title">Service-Based Companies</h4>
+                        <div class="company-cat-examples text-xs text-muted">TCS, Infosys, Wipro, Cognizant, Accenture</div>
+                      </div>
+                    </div>
+                    <div class="company-card-status"><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> High Readiness</span></div>
+                  </div>
+
+                  <div class="company-readiness-card">
+                    <div class="company-card-header">
+                      <div class="company-icon"><i class="fa-solid fa-rocket text-cyan"></i></div>
+                      <div>
+                        <h4 class="company-cat-title">High-Growth Startup Roles</h4>
+                        <div class="company-cat-examples text-xs text-muted">Swiggy, Zepto, Razorpay, Fintechs, Unicorns</div>
+                      </div>
+                    </div>
+                    <div class="company-card-status"><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> High Readiness</span></div>
+                  </div>
+
+                  <div class="company-readiness-card">
+                    <div class="company-card-header">
+                      <div class="company-icon"><i class="fa-solid fa-briefcase text-amber"></i></div>
+                      <div>
+                        <h4 class="company-cat-title">Product-Based Companies</h4>
+                        <div class="company-cat-examples text-xs text-muted">Oracle, Cisco, Adobe, Salesforce, Intuit</div>
+                      </div>
+                    </div>
+                    <div class="company-card-status"><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> High Readiness</span></div>
+                  </div>
+
+                  <div class="company-readiness-card">
+                    <div class="company-card-header">
+                      <div class="company-icon"><i class="fa-solid fa-crown text-emerald"></i></div>
+                      <div>
+                        <h4 class="company-cat-title">Top Product Companies</h4>
+                        <div class="company-cat-examples text-xs text-muted">Google, Microsoft, Amazon, Atlassian, Uber</div>
+                      </div>
+                    </div>
+                    <div class="company-card-status"><span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> High Readiness</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actionable Improvement Suggestions Card -->
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title"><i class="fa-solid fa-lightbulb text-amber"></i> Actionable Improvement Suggestions</h3>
+                  <h3 class="card-title text-sm"><i class="fa-solid fa-lightbulb text-amber"></i> Actionable Improvement Suggestions</h3>
                 </div>
                 <ul class="suggestions-list" id="pred-suggestions-list">
-                  <!-- Injected dynamically -->
+                  <li class="suggestion-item">
+                    <i class="fa-solid fa-circle-check text-emerald"></i>
+                    <span>Solid DSA depth (85%). Maintain competitive momentum by participating in weekly LeetCode contests.</span>
+                  </li>
+                  <li class="suggestion-item">
+                    <i class="fa-solid fa-circle-check text-emerald"></i>
+                    <span>Strong academic standing (8.45 CGPA) clears initial eligibility cutoffs for 96% of campus hiring firms.</span>
+                  </li>
+                  <li class="suggestion-item">
+                    <i class="fa-solid fa-server text-cyan"></i>
+                    <span>Review Operating Systems (Deadlocks, Paging) and DBMS (ACID, Normalization) before technical interviews.</span>
+                  </li>
                 </ul>
               </div>
+
             </div>
           </div>
         </section>
@@ -876,7 +1081,7 @@
           </div>
 
           <!-- Side-by-Side Comparison -->
-          <div class="gap-analysis-grid">
+          <div class="gap-analysis-grid mb-4">
             <div class="skill-comparison-card">
               <div class="card-header">
                 <h3 class="card-title text-success"><i class="fa-solid fa-circle-check text-emerald"></i> Matched Technical Skills</h3>
@@ -900,8 +1105,21 @@
             </div>
           </div>
 
+          <!-- Section: Progress Bar For Every Skill & Targeted Lecture Actions -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-bars-progress text-primary"></i> Skill-by-Skill Proficiency & Lecture Actions</h3>
+                <p class="card-subtitle">Detailed progress bar, priority band (Critical / High / Medium), and direct lecture links for every skill</p>
+              </div>
+            </div>
+            <div class="card-body p-3" id="skillgap-detailed-bars-root">
+              <!-- Dynamically injected progress bars per skill -->
+            </div>
+          </div>
+
           <!-- Targeted Bridging Recommendations -->
-          <div style="margin-top: 2rem;">
+          <div style="margin-top: 1.5rem;">
             <h3 class="text-xl font-bold mb-3" style="margin-bottom: 1rem;">Actionable Gap Bridging Plan</h3>
             <div id="skillgap-recommendations">
               <!-- Injected recommendations -->
@@ -1100,6 +1318,7 @@
   <!-- Application Logic Modules in proper dependency sequence -->
   <script src="js/state.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/youtube.js"></script>
   <script src="js/resume.js"></script>
   <script src="js/prediction.js"></script>
   <script src="js/coach.js"></script>

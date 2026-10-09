@@ -23,8 +23,14 @@ const DEFAULT_STUDENT_DATA = {
     backlogs: 0,
     aptitudeScore: 88,
     codingRating: 1740,
+    programmingLanguage: 'Java',
+    dsaSkill: 'Advanced',
+    coreCsKnowledge: 'Strong',
+    devSkills: 'Full Stack & APIs',
+    communicationScore: 85,
+    resumeScore: 88,
     targetCareerId: 'sde',
-    targetCareerTitle: 'Software Development Engineer',
+    targetCareerTitle: 'Software Engineer / SDE',
     skills: [
       'Java',
       'Python',
@@ -108,123 +114,478 @@ const DEFAULT_STUDENT_DATA = {
   }
 };
 
-// Careers Master Catalog
+// Careers Master Catalog – Complete Career Mapping Engine Specification
 const CAREERS_CATALOG = [
   {
     id: 'sde',
-    title: 'Software Development Engineer',
+    title: 'Software Engineer / SDE',
     category: 'Core Engineering',
     icon: 'fa-solid fa-code',
-    salary: '₹8 - 28 LPA',
-    desc: 'Designs, develops, tests, and deploys high-scale software systems and resilient backend architectures.',
+    salary: '₹12 - 36 LPA',
+    desc: 'Designs robust system algorithms, develops high-scale software architectures, and solves challenging algorithmic problems.',
     requiredSkills: [
-      'Data Structures & Algorithms',
-      'Java',
-      'C++',
-      'SQL & DBMS',
+      'C++ / Java / Python',
+      'Data Structures',
+      'Algorithms',
+      'Problem Solving',
+      'OOP',
+      'DBMS',
       'Operating Systems',
       'Computer Networks',
-      'System Design',
-      'Git & GitHub'
+      'System Design'
     ],
-    topCompanies: ['Google', 'Microsoft', 'Amazon', 'Adobe', 'Uber', 'Cisco'],
-    learningPath: 'Master DSA (LeetCode 150) → Core CS Fundamentals → Low Level Design → Build 2 Full-Stack Projects'
+    skillDifficulty: {
+      'C++ / Java / Python': 'Beginner',
+      'OOP': 'Beginner',
+      'DBMS': 'Intermediate',
+      'Computer Networks': 'Intermediate',
+      'Operating Systems': 'Intermediate',
+      'Data Structures': 'Intermediate',
+      'Algorithms': 'Advanced',
+      'Problem Solving': 'Advanced',
+      'System Design': 'Advanced'
+    },
+    skillPriority: {
+      'Data Structures': 'High Priority',
+      'Algorithms': 'High Priority',
+      'Problem Solving': 'High Priority',
+      'Operating Systems': 'Critical',
+      'DBMS': 'High Priority',
+      'System Design': 'Critical',
+      'C++ / Java / Python': 'Medium',
+      'OOP': 'Medium',
+      'Computer Networks': 'Medium'
+    },
+    youtubeSearchTopics: [
+      'DSA roadmap for placements',
+      'Data Structures and Algorithms',
+      'LeetCode interview preparation',
+      'OOP interview preparation',
+      'DBMS interview preparation'
+    ],
+    topCompanies: ['Google', 'Microsoft', 'Amazon', 'Atlassian', 'Adobe', 'Uber', 'Cisco'],
+    learningPath: 'Master DSA (LeetCode 150) → Core CS (OS, DBMS, Networks) → Low-Level & High-Level System Design → 2 Scalable Full-Stack Microservices',
+    recommendedProjects: [
+      {
+        title: 'Distributed Fault-Tolerant Key-Value Store',
+        stack: 'Java / Go, gRPC, Raft Consensus, Docker',
+        desc: 'Implemented distributed consensus algorithm with leader election, log replication, and 99.99% fault tolerance.',
+        recruiterNote: 'Demonstrates concurrency, network protocol design, and distributed systems understanding.'
+      },
+      {
+        title: 'High-Concurrency Campus Placement Engine',
+        stack: 'Spring Boot / Node.js, Redis, PostgreSQL, Kafka',
+        desc: 'Automates student eligibility filtration and handles 10,000 concurrent drive registrations with message queue throttling.',
+        recruiterNote: 'Proves high-load backend architecture and real-world database design.'
+      }
+    ],
+    interviewTopics: [
+      'Arrays, HashMaps, Two Pointers & Binary Search',
+      'Trees, Graphs, BFS/DFS, Dijkstra & Topological Sort',
+      'Dynamic Programming & Recursion Memoization',
+      'Operating Systems: Process Synchronization, Deadlocks, Paging',
+      'DBMS: ACID, Indexing, B-Trees, Normalization & Sharding',
+      'System Design: Caching, Load Balancing & Microservices'
+    ],
+    placementPrep: [
+      'Speed Coding (HackerRank & LeetCode 60-min assessments)',
+      'CS Core Fundamentals Multiple Choice & Technical Viva',
+      'Live Coding Walkthrough & Behavioral STAR Interviews'
+    ]
   },
   {
     id: 'webdev',
-    title: 'Full Stack Web Developer',
+    title: 'Frontend Developer / Full Stack Developer',
     category: 'Web & Applications',
     icon: 'fa-solid fa-laptop-code',
-    salary: '₹6 - 20 LPA',
-    desc: 'Builds end-to-end responsive web applications with interactive frontends and scalable backend APIs.',
+    salary: '₹8 - 24 LPA',
+    desc: 'Crafts responsive user interfaces, interactive web apps, modern component systems, and scalable backend REST/GraphQL services.',
     requiredSkills: [
-      'HTML/CSS',
+      'HTML',
+      'CSS',
       'JavaScript',
-      'React.js',
+      'React',
+      'TypeScript',
       'Node.js',
+      'Express',
       'REST APIs',
-      'SQL & DBMS',
-      'Git & GitHub',
-      'TypeScript'
+      'Git/GitHub',
+      'SQL/MongoDB'
     ],
-    topCompanies: ['Swiggy', 'Zomato', 'Paytm', 'Razorpay', 'Atlassian', 'Flipkart'],
-    learningPath: 'Modern JS (ES6+) → Frontend Framework (React/Next.js) → Backend (Node/Express) → Database & Cloud Deployment'
+    skillDifficulty: {
+      'HTML': 'Beginner',
+      'CSS': 'Beginner',
+      'JavaScript': 'Intermediate',
+      'Git/GitHub': 'Beginner',
+      'React': 'Intermediate',
+      'REST APIs': 'Intermediate',
+      'Node.js': 'Intermediate',
+      'Express': 'Intermediate',
+      'SQL/MongoDB': 'Intermediate',
+      'TypeScript': 'Advanced'
+    },
+    skillPriority: {
+      'JavaScript': 'High Priority',
+      'React': 'High Priority',
+      'TypeScript': 'Critical',
+      'REST APIs': 'High Priority',
+      'Node.js': 'High Priority',
+      'HTML': 'Medium',
+      'CSS': 'Medium',
+      'SQL/MongoDB': 'Medium',
+      'Git/GitHub': 'Medium'
+    },
+    youtubeSearchTopics: [
+      'HTML CSS JavaScript full course',
+      'JavaScript placement preparation',
+      'React JS full course',
+      'React projects',
+      'Node.js full course',
+      'Full stack development roadmap'
+    ],
+    topCompanies: ['Swiggy', 'Zomato', 'Paytm', 'Razorpay', 'Flipkart', 'Zepto', 'Intuit'],
+    learningPath: 'Modern JS (ES6+, Event Loop) → React 19 & Component Architecture → Node.js / Express APIs → TypeScript & Cloud Deployment',
+    recommendedProjects: [
+      {
+        title: 'Real-Time Collaborative Code Editor with Live Execution',
+        stack: 'React, TypeScript, Node.js, WebSockets, Redis',
+        desc: 'Built multi-cursor synchronized code editor with room management, syntax highlighting, and live containerized compilation.',
+        recruiterNote: 'Demonstrates WebSocket real-time state sync and sophisticated frontend component architecture.'
+      },
+      {
+        title: 'High-Performance E-Commerce Platform with Stripe Checkout',
+        stack: 'Next.js, Tailwind CSS, Express, MongoDB, Redis',
+        desc: 'Includes JWT auth, optimistic UI updates, Redis product caching, and webhooks for payment verification.',
+        recruiterNote: 'Proves complete full-stack mastery and payment integration experience.'
+      }
+    ],
+    interviewTopics: [
+      'JavaScript Engine: Call Stack, Event Loop, Closures, Hoisting',
+      'React: Virtual DOM, Reconciliation, Hooks Internals, State Management',
+      'Asynchronous Programming: Promises, Async/Await, Microtasks',
+      'API Design: Idempotency, Rate Limiting, CORS, Authentication Tokens',
+      'Web Performance: Bundle Splitting, Lazy Loading, Core Web Vitals'
+    ],
+    placementPrep: [
+      'Machine Coding Round: Build a complex component (e.g., Infinite Scroll or Autocomplete) in 90 minutes',
+      'Frontend System Design: Architecture of Pinterest / Netflix homepage',
+      'Live Debugging & Refactoring Exercise'
+    ]
   },
   {
     id: 'data-analyst',
-    title: 'Data Analyst & BI Specialist',
+    title: 'Data Analyst / Data Scientist',
     category: 'Data & Analytics',
     icon: 'fa-solid fa-chart-pie',
-    salary: '₹6 - 16 LPA',
-    desc: 'Transforms complex raw datasets into actionable executive insights, dashboards, and growth metrics.',
+    salary: '₹7 - 20 LPA',
+    desc: 'Uncovers trends, patterns, and insights from massive datasets to drive commercial decisions and executive strategy.',
     requiredSkills: [
       'Python',
-      'SQL & DBMS',
-      'Power BI / Tableau',
-      'Pandas & NumPy',
+      'SQL',
       'Statistics',
+      'Pandas',
+      'NumPy',
       'Data Visualization',
-      'Excel (Advanced)'
+      'Power BI / Tableau',
+      'Excel',
+      'Machine Learning fundamentals'
     ],
-    topCompanies: ['Deloitte', 'EY', 'Fractal', 'Mu Sigma', 'Accenture', 'JPMorgan'],
-    learningPath: 'Advanced SQL Queries → Python for Data Analysis → Power BI Dashboards → Statistical Modeling'
+    skillDifficulty: {
+      'Excel': 'Beginner',
+      'SQL': 'Intermediate',
+      'Python': 'Intermediate',
+      'Pandas': 'Intermediate',
+      'NumPy': 'Intermediate',
+      'Data Visualization': 'Beginner',
+      'Power BI / Tableau': 'Intermediate',
+      'Statistics': 'Advanced',
+      'Machine Learning fundamentals': 'Advanced'
+    },
+    skillPriority: {
+      'SQL': 'High Priority',
+      'Statistics': 'Critical',
+      'Python': 'High Priority',
+      'Pandas': 'High Priority',
+      'Power BI / Tableau': 'Medium',
+      'Data Visualization': 'Medium',
+      'NumPy': 'Medium',
+      'Excel': 'Medium',
+      'Machine Learning fundamentals': 'Critical'
+    },
+    youtubeSearchTopics: [
+      'SQL for data analysis',
+      'Python for data science',
+      'Pandas full course',
+      'Statistics for data science',
+      'Power BI full course',
+      'Data analyst roadmap'
+    ],
+    topCompanies: ['Deloitte', 'EY', 'Fractal Analytics', 'Mu Sigma', 'JPMorgan Chase', 'Accenture', 'Tiger Analytics'],
+    learningPath: 'Advanced Analytical SQL → Statistical Foundations & Hypothesis Testing → Python Pandas/NumPy → Interactive BI Dashboards',
+    recommendedProjects: [
+      {
+        title: 'Executive Healthcare Outcomes & Readmission Predictive Dashboard',
+        stack: 'Python, SQL, Power BI, Scikit-Learn',
+        desc: 'Processed 150,000+ patient records, uncovered core readmission indicators, and built interactive hospital executive dashboard.',
+        recruiterNote: 'Demonstrates end-to-end analytical pipeline from raw queries to business storytelling.'
+      },
+      {
+        title: 'Customer Lifetime Value & Churn Prediction Pipeline',
+        stack: 'Python, Pandas, Seaborn, XGBoost, Streamlit',
+        desc: 'Engineered cohort retention models and identified key customer friction drivers, increasing simulated retention by 22%.',
+        recruiterNote: 'Proves statistical modeling and machine learning fundamentals.'
+      }
+    ],
+    interviewTopics: [
+      'Complex SQL: Windows Functions (DENSE_RANK, LEAD/LAG), CTEs, Self Joins',
+      'Statistical Inference: P-Values, Confidence Intervals, Central Limit Theorem, A/B Testing',
+      'Data Wrangling: Handling Missing Data, Outliers, Feature Scaling',
+      'Business Metrics: LTV, CAC, Retention Cohorts, Churn Rate calculation'
+    ],
+    placementPrep: [
+      'Live SQL Query Screenings on HackerRank/StrataScratch',
+      'Case Study Analysis: "How would you diagnose a 15% drop in user engagement?"',
+      'Portfolio Presentation of Business Intelligence Dashboards'
+    ]
   },
   {
     id: 'aiml',
-    title: 'AI / Machine Learning Engineer',
+    title: 'AI/ML Engineer',
     category: 'Artificial Intelligence',
     icon: 'fa-solid fa-brain',
-    salary: '₹10 - 32 LPA',
-    desc: 'Engineers predictive mathematical models, deep learning architectures, and generative AI pipelines.',
+    salary: '₹14 - 40 LPA',
+    desc: 'Builds neural networks, deep learning models, natural language processing (NLP), and intelligent generative AI pipelines.',
     requiredSkills: [
       'Python',
-      'Mathematics & Linear Algebra',
-      'Scikit-Learn',
-      'Deep Learning (PyTorch/TensorFlow)',
-      'Data Structures & Algorithms',
-      'SQL & DBMS',
-      'Git & GitHub'
+      'NumPy',
+      'Pandas',
+      'Statistics',
+      'Machine Learning',
+      'Deep Learning',
+      'Neural Networks',
+      'NLP',
+      'TensorFlow/PyTorch',
+      'Generative AI'
     ],
-    topCompanies: ['NVIDIA', 'Microsoft', 'Google DeepMind', 'InMobi', 'Flipkart', 'Wadhwani AI'],
-    learningPath: 'Math & Stats Foundations → ML Algorithms from scratch → Deep Learning Frameworks → Deploy models via FastAPI & Docker'
+    skillDifficulty: {
+      'Python': 'Beginner',
+      'NumPy': 'Intermediate',
+      'Pandas': 'Intermediate',
+      'Statistics': 'Intermediate',
+      'Machine Learning': 'Intermediate',
+      'Neural Networks': 'Advanced',
+      'Deep Learning': 'Advanced',
+      'NLP': 'Advanced',
+      'TensorFlow/PyTorch': 'Advanced',
+      'Generative AI': 'Advanced'
+    },
+    skillPriority: {
+      'Machine Learning': 'High Priority',
+      'Deep Learning': 'High Priority',
+      'Neural Networks': 'Critical',
+      'TensorFlow/PyTorch': 'Critical',
+      'Statistics': 'High Priority',
+      'NLP': 'High Priority',
+      'Generative AI': 'Critical',
+      'Python': 'Medium',
+      'NumPy': 'Medium',
+      'Pandas': 'Medium'
+    },
+    youtubeSearchTopics: [
+      'Machine learning full course',
+      'Deep learning full course',
+      'Neural networks explained',
+      'NLP full course',
+      'Generative AI roadmap',
+      'AI ML placement preparation'
+    ],
+    topCompanies: ['NVIDIA', 'Microsoft AI', 'Google DeepMind', 'InMobi', 'Flipkart', 'Wadhwani AI', 'Ola Krutrim'],
+    learningPath: 'Linear Algebra & Calculus → Classical ML from Scratch → PyTorch Deep Learning & CNNs → Transformers, NLP & Generative AI',
+    recommendedProjects: [
+      {
+        title: 'Multimodal Medical MRI Diagnostic Classifier',
+        stack: 'Python, PyTorch, TorchVision, FastAPI, Docker',
+        desc: 'Trained Convolutional Neural Network (DenseNet) with attention gates achieving 95.2% accuracy on 40,000 clinical scans.',
+        recruiterNote: 'Demonstrates deep learning model architecture, loss optimization, and medical AI ethics.'
+      },
+      {
+        title: 'Enterprise Enterprise RAG Assistant with Hybrid Search',
+        stack: 'LangChain, LlamaIndex, Pinecone, OpenAI / Ollama, FastAPI',
+        desc: 'Implemented semantic vector indexing, re-ranking algorithms, and conversational memory with sub-second response times.',
+        recruiterNote: 'Proves modern Generative AI engineering and vector database integration.'
+      }
+    ],
+    interviewTopics: [
+      'Math of Backpropagation, Gradient Descent variants (Adam, RMSProp)',
+      'Regularization: L1/L2, Dropout, Batch Normalization, Data Augmentation',
+      'Transformers: Self-Attention mechanism, Positional Encodings, BERT vs GPT',
+      'Model Evaluation: ROC-AUC, F1-Score, Bias-Variance Tradeoff, Confusion Matrix',
+      'ML System Design: Recommendation systems, embedding generation, GPU latency'
+    ],
+    placementPrep: [
+      'Mathematical Derivations on Whiteboard (Linear Regression, SVMs)',
+      'PyTorch / TensorFlow Coding Test',
+      'Research Paper Discussion and Thesis Viva'
+    ]
   },
   {
     id: 'cloud-devops',
-    title: 'Cloud & DevOps Engineer',
+    title: 'DevOps Engineer / Cloud Engineer',
     category: 'Infrastructure & Cloud',
     icon: 'fa-solid fa-cloud',
-    salary: '₹7 - 22 LPA',
-    desc: 'Automates continuous deployment pipelines and orchestrates resilient multi-cloud infrastructure.',
+    salary: '₹9 - 28 LPA',
+    desc: 'Automates server infrastructure, containerizes applications, provisions cloud architectures, and orchestrates CI/CD pipelines.',
     requiredSkills: [
-      'Linux & Shell Scripting',
-      'AWS / Azure',
-      'Docker Basics',
+      'Linux',
+      'Networking',
+      'Git',
+      'Docker',
       'Kubernetes',
-      'CI/CD Pipelines (GitHub Actions/Jenkins)',
-      'Computer Networks',
-      'Python'
+      'CI/CD',
+      'AWS/Azure/GCP',
+      'Terraform',
+      'Monitoring',
+      'Cloud Security'
     ],
-    topCompanies: ['Amazon Web Services', 'Red Hat', 'Infosys', 'Wipro', 'Capgemini', 'IBM'],
-    learningPath: 'Linux Administration → Cloud Foundations (AWS/Azure) → Containerization (Docker) → CI/CD & Terraform'
+    skillDifficulty: {
+      'Git': 'Beginner',
+      'Linux': 'Intermediate',
+      'Networking': 'Intermediate',
+      'Docker': 'Intermediate',
+      'CI/CD': 'Intermediate',
+      'AWS/Azure/GCP': 'Intermediate',
+      'Kubernetes': 'Advanced',
+      'Terraform': 'Advanced',
+      'Monitoring': 'Intermediate',
+      'Cloud Security': 'Advanced'
+    },
+    skillPriority: {
+      'Docker': 'High Priority',
+      'Kubernetes': 'Critical',
+      'CI/CD': 'High Priority',
+      'AWS/Azure/GCP': 'High Priority',
+      'Linux': 'High Priority',
+      'Terraform': 'Critical',
+      'Cloud Security': 'Medium',
+      'Networking': 'Medium',
+      'Monitoring': 'Medium',
+      'Git': 'Medium'
+    },
+    youtubeSearchTopics: [
+      'DevOps roadmap',
+      'Docker Kubernetes full course',
+      'AWS cloud full course',
+      'Linux for DevOps',
+      'CI/CD pipeline',
+      'Kubernetes for beginners'
+    ],
+    topCompanies: ['Amazon Web Services', 'Red Hat', 'Microsoft Azure', 'Infosys Cloud', 'Wipro', 'Capgemini', 'Cisco'],
+    learningPath: 'Linux Administration & Bash → Cloud Architecture (AWS) → Docker Containerization → Kubernetes Orchestration & Terraform IaC',
+    recommendedProjects: [
+      {
+        title: 'End-to-End Automated GitOps Pipeline with ArgoCD & Kubernetes',
+        stack: 'Kubernetes (k8s), ArgoCD, GitHub Actions, Docker, Helm',
+        desc: 'Automated continuous integration and deployment with canary rollouts, automated rollback, and zero-downtime deployments.',
+        recruiterNote: 'Demonstrates modern cloud-native GitOps deployment practices.'
+      },
+      {
+        title: 'Multi-Region High-Availability Cloud Infrastructure as Code',
+        stack: 'Terraform, AWS (VPC, EKS, RDS, S3, Route53), Prometheus & Grafana',
+        desc: 'Provisioned fault-tolerant infrastructure with automated auto-scaling groups, alerting metrics, and centralized logging.',
+        recruiterNote: 'Proves enterprise cloud architecture and infrastructure provisioning.'
+      }
+    ],
+    interviewTopics: [
+      'Linux Troubleshooting: top, netstat, systemd, strace, file permissions',
+      'Docker: Multi-stage builds, container isolation, cgroups, volume persistence',
+      'Kubernetes: Pods, ReplicaSets, Services (ClusterIP vs NodePort), Ingress controllers',
+      'CI/CD: Blue-Green vs Canary deployments, security scanning in pipelines',
+      'Cloud Networking: VPC Peering, CIDR blocks, Subnets, NAT Gateways'
+    ],
+    placementPrep: [
+      'Live Linux Shell Terminal Assessment',
+      'Kubernetes Cluster Configuration Debugging',
+      'Cloud Infrastructure Whiteboard Design'
+    ]
   },
   {
     id: 'cybersecurity',
-    title: 'Cybersecurity Analyst',
+    title: 'Cybersecurity Engineer / Security Analyst',
     category: 'Security & Defense',
     icon: 'fa-solid fa-shield-halved',
-    salary: '₹7 - 24 LPA',
-    desc: 'Protects enterprise digital assets through vulnerability assessments, penetration testing, and incident audits.',
+    salary: '₹8 - 26 LPA',
+    desc: 'Audits vulnerabilities, performs ethical penetration testing, monitors SIEM security operation centers, and analyzes digital forensics.',
     requiredSkills: [
-      'Computer Networks',
-      'Linux & Shell Scripting',
-      'Ethical Hacking & Pentesting',
-      'Cryptography',
-      'Operating Systems',
-      'SIEM Tools (Splunk/Wireshark)',
-      'Python'
+      'Networking',
+      'Linux',
+      'Cybersecurity fundamentals',
+      'Ethical Hacking',
+      'Penetration Testing',
+      'Web Security',
+      'SOC',
+      'Digital Forensics',
+      'SIEM',
+      'Incident Response'
     ],
-    topCompanies: ['Palo Alto Networks', 'CrowdStrike', 'TCS Cyber', 'Wipro', 'QuickHeal', 'PwC'],
-    learningPath: 'Networking Protocols (TCP/IP) → Linux Security → CompTIA Security+ prep → CTF & TryHackMe Labs'
+    skillDifficulty: {
+      'Linux': 'Intermediate',
+      'Networking': 'Intermediate',
+      'Cybersecurity fundamentals': 'Beginner',
+      'Web Security': 'Intermediate',
+      'Ethical Hacking': 'Intermediate',
+      'SIEM': 'Intermediate',
+      'SOC': 'Intermediate',
+      'Penetration Testing': 'Advanced',
+      'Digital Forensics': 'Advanced',
+      'Incident Response': 'Advanced'
+    },
+    skillPriority: {
+      'Networking': 'High Priority',
+      'Ethical Hacking': 'High Priority',
+      'Web Security': 'High Priority',
+      'Penetration Testing': 'Critical',
+      'SIEM': 'Critical',
+      'Digital Forensics': 'Critical',
+      'Linux': 'Medium',
+      'Cybersecurity fundamentals': 'Medium',
+      'SOC': 'Medium',
+      'Incident Response': 'Medium'
+    },
+    youtubeSearchTopics: [
+      'Cybersecurity roadmap',
+      'Ethical hacking full course',
+      'Networking for cybersecurity',
+      'Linux for cybersecurity',
+      'SOC analyst roadmap',
+      'Digital forensics course'
+    ],
+    topCompanies: ['Palo Alto Networks', 'CrowdStrike', 'TCS Cyber Security', 'Wipro Cyber', 'PwC', 'KPMG', 'Quick Heal'],
+    learningPath: 'TCP/IP Network Forensics → Kali Linux & Bash → OWASP Web Security & Pentesting → SOC Operations & SIEM Splunk Triage',
+    recommendedProjects: [
+      {
+        title: 'Automated Web Vulnerability Scanner & Exploit Reporter',
+        stack: 'Python, Scapy, Requests, OWASP ZAP API, Beautiful Soup',
+        desc: 'Discovers SQL Injection, XSS, and insecure direct object references (IDOR) with automated CVSS severity score generation.',
+        recruiterNote: 'Demonstrates penetration testing automation and defensive coding.'
+      },
+      {
+        title: 'Enterprise SOC SIEM Detection & Brute-Force Incident Response Lab',
+        stack: 'Splunk SIEM, Wireshark, Snort IDS, Suricata, Kali Linux',
+        desc: 'Simulated multi-stage cyber attacks, configured custom IDS alert rules, and generated forensic incident reports.',
+        recruiterNote: 'Proves security monitoring, alert triage, and threat hunting.'
+      }
+    ],
+    interviewTopics: [
+      'OWASP Top 10: In-depth mitigation of SQL Injection, XSS, CSRF, and SSRF',
+      'Network Security: TCP 3-Way Handshake, SYN Flood attacks, ARP Poisoning, DNS Spoofing',
+      'Cryptography: Symmetric vs Asymmetric ciphers, Hashing (SHA vs MD5), Public Key Infrastructure (PKI)',
+      'Incident Response: Preparation, Identification, Containment, Eradication, Recovery, Lessons Learned'
+    ],
+    placementPrep: [
+      'Capture The Flag (CTF) Web Security Challenges (TryHackMe/HackTheBox)',
+      'Wireshark .pcap File Packet Analysis Assessment',
+      'Security Incident Playbook Discussion'
+    ]
   }
 ];
 
@@ -302,8 +663,14 @@ class StateManager {
       backlogs: parseInt(user.backlogs !== undefined ? user.backlogs : 0),
       aptitudeScore: parseInt(user.aptitudeScore !== undefined ? user.aptitudeScore : (user.aptitude_score || 80)),
       codingRating: parseInt(user.codingRating !== undefined ? user.codingRating : (user.coding_rating || 1600)),
+      programmingLanguage: user.programmingLanguage || user.programming_language || 'Java',
+      dsaSkill: user.dsaSkill || user.dsa_skill || 'Advanced',
+      coreCsKnowledge: user.coreCsKnowledge || user.core_cs_knowledge || 'Strong',
+      devSkills: user.devSkills || user.dev_skills || 'Full Stack & APIs',
+      communicationScore: parseInt(user.communicationScore !== undefined ? user.communicationScore : (user.communication_score || 85)),
+      resumeScore: parseInt(user.resumeScore !== undefined ? user.resumeScore : (user.resume_score || 85)),
       targetCareerId: user.targetCareerId || user.target_career_id || 'sde',
-      targetCareerTitle: user.targetCareerTitle || user.target_career_title || 'Software Development Engineer',
+      targetCareerTitle: user.targetCareerTitle || user.target_career_title || 'Software Engineer / SDE',
       skills: Array.isArray(user.skills) ? user.skills : (typeof user.skills === 'string' ? JSON.parse(user.skills || '[]') : []),
       certifications: Array.isArray(user.certifications) ? user.certifications : (typeof user.certifications === 'string' ? JSON.parse(user.certifications || '[]') : []),
       projects: Array.isArray(user.projects) ? user.projects : (typeof user.projects === 'string' ? JSON.parse(user.projects || '[]') : []),

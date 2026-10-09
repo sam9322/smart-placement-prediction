@@ -462,63 +462,9 @@ function handleRangeInput(sliderId, labelId) {
   }
 }
 
-function handleRunPrediction(e) {
-  if (e) e.preventDefault();
+// Prediction calculation handler is managed by js/prediction.js (calculateSmartPlacementPrediction)
 
-  const cgpa = parseFloat(document.getElementById('pred-cgpa').value) || 7.0;
-  const aptitudeScore = parseInt(document.getElementById('pred-aptitude').value) || 70;
-  const codingRating = parseInt(document.getElementById('pred-coding').value) || 1400;
-  const projectsCount = parseInt(document.getElementById('pred-projects').value) || 0;
-  const internshipsCount = parseInt(document.getElementById('pred-internships').value) || 0;
-  const certsCount = parseInt(document.getElementById('pred-certs').value) || 0;
-  const backlogs = parseInt(document.getElementById('pred-backlogs').value) || 0;
 
-  const profile = appState.getProfile();
-  const skillsCount = (profile.skills || []).length;
-
-  const result = calculatePlacementProbability({
-    cgpa,
-    skillsCount,
-    internshipsCount,
-    projectsCount,
-    certsCount,
-    aptitudeScore,
-    codingRating,
-    backlogs
-  });
-
-  // Save to State
-  appState.updatePrediction({
-    probability: result.probability,
-    tier: result.tier,
-    tierLabel: result.tierLabel,
-    factors: result.factors,
-    lastCalculated: new Date().toISOString().split('T')[0]
-  });
-
-  // Sync to backend SQLite database if user is authenticated
-  if (window.authManager) {
-    authManager.syncPredictionToBackend(result);
-  }
-
-  // Animate Gauge
-  updateGaugeDisplay('pred-gauge-svg', 'pred-gauge-val', result.probability);
-
-  // Render Details & Suggestions
-  renderPredictionDetails(result);
-
-  // Trigger celebration confetti if High tier!
-  if (result.probability >= 80 && typeof confetti === 'function') {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-  }
-
-  showToast(`Prediction calculated: ${result.probability}% Placement Probability (${result.tier} Readiness)!`, 'success');
-  if (window.renderDashboard) renderDashboard();
-}
 
 function renderPredictionDetails(result) {
   // Tier Status Badge

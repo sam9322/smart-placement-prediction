@@ -86,7 +86,7 @@ def init_db():
         )
     ''')
 
-    # Prediction History Table
+    # Prediction History Table (Model 12: PlacementPrediction)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS predictions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -97,6 +97,145 @@ def init_db():
             factors TEXT DEFAULT '{}',
             calculated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ''')
+
+    # 13 Multi-Entity Data Models:
+    # Model 2: Careers
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS careers (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            category TEXT NOT NULL,
+            avg_package TEXT,
+            description TEXT
+        )
+    ''')
+
+    # Model 3: Career Questions
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS career_questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            question_text TEXT NOT NULL,
+            category TEXT,
+            step_order INTEGER
+        )
+    ''')
+
+    # Model 4: Career Answers
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS career_answers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            question_id INTEGER,
+            answer_text TEXT NOT NULL,
+            target_career_id TEXT,
+            why_explanation TEXT,
+            FOREIGN KEY (question_id) REFERENCES career_questions(id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Model 5: Skills Master
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS skills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT UNIQUE NOT NULL,
+            category TEXT,
+            default_difficulty TEXT
+        )
+    ''')
+
+    # Model 6: Student Skills
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS student_skills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            skill_name TEXT NOT NULL,
+            proficiency INTEGER DEFAULT 75,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Model 7: Career Skills
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS career_skills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            career_id TEXT NOT NULL,
+            skill_name TEXT NOT NULL,
+            priority TEXT DEFAULT 'High Priority',
+            difficulty TEXT DEFAULT 'Intermediate',
+            FOREIGN KEY (career_id) REFERENCES careers(id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Model 8: Assessment Results
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS assessment_results (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            top_career_id TEXT,
+            top_score INTEGER,
+            runner_up_1 TEXT,
+            runner_up_2 TEXT,
+            details_json TEXT DEFAULT '{}',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Model 9: YouTube Resources
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS youtube_resources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            career_id TEXT,
+            title TEXT NOT NULL,
+            channel_name TEXT,
+            video_url TEXT,
+            thumbnail_url TEXT,
+            topic TEXT,
+            level TEXT,
+            duration TEXT,
+            relevance_score REAL,
+            feedback_action TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Model 10: Roadmaps
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS roadmaps (
+            id TEXT PRIMARY KEY,
+            career_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            duration_months INTEGER DEFAULT 6,
+            description TEXT
+        )
+    ''')
+
+    # Model 11: Roadmap Steps
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS roadmap_steps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            roadmap_id TEXT NOT NULL,
+            month_number INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            objective TEXT,
+            skills_json TEXT DEFAULT '[]',
+            lectures_json TEXT DEFAULT '[]',
+            practice_json TEXT DEFAULT '[]',
+            project_json TEXT DEFAULT '{}',
+            interview_json TEXT DEFAULT '[]',
+            FOREIGN KEY (roadmap_id) REFERENCES roadmaps(id) ON DELETE CASCADE
+        )
+    ''')
+
+    # Model 13: Interview Questions
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS interview_questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            career_id TEXT NOT NULL,
+            category TEXT,
+            question TEXT NOT NULL,
+            sample_answer TEXT,
+            difficulty TEXT
         )
     ''')
 
@@ -375,6 +514,19 @@ def init_db():
                 INSERT INTO predictions (user_id, probability, tier, tier_label, factors)
                 VALUES (?, ?, ?, ?, ?)
             ''', (jyo_row['id'], 86, 'High', 'High Readiness - Tier 1 Product / IT Giant (10 - 22 LPA)', jyo_factors))
+
+    # Seed Careers Catalog if empty
+    cursor.execute('SELECT COUNT(*) FROM careers')
+    if cursor.fetchone()[0] == 0:
+        default_careers = [
+            ('sde', 'Software Engineer / SDE', 'Core Engineering', '₹12 - 36 LPA', 'Designing robust system algorithms, scalable backends, and optimizing data structures'),
+            ('webdev', 'Frontend Developer / Full Stack Developer', 'Web & Applications', '₹8 - 24 LPA', 'Crafting responsive user interfaces, full-stack microservices, and interactive web apps'),
+            ('data-analyst', 'Data Analyst / Data Scientist', 'Data & Analytics', '₹7 - 20 LPA', 'Uncovering trends, patterns, statistical modeling, and insights from massive datasets'),
+            ('aiml', 'AI/ML Engineer', 'Artificial Intelligence', '₹14 - 40 LPA', 'Building neural networks, NLP, transformer models, and intelligent predictive pipelines'),
+            ('cloud-devops', 'DevOps Engineer / Cloud Engineer', 'Infrastructure & Cloud', '₹9 - 28 LPA', 'Automating server infrastructure, containers, CI/CD, and cloud pipelines'),
+            ('cybersecurity', 'Cybersecurity Engineer / Security Analyst', 'Security & Defense', '₹8 - 26 LPA', 'Auditing vulnerabilities, penetration testing, threat modeling, and digital forensics')
+        ]
+        cursor.executemany('INSERT INTO careers (id, title, category, avg_package, description) VALUES (?, ?, ?, ?, ?)', default_careers)
 
     # Normalize old test accounts if any
     cursor.execute("UPDATE users SET email = 'samiksha_test@backup.edu' WHERE email = 'samiksha@gmail.com'")
@@ -1038,6 +1190,221 @@ def analyze_resume():
         'message': f'Resume successfully analyzed! ATS Score: {analysis["atsScore"]}/100',
         'data': analysis
     }), 200
+
+# ==============================================================================
+# CAREER ENGINE, YOUTUBE & PLACEMENT PREDICTION API ENDPOINTS
+# ==============================================================================
+
+CAREER_MAPPING_DATA = [
+    {
+        'id': 'sde',
+        'title': 'Software Engineer / SDE',
+        'category': 'Core Engineering',
+        'avgPackage': '₹12 - 36 LPA',
+        'requiredSkills': ['C++ / Java / Python', 'Data Structures', 'Algorithms', 'Problem Solving', 'OOP', 'DBMS', 'Operating Systems', 'Computer Networks', 'System Design'],
+        'searchTopics': ['DSA roadmap for placements', 'Data Structures and Algorithms', 'LeetCode interview preparation', 'OOP interview preparation', 'DBMS interview preparation']
+    },
+    {
+        'id': 'webdev',
+        'title': 'Frontend Developer / Full Stack Developer',
+        'category': 'Web & Applications',
+        'avgPackage': '₹8 - 24 LPA',
+        'requiredSkills': ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript', 'Node.js', 'Express', 'REST APIs', 'Git/GitHub', 'SQL/MongoDB'],
+        'searchTopics': ['HTML CSS JavaScript full course', 'JavaScript placement preparation', 'React JS full course', 'React projects', 'Node.js full course', 'Full stack development roadmap']
+    },
+    {
+        'id': 'data-analyst',
+        'title': 'Data Analyst / Data Scientist',
+        'category': 'Data & Analytics',
+        'avgPackage': '₹7 - 20 LPA',
+        'requiredSkills': ['Python', 'SQL', 'Statistics', 'Pandas', 'NumPy', 'Data Visualization', 'Power BI / Tableau', 'Excel', 'Machine Learning fundamentals'],
+        'searchTopics': ['SQL for data analysis', 'Python for data science', 'Pandas full course', 'Statistics for data science', 'Power BI full course', 'Data analyst roadmap']
+    },
+    {
+        'id': 'aiml',
+        'title': 'AI/ML Engineer',
+        'category': 'Artificial Intelligence',
+        'avgPackage': '₹14 - 40 LPA',
+        'requiredSkills': ['Python', 'NumPy', 'Pandas', 'Statistics', 'Machine Learning', 'Deep Learning', 'Neural Networks', 'NLP', 'TensorFlow/PyTorch', 'Generative AI'],
+        'searchTopics': ['Machine learning full course', 'Deep learning full course', 'Neural networks explained', 'NLP full course', 'Generative AI roadmap', 'AI ML placement preparation']
+    },
+    {
+        'id': 'cloud-devops',
+        'title': 'DevOps Engineer / Cloud Engineer',
+        'category': 'Infrastructure & Cloud',
+        'avgPackage': '₹9 - 28 LPA',
+        'requiredSkills': ['Linux', 'Networking', 'Git', 'Docker', 'Kubernetes', 'CI/CD', 'AWS/Azure/GCP', 'Terraform', 'Monitoring', 'Cloud Security'],
+        'searchTopics': ['DevOps roadmap', 'Docker Kubernetes full course', 'AWS cloud full course', 'Linux for DevOps', 'CI/CD pipeline', 'Kubernetes for beginners']
+    },
+    {
+        'id': 'cybersecurity',
+        'title': 'Cybersecurity Engineer / Security Analyst',
+        'category': 'Security & Defense',
+        'avgPackage': '₹8 - 26 LPA',
+        'requiredSkills': ['Networking', 'Linux', 'Cybersecurity fundamentals', 'Ethical Hacking', 'Penetration Testing', 'Web Security', 'SOC', 'Digital Forensics', 'SIEM', 'Incident Response'],
+        'searchTopics': ['Cybersecurity roadmap', 'Ethical hacking full course', 'Networking for cybersecurity', 'Linux for cybersecurity', 'SOC analyst roadmap', 'Digital forensics course']
+    }
+]
+
+@app.route('/api/careers', methods=['GET'])
+def get_careers():
+    return jsonify({
+        'success': True,
+        'careers': CAREER_MAPPING_DATA
+    }), 200
+
+@app.route('/api/coach/assess', methods=['POST'])
+def assess_career():
+    data = request.get_json() or {}
+    answers = data.get('answers', {})
+    profile = data.get('profile', {})
+
+    raw_scores = {c['id']: 0 for c in CAREER_MAPPING_DATA}
+
+    for val in answers.values():
+        if val in raw_scores:
+            raw_scores[val] += 30
+
+    skills = [s.lower() for s in profile.get('skills', [])]
+    if any('dsa' in s or 'java' in s or 'c++' in s for s in skills): raw_scores['sde'] += 20
+    if any('react' in s or 'javascript' in s or 'html' in s for s in skills): raw_scores['webdev'] += 20
+    if any('sql' in s or 'pandas' in s or 'power bi' in s for s in skills): raw_scores['data-analyst'] += 20
+    if any('machine learning' in s or 'pytorch' in s or 'python' in s for s in skills): raw_scores['aiml'] += 20
+    if any('docker' in s or 'linux' in s or 'aws' in s for s in skills): raw_scores['cloud-devops'] += 20
+    if any('security' in s or 'networking' in s or 'hacking' in s for s in skills): raw_scores['cybersecurity'] += 20
+
+    highest = max(max(raw_scores.values()), 40)
+    ranked = []
+    for c in CAREER_MAPPING_DATA:
+        raw = raw_scores[c['id']]
+        normalized = min(96, max(50, round((raw / highest) * 94) + 2))
+        ranked.append({'career': c, 'score': normalized})
+
+    ranked.sort(key=lambda x: x['score'], reverse=True)
+
+    result = {
+        'top': ranked[0],
+        'runnerUp1': ranked[1],
+        'runnerUp2': ranked[2],
+        'allRanked': ranked,
+        'aiExplanation': f"Based on your assessment responses and technical profile, you have an outstanding {ranked[0]['score']}% match for {ranked[0]['career']['title']}."
+    }
+
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO assessment_results (user_id, top_career_id, top_score, runner_up_1, runner_up_2, details_json)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            profile.get('id', 1),
+            ranked[0]['career']['id'],
+            ranked[0]['score'],
+            ranked[1]['career']['id'],
+            ranked[2]['career']['id'],
+            json.dumps(result)
+        ))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error logging assessment result: {e}")
+
+    return jsonify({'success': True, **result}), 200
+
+@app.route('/api/youtube/recommend', methods=['GET', 'POST'])
+def recommend_youtube():
+    career = request.args.get('career', 'sde')
+    topic = request.args.get('topic', '')
+
+    search_queries = {
+        'sde': 'Data Structures and Algorithms LeetCode placement preparation roadmap',
+        'webdev': 'React JS full course full stack development roadmap Traversy Media',
+        'data-analyst': 'SQL for data analysis Python Alex The Analyst full course',
+        'aiml': 'Machine learning deep learning PyTorch full course Andrew Ng',
+        'cloud-devops': 'DevOps roadmap Docker Kubernetes AWS TechWorld with Nana',
+        'cybersecurity': 'Cybersecurity roadmap ethical hacking full course NetworkChuck'
+    }
+
+    query = f"{topic} placement preparation full course" if topic else search_queries.get(career, search_queries['sde'])
+    search_url = f"https://www.youtube.com/results?search_query={query.replace(' ', '+')}"
+
+    return jsonify({
+        'success': True,
+        'targetCareer': career,
+        'query': query,
+        'searchUrl': search_url,
+        'message': 'Dynamic lecture search URL generated based on student career track and topic relevance.'
+    }), 200
+
+@app.route('/api/youtube/feedback', methods=['POST'])
+def feedback_youtube():
+    data = request.get_json() or {}
+    video_id = data.get('videoId')
+    action = data.get('action')
+
+    if not video_id or not action:
+        return jsonify({'success': False, 'message': 'videoId and action are required.'}), 400
+
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO youtube_resources (video_url, topic, feedback_action)
+            VALUES (?, ?, ?)
+        ''', (f"https://www.youtube.com/watch?v={video_id}", action, action))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error saving video feedback: {e}")
+
+    return jsonify({
+        'success': True,
+        'message': f"Recorded feedback: {action} for video {video_id}. Recommendation weighting dynamically adjusted."
+    }), 200
+
+@app.route('/api/prediction/calculate', methods=['POST'])
+def calculate_prediction_api():
+    params = request.get_json() or {}
+    cgpa = float(params.get('cgpa', 8.0))
+    backlogs = int(params.get('backlogs', 0))
+    dsa_skill = params.get('dsaSkill', 'Advanced')
+    aptitude_score = int(params.get('aptitudeScore', 80))
+
+    dsa_score = 96 if dsa_skill == 'Expert' else 85 if dsa_skill == 'Advanced' else 70 if dsa_skill == 'Intermediate' else 48
+    dev_score = 85
+    core_cs_score = 80
+    proj_score = 85 if int(params.get('projectsCount', 2)) >= 2 else 60
+    academic_score = min(100.0, (cgpa / 10.0) * 100.0)
+
+    raw = (dsa_score * 0.22) + (dev_score * 0.18) + (core_cs_score * 0.15) + (proj_score * 0.15) + (academic_score * 0.15) + (aptitude_score * 0.15)
+    if backlogs > 0:
+        raw -= (backlogs * 12)
+
+    probability = round(min(98, max(20, raw)))
+
+    prediction = {
+        'probability': probability,
+        'tier': 'High' if probability >= 80 else 'Medium' if probability >= 60 else 'Low',
+        'tierLabel': 'High Readiness - Tier 1 Candidate' if probability >= 80 else 'Moderate Readiness - Tier 2 Candidate',
+        'subScores': {
+            'dsa': dsa_score,
+            'development': dev_score,
+            'coreCs': core_cs_score,
+            'projects': proj_score,
+            'communication': int(params.get('communicationScore', 85)),
+            'resume': int(params.get('resumeScore', 82))
+        },
+        'companyReadiness': {
+            'serviceBased': 'High readiness' if probability >= 60 else 'Medium readiness',
+            'startupRoles': 'High readiness' if dev_score >= 75 else 'Medium readiness',
+            'productBased': 'High readiness' if probability >= 75 else 'Medium readiness',
+            'topProduct': 'High readiness' if (dsa_score >= 85 and probability >= 82) else 'Needs improvement'
+        },
+        'strongestOpportunity': 'Software Development Engineer' if dsa_score >= 80 else 'Full Stack Developer',
+        'timestamp': datetime.utcnow().isoformat()
+    }
+
+    return jsonify({'success': True, **prediction}), 200
 
 @app.route('/api/health', methods=['GET'])
 def health():

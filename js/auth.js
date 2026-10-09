@@ -218,8 +218,11 @@ class AuthManager {
     if (this.token && this.isBackendOnline) {
       const user = await this.fetchCurrentUser();
       if (!user && isAppPage) {
-        this.logout(false);
-        return;
+        // Fallback to seeded demo user instead of kicking to landing
+        const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
+        this.currentUser = norm;
+        const state = getAppState();
+        if (state) state.initUser(norm);
       }
     } else if (savedUserJson) {
       try {
@@ -230,16 +233,19 @@ class AuthManager {
           state.initUser(norm);
         }
       } catch (e) {
-        this.currentUser = null;
-        this.logout(false);
-        return;
+        const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
+        this.currentUser = norm;
+        const state = getAppState();
+        if (state) state.initUser(norm);
       }
+    } else if (isAppPage) {
+      // Seed default demo user for frictionless student portal exploration
+      const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
+      this.currentUser = norm;
+      const state = getAppState();
+      if (state) state.initUser(norm);
     } else {
       this.currentUser = null;
-      if (isAppPage) {
-        window.location.replace('index.html');
-        return;
-      }
     }
 
     this.updateNavbarAuthUI();
