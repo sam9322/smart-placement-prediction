@@ -714,7 +714,7 @@
         </button>
       </div>
 
-      <div class="modal-body" style="padding: 1.25rem 1.5rem 0.5rem 1.5rem;">
+      <div class="modal-body" style="padding: 1.25rem 1.5rem;">
         <!-- Sign In Form -->
         <form id="form-login" onsubmit="handleAuthLogin(event)">
           <div class="form-group">
@@ -736,17 +736,6 @@
           <button type="submit" class="btn btn-primary w-full btn-lg" id="login-submit-btn">
             <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
           </button>
-
-          <!-- Quick Test Accounts Helper -->
-          <div style="margin-top: 1rem; padding: 0.6rem 0.8rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.75rem; color: var(--text-secondary); text-align: center;">
-            <i class="fa-solid fa-key" style="margin-right: 4px; color: var(--primary);"></i>
-            <span>Test accounts: </span>
-            <a href="javascript:void(0)" onclick="quickFillAccount('samiksha')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Samiksha</a>
-            <span style="margin: 0 4px; color: var(--border-color);">|</span>
-            <a href="javascript:void(0)" onclick="quickFillAccount('jyoti')" style="color: var(--accent-emerald); font-weight: 600; text-decoration: underline;">Jyoti</a>
-            <span style="margin: 0 4px; color: var(--border-color);">|</span>
-            <span>Pass: <code>password123</code></span>
-          </div>
         </form>
       </div>
 
@@ -774,18 +763,6 @@
     function closeAuthModal() {
       const modal = document.getElementById('auth-modal');
       if (modal) modal.classList.remove('open');
-    }
-
-    function quickFillAccount(type) {
-      const emailInput = document.getElementById('login-email');
-      const passwordInput = document.getElementById('login-password');
-      if (type === 'samiksha') {
-        if (emailInput) emailInput.value = 'samiksha.walbe@engg.edu';
-        if (passwordInput) passwordInput.value = 'password123';
-      } else if (type === 'jyoti') {
-        if (emailInput) emailInput.value = 'jyoti.kore@engg.edu';
-        if (passwordInput) passwordInput.value = 'password123';
-      }
     }
 
     async function handleAuthLogin(e) {

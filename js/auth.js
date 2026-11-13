@@ -292,7 +292,7 @@ class AuthManager {
     return null;
   }
 
-  async login(email, password = 'password123') {
+  async login(email, password = '') {
     const cleanEmail = email.trim().toLowerCase();
     await this.checkBackendHealth();
 
