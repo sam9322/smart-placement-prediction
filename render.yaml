@@ -14,3 +14,4 @@ services:
         value: /data/database.db
       - key: PYTHON_VERSION
         value: 3.11.6
+

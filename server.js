@@ -150,6 +150,89 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Auth Register Endpoint
+app.post('/api/auth/register', (req, res) => {
+  const data = req.body || {};
+  const fullname = (data.fullName || data.fullname || '').trim();
+  const email = (data.email || '').trim().toLowerCase();
+  const rawPhone = String(data.mobileNumber || data.phone || '').trim();
+  const phoneDigits = rawPhone.replace(/[\s\-\(\)\+]/g, '');
+  const cleanPhone = phoneDigits.startsWith('91') && phoneDigits.length === 12 ? phoneDigits.slice(2) : phoneDigits;
+  const college = (data.college || '').trim();
+  const branch = (data.branch || '').trim();
+  const gradYear = String(data.academicYear || data.gradYear || data.grad_year || '').trim();
+  const password = (data.password || '').trim();
+  const confirmPassword = (data.confirmPassword || data.confirm_password || '').trim();
+
+  if (!fullname) return res.status(400).json({ success: false, message: 'Full Name is required.' });
+  if (!email) return res.status(400).json({ success: false, message: 'College Email Address is required.' });
+  if (!rawPhone) return res.status(400).json({ success: false, message: 'Mobile Number is required.' });
+  if (!college) return res.status(400).json({ success: false, message: 'College Name is required.' });
+  if (!branch) return res.status(400).json({ success: false, message: 'Course / Branch is required.' });
+  if (!gradYear) return res.status(400).json({ success: false, message: 'Academic Year is required.' });
+  if (!password) return res.status(400).json({ success: false, message: 'Password is required.' });
+
+  const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ success: false, message: 'Please provide a valid college email address.' });
+  }
+
+  if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+    return res.status(400).json({ success: false, message: 'Mobile number must be a valid 10-digit Indian mobile number.' });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long.' });
+  }
+
+  if (confirmPassword && password !== confirmPassword) {
+    return res.status(400).json({ success: false, message: 'Password and Confirm Password do not match.' });
+  }
+
+  const existing = (db.students || []).find(s => s.email && s.email.toLowerCase() === email);
+  if (existing) {
+    return res.status(409).json({ success: false, message: 'An account with this college email already exists. Please sign in.' });
+  }
+
+  const newStudent = {
+    id: (db.students || []).length + 1,
+    fullName: fullname,
+    fullname: fullname,
+    email: email,
+    phone: `+91 ${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}`,
+    college: college,
+    degree: 'B.Tech',
+    branch: branch,
+    gradYear: gradYear,
+    grad_year: gradYear,
+    rollNumber: `CS${gradYear.slice(-2) || '26'}B${Math.floor(1000 + Math.random() * 9000)}`,
+    cgpa: 8.0,
+    backlogs: 0,
+    programmingLanguage: 'Python',
+    dsaSkill: 'Intermediate',
+    coreCsKnowledge: 'Moderate',
+    devSkills: 'Full Stack & APIs',
+    aptitudeScore: 80,
+    codingRating: 1600,
+    targetCareerId: 'sde',
+    targetCareerTitle: 'Software Development Engineer',
+    skills: ['Python', 'Data Structures & Algorithms', 'SQL & DBMS', 'Git & GitHub'],
+    projects: [],
+    certifications: [],
+    internships: []
+  };
+
+  db.students.push(newStudent);
+  saveDatabase(db);
+
+  res.status(201).json({
+    success: true,
+    message: `Registration successful! Welcome to Career Coach, ${fullname}.`,
+    token: `token_${newStudent.id}_${Date.now()}`,
+    user: newStudent
+  });
+});
+
 // Auth Login Endpoint
 app.post('/api/auth/login', (req, res) => {
   const { email = '' } = req.body;

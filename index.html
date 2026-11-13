@@ -47,6 +47,9 @@
 
         <!-- Guest Actions (Not Logged In) -->
         <div id="landing-guest-nav" class="flex items-center gap-2" style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-outline btn-sm" onclick="openAuthModal('register')">
+            <i class="fa-solid fa-user-plus"></i> Register
+          </button>
           <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">
             <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
           </button>
@@ -103,6 +106,9 @@
         <div id="mobile-guest-actions" class="flex flex-col gap-2">
           <button class="btn btn-primary w-full" onclick="closeLandingMobileMenu(); openAuthModal('login');">
             <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
+          </button>
+          <button class="btn btn-secondary w-full" onclick="closeLandingMobileMenu(); openAuthModal('register');">
+            <i class="fa-solid fa-user-plus"></i> Create Account / Register
           </button>
         </div>
 
@@ -701,7 +707,7 @@
        AUTHENTICATION MODAL (SIGN IN / REGISTER)
        ========================================================================== -->
   <div class="modal-backdrop" id="auth-modal">
-    <div class="modal-card" style="max-width: 480px;">
+    <div class="modal-card" id="auth-modal-card" style="max-width: 480px; transition: max-width 0.25s ease;">
       <div class="modal-header">
         <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
           <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1rem;">
@@ -715,28 +721,144 @@
       </div>
 
       <div class="modal-body" style="padding: 1.25rem 1.5rem;">
-        <!-- Sign In Form -->
-        <form id="form-login" onsubmit="handleAuthLogin(event)">
-          <div class="form-group">
-            <label class="form-label">College Email Address <span class="required">*</span></label>
-            <div class="input-group">
-              <i class="fa-regular fa-envelope input-icon-left"></i>
-              <input type="email" id="login-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+        
+        <!-- View 1: Sign In View -->
+        <div id="auth-login-view">
+          <form id="form-login" onsubmit="handleAuthLogin(event)">
+            <div class="form-group">
+              <label class="form-label">College Email Address <span class="required">*</span></label>
+              <div class="input-group">
+                <i class="fa-regular fa-envelope input-icon-left"></i>
+                <input type="email" id="login-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+              </div>
             </div>
-          </div>
 
-          <div class="form-group">
-            <label class="form-label">Password <span class="required">*</span></label>
-            <div class="input-group">
-              <i class="fa-solid fa-lock input-icon-left"></i>
-              <input type="password" id="login-password" class="form-control input-with-icon-left" placeholder="Enter password" required autocomplete="current-password">
+            <div class="form-group">
+              <label class="form-label">Password <span class="required">*</span></label>
+              <div class="input-group">
+                <i class="fa-solid fa-lock input-icon-left"></i>
+                <input type="password" id="login-password" class="form-control input-with-icon-left" placeholder="Enter password" required autocomplete="current-password">
+              </div>
             </div>
-          </div>
 
-          <button type="submit" class="btn btn-primary w-full btn-lg" id="login-submit-btn">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
-          </button>
-        </form>
+            <button type="submit" class="btn btn-primary w-full btn-lg" id="login-submit-btn">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
+            </button>
+
+            <!-- Registration Link Below Sign In Button -->
+            <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text-secondary);">
+              <span>Don't have an account? </span>
+              <a href="javascript:void(0)" onclick="switchAuthMode('register')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Register here</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- View 2: Student Registration View -->
+        <div id="auth-register-view" style="display: none;">
+          <form id="form-register" onsubmit="handleAuthRegister(event)">
+            <div class="grid-responsive-2" style="margin-bottom: 0.5rem;">
+              
+              <!-- 1. Full Name -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Full Name <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-regular fa-user input-icon-left"></i>
+                  <input type="text" id="reg-fullname" class="form-control input-with-icon-left" placeholder="e.g. Aditi Sharma" required autocomplete="name">
+                </div>
+              </div>
+
+              <!-- 2. College Email Address -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">College Email Address <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-regular fa-envelope input-icon-left"></i>
+                  <input type="email" id="reg-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+                </div>
+              </div>
+
+              <!-- 3. Mobile Number -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Mobile Number <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-solid fa-phone input-icon-left"></i>
+                  <input type="tel" id="reg-phone" class="form-control input-with-icon-left" placeholder="9876543210 (10 digits)" required maxlength="10" autocomplete="tel">
+                </div>
+              </div>
+
+              <!-- 4. College Name -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">College Name <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-solid fa-building-columns input-icon-left"></i>
+                  <input type="text" id="reg-college" class="form-control input-with-icon-left" placeholder="e.g. National Institute of Tech" required>
+                </div>
+              </div>
+
+              <!-- 5. Course / Branch -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Course / Branch <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-solid fa-laptop-code input-icon-left"></i>
+                  <select id="reg-branch" class="form-control input-with-icon-left" required>
+                    <option value="">Select Branch...</option>
+                    <option value="Computer Science & Engineering">Computer Science & Engineering (CSE)</option>
+                    <option value="Information Technology">Information Technology (IT)</option>
+                    <option value="Artificial Intelligence & Data Science">AI & Data Science (AI & DS)</option>
+                    <option value="Electronics & Communication">Electronics & Communication (ECE)</option>
+                    <option value="Electrical Engineering">Electrical Engineering (EE)</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering (ME)</option>
+                    <option value="Civil Engineering">Civil Engineering (CE)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 6. Academic Year -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Academic Year <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-regular fa-calendar-days input-icon-left"></i>
+                  <select id="reg-year" class="form-control input-with-icon-left" required>
+                    <option value="">Select Year...</option>
+                    <option value="2026">Final Year (Batch of 2026)</option>
+                    <option value="2027">Third Year (Batch of 2027)</option>
+                    <option value="2028">Second Year (Batch of 2028)</option>
+                    <option value="2029">First Year (Batch of 2029)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 7. Password -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Password <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-solid fa-lock input-icon-left"></i>
+                  <input type="password" id="reg-password" class="form-control input-with-icon-left" placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password">
+                </div>
+              </div>
+
+              <!-- 8. Confirm Password -->
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Confirm Password <span class="required">*</span></label>
+                <div class="input-group">
+                  <i class="fa-solid fa-shield-halved input-icon-left"></i>
+                  <input type="password" id="reg-confirm-password" class="form-control input-with-icon-left" placeholder="Re-enter password" required minlength="8" autocomplete="new-password">
+                </div>
+              </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full btn-lg" id="register-submit-btn" style="margin-top: 0.25rem;">
+              <i class="fa-solid fa-user-plus"></i> Register Account
+            </button>
+
+            <!-- Back to Login Option -->
+            <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text-secondary);">
+              <span>Already have an account? </span>
+              <a href="javascript:void(0)" onclick="switchAuthMode('login')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Back to Login</a>
+            </div>
+          </form>
+        </div>
+
       </div>
 
       <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
@@ -753,7 +875,27 @@
 
   <!-- Inline Auth Modal Logic -->
   <script>
+    function switchAuthMode(mode) {
+      const loginView = document.getElementById('auth-login-view');
+      const registerView = document.getElementById('auth-register-view');
+      const modalTitle = document.getElementById('auth-modal-title');
+      const modalCard = document.getElementById('auth-modal-card');
+
+      if (mode === 'register') {
+        if (loginView) loginView.style.display = 'none';
+        if (registerView) registerView.style.display = 'block';
+        if (modalTitle) modalTitle.innerText = 'Student Registration';
+        if (modalCard) modalCard.style.maxWidth = '620px';
+      } else {
+        if (loginView) loginView.style.display = 'block';
+        if (registerView) registerView.style.display = 'none';
+        if (modalTitle) modalTitle.innerText = 'Sign In to Student Portal';
+        if (modalCard) modalCard.style.maxWidth = '480px';
+      }
+    }
+
     function openAuthModal(mode = 'login') {
+      switchAuthMode(mode);
       const modal = document.getElementById('auth-modal');
       if (modal) {
         modal.classList.add('open');
@@ -775,7 +917,7 @@
 
       if (!email || !password) {
         if (typeof showToast === 'function') {
-          showToast('Please enter your email and password.', 'warning');
+          showToast('Please enter both your college email and password.', 'warning');
         }
         return;
       }
@@ -788,6 +930,9 @@
       try {
         const res = await authManager.login(email, password);
         if (res && res.success) {
+          if (typeof showToast === 'function') {
+            showToast(`Welcome back, ${res.user ? res.user.fullName : 'Student'}! Redirecting to dashboard...`, 'success');
+          }
           closeAuthModal();
           setTimeout(() => {
             window.location.href = 'app.html#dashboard';
@@ -810,6 +955,123 @@
       }
     }
 
+    async function handleAuthRegister(e) {
+      if (e && e.preventDefault) e.preventDefault();
+
+      const fullname = (document.getElementById('reg-fullname')?.value || '').trim();
+      const email = (document.getElementById('reg-email')?.value || '').trim().toLowerCase();
+      const rawPhone = (document.getElementById('reg-phone')?.value || '').trim();
+      const college = (document.getElementById('reg-college')?.value || '').trim();
+      const branch = (document.getElementById('reg-branch')?.value || '').trim();
+      const gradYear = (document.getElementById('reg-year')?.value || '').trim();
+      const password = (document.getElementById('reg-password')?.value || '').trim();
+      const confirmPassword = (document.getElementById('reg-confirm-password')?.value || '').trim();
+      const btn = document.getElementById('register-submit-btn');
+
+      // 1. Required fields check
+      if (!fullname || !email || !rawPhone || !college || !branch || !gradYear || !password || !confirmPassword) {
+        if (typeof showToast === 'function') {
+          showToast('Please complete all required fields.', 'warning');
+        }
+        return;
+      }
+
+      // 2. Email format validation
+      const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+      if (!emailRegex.test(email)) {
+        if (typeof showToast === 'function') {
+          showToast('Please enter a valid college email address.', 'warning');
+        }
+        document.getElementById('reg-email')?.focus();
+        return;
+      }
+
+      // 3. Mobile number validation (10 digits, starts with 6-9)
+      const cleanPhone = rawPhone.replace(/[\s\-\(\)\+]/g, '');
+      const phoneDigits = cleanPhone.startsWith('91') && cleanPhone.length === 12 ? cleanPhone.slice(2) : cleanPhone;
+      if (!/^[6-9]\d{9}$/.test(phoneDigits)) {
+        if (typeof showToast === 'function') {
+          showToast('Mobile number must be a valid 10-digit Indian mobile number (starting with 6-9).', 'warning');
+        }
+        document.getElementById('reg-phone')?.focus();
+        return;
+      }
+
+      // 4. Password length check (min 8 characters)
+      if (password.length < 8) {
+        if (typeof showToast === 'function') {
+          showToast('Password must be at least 8 characters long.', 'warning');
+        }
+        document.getElementById('reg-password')?.focus();
+        return;
+      }
+
+      // 5. Password match check
+      if (password !== confirmPassword) {
+        if (typeof showToast === 'function') {
+          showToast('Passwords do not match. Please re-enter your password.', 'danger');
+        }
+        document.getElementById('reg-confirm-password')?.focus();
+        return;
+      }
+
+      // 6. Submit registration to backend
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering Account...';
+      }
+
+      try {
+        const payload = {
+          fullName: fullname,
+          email: email,
+          mobileNumber: phoneDigits,
+          college: college,
+          branch: branch,
+          academicYear: gradYear,
+          password: password,
+          confirmPassword: confirmPassword
+        };
+
+        const res = await authManager.register(payload);
+        if (res && res.success) {
+          if (typeof showToast === 'function') {
+            showToast(`Registration successful! Welcome, ${fullname}.`, 'success');
+          }
+          closeAuthModal();
+          setTimeout(() => {
+            window.location.href = 'app.html#dashboard';
+          }, 400);
+        } else {
+          if (typeof showToast === 'function') {
+            showToast((res && res.message) || 'Registration failed. Please check your details.', 'danger');
+          }
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        if (typeof showToast === 'function') {
+          showToast('Network error during registration. Please try again.', 'danger');
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Register Account';
+        }
+      }
+    }
+
+    // Check URL parameters on load for auth modal
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('auth') === 'required' || urlParams.get('login') === '1') {
+        openAuthModal('login');
+        if (typeof showToast === 'function') {
+          showToast('Please sign in or create an account to access the Student Portal.', 'info');
+        }
+      } else if (urlParams.get('register') === '1') {
+        openAuthModal('register');
+      }
+    });
 
     // Toast helper for landing page
     function showToast(message, type = 'info') {

@@ -23,14 +23,12 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/app.css">
 
-  <!-- Authentication Route Guard (Auto-seed demo session for instant interactive testing) -->
+  <!-- Authentication Route Guard: Protect student dashboard from unauthorized access -->
   <script>
     (function() {
-      let token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
+      const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
       if (!token) {
-        token = 'demo_token_samiksha_2026';
-        localStorage.setItem('smart_placement_auth_token', token);
-        localStorage.setItem('smart_placement_user_id', 'samiksha@engg.edu');
+        window.location.replace('index.html?auth=required');
       }
     })();
   </script>
@@ -145,19 +143,11 @@
             <span class="header-btn-label">Quick Jump</span>
           </button>
 
-          <!-- Account Switcher between Samiksha & Jyoti -->
-          <div class="account-switcher-pill">
-            <span class="account-switcher-title text-xs text-muted" style="padding: 0 6px; font-weight: 600; font-size: 0.75rem;">
-              <i class="fa-solid fa-users text-primary"></i> Account:
-            </span>
-            <button type="button" class="btn btn-xs btn-primary font-semibold" id="switch-account-samiksha-btn" onclick="switchToAccount('samiksha')" title="Switch to Samiksha Walbe (B.Tech CSE - 8.85 CGPA)" style="border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
-              <span class="user-avatar-circle account-btn-avatar">SW</span>
-              <span class="account-btn-name">Samiksha (CSE)</span>
-            </button>
-            <button type="button" class="btn btn-xs btn-ghost text-muted" id="switch-account-jyoti-btn" onclick="switchToAccount('jyoti')" title="Switch to Jyoti Kore (B.Tech IT - 8.40 CGPA)" style="border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.78rem;">
-              <span class="user-avatar-circle account-btn-avatar account-btn-avatar-jyoti">JK</span>
-              <span class="account-btn-name">Jyoti (IT)</span>
-            </button>
+          <!-- Active Authenticated Student Badge -->
+          <div class="account-switcher-pill" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem;">
+            <i class="fa-solid fa-circle-check text-success" style="font-size: 0.85rem;"></i>
+            <span class="text-xs text-muted" style="font-weight: 500;">Signed in as:</span>
+            <span class="font-semibold text-xs text-primary" id="header-student-badge">Student</span>
           </div>
 
           <!-- Theme Toggle Button -->

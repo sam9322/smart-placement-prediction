@@ -334,12 +334,18 @@ class AuthManager {
           }
           return { success: true, user: norm };
         } else {
-          return { success: false, message: data.message || 'Invalid credentials' };
+          return { success: false, message: data.message || 'Invalid email or password.' };
         }
       } catch (e) {
         console.error('Login error:', e);
+        return { success: false, message: 'Network connection error. Please try again.' };
       }
     }
+
+    return {
+      success: false,
+      message: 'Backend server is currently offline. Please ensure the Flask backend service is running.'
+    };
 
     // Offline / LocalStorage fallback with high-fidelity student data
     if (cleanEmail.includes('samiksha')) {
@@ -519,47 +525,26 @@ class AuthManager {
           sessionStorage.setItem(USER_ID_KEY, String(norm.id || ''));
           sessionStorage.setItem(USER_EMAIL_KEY, norm.email || '');
 
-          if (window.appState) {
-            appState.initUser(norm);
+          const state = getAppState();
+          if (state) {
+            state.initUser(norm);
           }
 
           this.updateNavbarAuthUI();
-          if (typeof showToast === 'function') {
-            showToast('Account registered and saved to SQLite database!', 'success');
-          }
-          return { success: true, user: norm };
+          return { success: true, user: norm, message: data.message };
         } else {
-          return { success: false, message: data.message || 'Registration failed' };
+          return { success: false, message: data.message || 'Registration failed.' };
         }
       } catch (e) {
         console.error('Registration network error:', e);
+        return { success: false, message: 'Network connection to backend failed. Please try again.' };
       }
     }
 
-    // Offline fallback: save locally
-    const fallbackUser = {
-      fullName: userData.fullName,
-      email: userData.email,
-      branch: userData.branch || 'Computer Science & Engineering',
-      degree: 'B.Tech',
-      rollNumber: userData.rollNumber || 'CS22B' + Math.floor(Math.random() * 9000 + 1000),
-      cgpa: parseFloat(userData.cgpa) || 8.0,
-      aptitudeScore: 80,
-      codingRating: 1600,
-      targetCareerId: 'sde',
-      targetCareerTitle: 'Software Development Engineer',
-      skills: ['Python', 'Java', 'Data Structures & Algorithms', 'SQL & DBMS', 'Git & GitHub'],
-      projects: [],
-      certifications: [],
-      internships: []
+    return {
+      success: false,
+      message: 'Backend server is currently offline. Please ensure the Flask backend service is running.'
     };
-    if (window.appState) appState.initUser(fallbackUser);
-    this.currentUser = fallbackUser;
-    this.updateNavbarAuthUI();
-    if (typeof showToast === 'function') {
-      showToast('Account registered locally (offline mode)', 'success');
-    }
-    return { success: true, user: fallbackUser };
   }
 
   logout(showNotice = true) {
@@ -679,10 +664,13 @@ class AuthManager {
     const appUserAvatar = document.getElementById('sidebar-user-avatar');
     const headerAvatar = document.getElementById('header-user-avatar');
 
+    const headerStudentBadge = document.getElementById('header-student-badge');
+
     if (appUserName) appUserName.innerText = currentName;
     if (appUserBranch) appUserBranch.innerText = currentBranch;
     if (appUserAvatar) appUserAvatar.innerText = initials;
     if (headerAvatar) headerAvatar.innerText = initials;
+    if (headerStudentBadge) headerStudentBadge.innerText = currentName;
 
     // Highlight active switcher pill button in app.html
     const samBtn = document.getElementById('switch-account-samiksha-btn');

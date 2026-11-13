@@ -82,9 +82,22 @@ def init_db():
             certifications TEXT DEFAULT '[]',
             projects TEXT DEFAULT '[]',
             internships TEXT DEFAULT '[]',
+            phone TEXT DEFAULT '',
+            roadmap_state TEXT DEFAULT '{}',
+            interview_history TEXT DEFAULT '{}',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+
+    # Ensure newer columns exist in existing database tables
+    cursor.execute('PRAGMA table_info(users)')
+    existing_cols = [row[1] for row in cursor.fetchall()]
+    if 'phone' not in existing_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN phone TEXT DEFAULT ''")
+    if 'roadmap_state' not in existing_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN roadmap_state TEXT DEFAULT '{}'")
+    if 'interview_history' not in existing_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN interview_history TEXT DEFAULT '{}'")
 
     # Auth Tokens Table
     cursor.execute('''
@@ -621,36 +634,85 @@ def user_to_dict(user_row):
 @app.route('/api/auth/register', methods=['POST'])
 def register():
     data = request.get_json() or {}
-    fullname = data.get('fullName', '').strip()
+    fullname = (data.get('fullName') or data.get('fullname') or '').strip()
     email = data.get('email', '').strip().lower()
+    raw_phone = str(data.get('mobileNumber') or data.get('phone') or '').strip()
+    phone_digits = re.sub(r'[\s\-\(\)\+]', '', raw_phone)
+    if phone_digits.startswith('91') and len(phone_digits) == 12:
+        phone_digits = phone_digits[2:]
+
+    college = data.get('college', '').strip()
+    branch = data.get('branch', '').strip()
+    grad_year = str(data.get('academicYear') or data.get('gradYear') or data.get('grad_year') or '').strip()
     password = data.get('password', '').strip()
+    confirm_password = (data.get('confirmPassword') or data.get('confirm_password') or '').strip()
 
-    if not fullname or not email or not password:
-        return jsonify({'success': False, 'message': 'Full name, email, and password are required.'}), 400
+    # Required fields validation
+    if not fullname:
+        return jsonify({'success': False, 'message': 'Full Name is required.'}), 400
+    if not email:
+        return jsonify({'success': False, 'message': 'College Email Address is required.'}), 400
+    if not raw_phone:
+        return jsonify({'success': False, 'message': 'Mobile Number is required.'}), 400
+    if not college:
+        return jsonify({'success': False, 'message': 'College Name is required.'}), 400
+    if not branch:
+        return jsonify({'success': False, 'message': 'Course / Branch is required.'}), 400
+    if not grad_year:
+        return jsonify({'success': False, 'message': 'Academic Year is required.'}), 400
+    if not password:
+        return jsonify({'success': False, 'message': 'Password is required.'}), 400
 
-    if len(password) < 6:
-        return jsonify({'success': False, 'message': 'Password must be at least 6 characters long.'}), 400
+    # Email format validation
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if not re.match(email_regex, email):
+        return jsonify({'success': False, 'message': 'Please provide a valid college email address.'}), 400
+
+    # Mobile number validation (10 digits for Indian mobile numbers starting with 6-9)
+    if not re.match(r'^[6-9]\d{9}$', phone_digits):
+        return jsonify({'success': False, 'message': 'Mobile number must be a valid 10-digit Indian mobile number.'}), 400
+
+    # Password length validation (at least 8 characters)
+    if len(password) < 8:
+        return jsonify({'success': False, 'message': 'Password must be at least 8 characters long.'}), 400
+
+    # Password match validation
+    if confirm_password and password != confirm_password:
+        return jsonify({'success': False, 'message': 'Password and Confirm Password do not match.'}), 400
 
     conn = get_db()
     cursor = conn.cursor()
 
+    # Prevent duplicate registration
     cursor.execute('SELECT id FROM users WHERE email = ?', (email,))
     if cursor.fetchone():
         conn.close()
-        return jsonify({'success': False, 'message': 'An account with this email already exists.'}), 409
+        return jsonify({'success': False, 'message': 'An account with this college email already exists. Please sign in.'}), 409
 
     hashed_pw = generate_password_hash(password, method='pbkdf2:sha256')
-    branch = data.get('branch', 'Computer Science & Engineering')
-    roll = data.get('rollNumber', f'CS{secrets.token_hex(2).upper()}')
-    cgpa = float(data.get('cgpa', 8.0))
+    clean_phone = f"+91 {phone_digits[:5]} {phone_digits[5:]}"
+    branch_prefix = "".join([w[0] for w in branch.split() if w[0].isalnum()])[:3].upper() or "CS"
+    year_suffix = grad_year[-2:] if len(grad_year) >= 2 else "26"
+    roll = f"{branch_prefix}{year_suffix}B{secrets.token_hex(2).upper()}"
 
     cursor.execute('''
-        INSERT INTO users (fullname, email, password_hash, branch, roll_number, cgpa)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (fullname, email, hashed_pw, branch, roll, cgpa))
+        INSERT INTO users (
+            fullname, email, password_hash, phone, college, degree, branch,
+            grad_year, roll_number, cgpa, tenth_marks, twelfth_marks,
+            backlogs, aptitude_score, coding_rating, target_career_id,
+            target_career_title, skills, certifications, projects, internships,
+            roadmap_state, interview_history
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        fullname, email, hashed_pw, clean_phone, college, 'B.Tech', branch,
+        grad_year, roll, 8.0, 85.0, 82.0,
+        0, 80, 1600, 'sde',
+        'Software Development Engineer', '[]', '[]', '[]', '[]',
+        '{}', '{}'
+    ))
     user_id = cursor.lastrowid
 
-    # Create auth token
+    # Create active session token
     token = secrets.token_hex(32)
     cursor.execute('INSERT INTO tokens (token, user_id) VALUES (?, ?)', (token, user_id))
     conn.commit()
@@ -661,7 +723,7 @@ def register():
 
     return jsonify({
         'success': True,
-        'message': 'Account created successfully!',
+        'message': f'Registration successful! Welcome to Career Coach, {fullname}.',
         'token': token,
         'user': user_to_dict(user_row)
     }), 201
@@ -675,18 +737,22 @@ def login():
     if not email or not password:
         return jsonify({'success': False, 'message': 'Email and password are required.'}), 400
 
-    # Flexible matching for usernames
-    if 'samiksha' in email:
-        email = 'samiksha@engg.edu'
-    elif 'jyoti' in email:
-        email = 'jyoti@engg.edu'
-    elif 'aarav' in email:
-        email = 'aarav.patel@engg.edu'
-
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
     user = cursor.fetchone()
+
+    # Legacy alias matching for pre-seeded student accounts if not directly found
+    if not user:
+        if email == 'samiksha.walbe@engg.edu':
+            cursor.execute('SELECT * FROM users WHERE email = ?', ('samiksha@engg.edu',))
+            user = cursor.fetchone()
+        elif email == 'jyoti.kore@engg.edu':
+            cursor.execute('SELECT * FROM users WHERE email = ?', ('jyoti@engg.edu',))
+            user = cursor.fetchone()
+        elif email == 'aarav@engg.edu':
+            cursor.execute('SELECT * FROM users WHERE email = ?', ('aarav.patel@engg.edu',))
+            user = cursor.fetchone()
 
     if not user or not check_password_hash(user['password_hash'], password):
         conn.close()
