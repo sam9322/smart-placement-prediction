@@ -19,18 +19,29 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
+bundled_db = os.path.join(BASE_DIR, 'database.db')
 
-if os.environ.get('VERCEL'):
+if os.environ.get('SQLITE_DB_PATH'):
+    DB_PATH = os.environ.get('SQLITE_DB_PATH')
+    db_dir = os.path.dirname(DB_PATH)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+    if not os.path.exists(DB_PATH) and os.path.exists(bundled_db):
+        import shutil
+        try:
+            shutil.copyfile(bundled_db, DB_PATH)
+        except Exception:
+            pass
+elif os.environ.get('VERCEL'):
     import shutil
     DB_PATH = '/tmp/database.db'
-    bundled_db = os.path.join(BASE_DIR, 'database.db')
     if not os.path.exists(DB_PATH) and os.path.exists(bundled_db):
         try:
             shutil.copyfile(bundled_db, DB_PATH)
         except Exception:
             pass
 else:
-    DB_PATH = os.path.join(BASE_DIR, 'database.db')
+    DB_PATH = bundled_db
 
 app = Flask(__name__, static_folder=PROJECT_ROOT)
 app.config['SECRET_KEY'] = 'smart-placement-coach-secret-key-2026'
