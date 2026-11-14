@@ -1073,6 +1073,21 @@
       }
     });
 
+    // Smart link guard for guest users navigating to app.html
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="app.html"]');
+      if (link) {
+        const isAuth = authManager && typeof authManager.isAuthenticated === 'function' && authManager.isAuthenticated();
+        if (!isAuth) {
+          e.preventDefault();
+          openAuthModal('login');
+          if (typeof showToast === 'function') {
+            showToast('Please sign in or create an account to access the Student Portal.', 'info');
+          }
+        }
+      }
+    });
+
     // Toast helper for landing page
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');

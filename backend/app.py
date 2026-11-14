@@ -1364,6 +1364,7 @@ def assess_career():
         'runnerUp1': ranked[1],
         'runnerUp2': ranked[2],
         'allRanked': ranked,
+        'rankedCareers': ranked,
         'aiExplanation': f"Based on your assessment responses and technical profile, you have an outstanding {ranked[0]['score']}% match for {ranked[0]['career']['title']}."
     }
 
@@ -1457,6 +1458,7 @@ def recommend_youtube():
         'query': query,
         'searchUrl': search_url,
         'lectures': lectures,
+        'recommendations': lectures,
         'message': 'Dynamic verified YouTube lectures retrieved matching selected career answer.'
     }), 200
 

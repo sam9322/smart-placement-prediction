@@ -8,10 +8,10 @@ const TOKEN_KEY = 'smart_placement_auth_token';
 const SESSION_KEY = 'smart_placement_auth_user';
 const USER_ID_KEY = 'smart_placement_user_id';
 const USER_EMAIL_KEY = 'smart_placement_user_email';
-// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment
+// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment, with fallback for local file opening
 const API_BASE_URL = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'http:' || window.location.protocol === 'https:'))
   ? ''
-  : '';
+  : 'http://localhost:5000';
 
 function getAppState() {
   if (typeof window !== 'undefined' && window.appState) return window.appState;

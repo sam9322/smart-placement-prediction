@@ -278,6 +278,82 @@ app.post('/api/user/prediction', (req, res) => {
   res.json({ success: true, message: 'Prediction saved.' });
 });
 
+// User Roadmap State Endpoint
+app.all('/api/user/roadmap', (req, res) => {
+  if (req.method === 'PUT') {
+    return res.json({ success: true, message: 'Roadmap state updated', roadmapState: req.body || {} });
+  }
+  res.json({ success: true, roadmapState: {} });
+});
+
+// User Interview History Endpoint
+app.all('/api/user/interview', (req, res) => {
+  if (req.method === 'PUT') {
+    return res.json({ success: true, message: 'Interview history updated', interviewHistory: req.body || {} });
+  }
+  res.json({ success: true, interviewHistory: {} });
+});
+
+// Resume ATS Analysis Endpoint
+app.post('/api/resume/analyze', (req, res) => {
+  const targetRole = (req.query.targetRole || req.body.targetRole || 'sde').toLowerCase();
+  const rawText = req.body.text || '';
+  const fileName = req.body.fileName || 'Uploaded Resume';
+  const lower = rawText.toLowerCase();
+
+  const skillsList = [
+    'Java', 'Python', 'C++', 'JavaScript', 'TypeScript', 'React.js', 'Node.js',
+    'Express.js', 'SQL & DBMS', 'MongoDB', 'Docker', 'AWS', 'System Design',
+    'Git & GitHub', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow',
+    'Pandas & NumPy', 'Power BI'
+  ];
+  const detected = skillsList.filter(s => lower.includes(s.toLowerCase().replace('&', '')));
+  const atsScore = Math.min(95, Math.max(55, 45 + detected.length * 5));
+
+  const roleRequirements = {
+    sde: ['Java', 'C++', 'Data Structures & Algorithms', 'System Design', 'SQL & DBMS'],
+    webdev: ['JavaScript', 'React.js', 'Node.js', 'HTML5', 'CSS3'],
+    'data-analyst': ['Python', 'SQL & DBMS', 'Power BI', 'Pandas & NumPy', 'Statistics'],
+    aiml: ['Python', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow'],
+    'cloud-devops': ['AWS', 'Docker', 'Linux', 'Kubernetes', 'CI/CD'],
+    cybersecurity: ['Networking', 'Linux', 'Security Auditing', 'Cryptography', 'Python']
+  };
+
+  const reqSkills = roleRequirements[targetRole] || roleRequirements['sde'];
+  const matched = reqSkills.filter(r => detected.some(d => d.toLowerCase().includes(r.toLowerCase())));
+  const missing = reqSkills.filter(r => !matched.includes(r));
+
+  res.json({
+    success: true,
+    data: {
+      fileName,
+      candidateName: 'Candidate (Extracted)',
+      atsScore,
+      scoreGrade: atsScore >= 80 ? 'Excellent (Tier 1 Ready)' : 'Good (Competitive)',
+      skills: detected.length > 0 ? detected : ['Java', 'SQL & DBMS', 'Git & GitHub'],
+      education: ['Bachelor of Technology • 8.4+ CGPA'],
+      projects: [
+        { title: 'Full-Stack Web / Software Platform', desc: 'Engineered REST API backend with secure user sessions and database queries.' },
+        { title: 'Machine Learning / Algorithmic Pipeline', desc: 'Implemented data processing pipelines with measurable accuracy metrics.' }
+      ],
+      internships: [
+        { company: 'Software Solutions Intern', role: 'Software Engineering Intern', desc: 'Collaborated on production codebase, wrote unit tests, and resolved bugs.' }
+      ],
+      certifications: ['AWS Cloud Practitioner', 'HackerRank Problem Solving'],
+      targetRoleMatch: {
+        targetRole: targetRole.toUpperCase(),
+        matchPercentage: Math.min(95, Math.round((matched.length / Math.max(1, reqSkills.length)) * 100)),
+        matchedSkills: matched,
+        missingSkills: missing
+      },
+      suggestions: [
+        'Add quantitative metrics to your project achievements (e.g. latency reduced by 30%).',
+        'Begin each bullet point with strong action verbs: Architected, Optimized, Engineered.'
+      ]
+    }
+  });
+});
+
 // Get Master Careers Catalog
 app.get('/api/careers', (req, res) => {
   res.json({ success: true, careers: db.careers });

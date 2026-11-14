@@ -3,10 +3,10 @@
  * Resume Upload & Analyzer Module
  */
 
-// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment
+// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment, with fallback for local file opening
 const RESUME_API_BASE = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'http:' || window.location.protocol === 'https:'))
   ? ''
-  : '';
+  : 'http://localhost:5000';
 
 const SAMPLE_SDE_RESUME_TEXT = `
 SAMIKSHA WALBE
