@@ -418,18 +418,30 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       });
     }
 
+    // Import resume score and metadata into profile
+    if (this.latestAnalysis.atsScore !== undefined) {
+      profile.resumeScore = this.latestAnalysis.atsScore;
+      profile.resumeDetails = {
+        fileName: this.latestAnalysis.fileName || 'Uploaded_Resume.pdf',
+        atsScore: this.latestAnalysis.atsScore,
+        scoreGrade: this.latestAnalysis.scoreGrade || 'ATS Ready',
+        analyzedAt: new Date().toISOString()
+      };
+    }
+
     // Save and sync with backend SQLite
     appState.updateProfile(profile);
     if (window.authManager) {
       authManager.syncProfileToBackend(profile);
     }
 
-    showToast(`Successfully imported ${addedCount} new skills and portfolio projects into your profile! 🎉`, 'success');
+    showToast(`Successfully imported ${addedCount} new skills, resume ATS score (${profile.resumeScore}%), and portfolio projects into your profile! 🎉`, 'success');
 
     // Re-render other views
     if (window.renderProfileView) renderProfileView();
     if (window.renderDashboard) renderDashboard();
     if (window.renderSkillGapAnalysis) renderSkillGapAnalysis();
+    if (typeof syncPredictionFormWithProfile === 'function') syncPredictionFormWithProfile(false);
   }
 }
 

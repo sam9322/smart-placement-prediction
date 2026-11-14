@@ -268,9 +268,32 @@ app.get('/api/auth/me', (req, res) => {
   });
 });
 
-// User Profile Update Endpoint
+// User Profile Endpoint
+app.get('/api/user/profile', (req, res) => {
+  const authHeader = (req.headers.authorization || '').toLowerCase();
+  const isJyoti = authHeader.includes('jyoti');
+  const student = isJyoti ? db.students[1] : db.students[0];
+  res.json({
+    success: true,
+    user: student,
+    prediction: {
+      probability: isJyoti ? 86 : 92,
+      tier: 'High',
+      tierLabel: 'High Readiness - Tier 1 Candidate',
+      factors: { academics: 90, technicalDSA: 92, projects: 88, internships: 90, aptitude: 85 }
+    }
+  });
+});
+
 app.put('/api/user/profile', (req, res) => {
-  res.json({ success: true, message: 'Profile synchronized with backend.' });
+  const authHeader = (req.headers.authorization || '').toLowerCase();
+  const isJyoti = authHeader.includes('jyoti');
+  const student = isJyoti ? db.students[1] : db.students[0];
+  if (student && req.body) {
+    Object.assign(student, req.body);
+    saveDatabase(db);
+  }
+  res.json({ success: true, message: 'Profile synchronized with backend.', user: student });
 });
 
 // User Prediction Save Endpoint

@@ -154,6 +154,10 @@ function renderProfileView() {
   setVal('profile-backlogs', profile.backlogs);
   setVal('profile-aptitude', profile.aptitudeScore);
   setVal('profile-coding-rating', profile.codingRating);
+  setVal('profile-language', profile.programmingLanguage);
+  setVal('profile-dsa-skill', profile.dsaSkill);
+  setVal('profile-corecs', profile.coreCsKnowledge);
+  setVal('profile-dev-skills', profile.devSkills);
 
   // Summary card on left
   const summaryName = document.getElementById('profile-summary-name');
@@ -403,7 +407,11 @@ function handleSaveProfileForm(e) {
     twelfthMarks: parseFloat(document.getElementById('profile-twelfth').value) || 0,
     backlogs: parseInt(document.getElementById('profile-backlogs').value) || 0,
     aptitudeScore: parseInt(document.getElementById('profile-aptitude').value) || 0,
-    codingRating: parseInt(document.getElementById('profile-coding-rating').value) || 1200
+    codingRating: parseInt(document.getElementById('profile-coding-rating').value) || 1200,
+    programmingLanguage: (document.getElementById('profile-language')?.value || '').trim(),
+    dsaSkill: (document.getElementById('profile-dsa-skill')?.value || '').trim(),
+    coreCsKnowledge: (document.getElementById('profile-corecs')?.value || '').trim(),
+    devSkills: (document.getElementById('profile-dev-skills')?.value || '').trim()
   };
 
   appState.updateProfile(updatedProfile);

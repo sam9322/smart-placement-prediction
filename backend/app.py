@@ -85,6 +85,13 @@ def init_db():
             phone TEXT DEFAULT '',
             roadmap_state TEXT DEFAULT '{}',
             interview_history TEXT DEFAULT '{}',
+            programming_language TEXT DEFAULT '',
+            dsa_skill TEXT DEFAULT '',
+            core_cs_knowledge TEXT DEFAULT '',
+            dev_skills TEXT DEFAULT '',
+            communication_score INTEGER DEFAULT 0,
+            resume_score INTEGER DEFAULT 0,
+            resume_details TEXT DEFAULT '{}',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -448,7 +455,14 @@ def init_db():
     for col in [
         ('phone', "TEXT DEFAULT '+91 98765 00000'"),
         ('roadmap_state', "TEXT DEFAULT '{}'"),
-        ('interview_history', "TEXT DEFAULT '{}'")
+        ('interview_history', "TEXT DEFAULT '{}'"),
+        ('programming_language', "TEXT DEFAULT ''"),
+        ('dsa_skill', "TEXT DEFAULT ''"),
+        ('core_cs_knowledge', "TEXT DEFAULT ''"),
+        ('dev_skills', "TEXT DEFAULT ''"),
+        ('communication_score', "INTEGER DEFAULT 0"),
+        ('resume_score', "INTEGER DEFAULT 0"),
+        ('resume_details', "TEXT DEFAULT '{}'")
     ]:
         try:
             cursor.execute(f"ALTER TABLE users ADD COLUMN {col[0]} {col[1]}")
@@ -466,6 +480,12 @@ def init_db():
         "aptitudeScore": 9, "aptitudeTotal": 10, "technicalScore": 9, "technicalTotal": 10,
         "mockAttempts": [{"date": "2026-10-05", "role": "Software Development Engineer", "score": 92, "feedback": "Solid grasp of distributed systems, concurrency, and tree traversals."}]
     })
+    sam_resume = json.dumps({
+        "fileName": "Samiksha_Walbe_SDE_Resume.pdf",
+        "atsScore": 88,
+        "scoreGrade": "Excellent (ATS Ready)",
+        "analyzedAt": "2026-10-06"
+    })
     cursor.execute("""
         UPDATE users SET
             fullname = 'Samiksha Walbe',
@@ -479,12 +499,19 @@ def init_db():
             backlogs = 0,
             aptitude_score = 88,
             coding_rating = 1740,
+            programming_language = 'Java',
+            dsa_skill = 'Advanced',
+            core_cs_knowledge = 'Strong',
+            dev_skills = 'Full Stack & APIs',
+            communication_score = 85,
+            resume_score = 88,
+            resume_details = ?,
             target_career_id = 'sde',
             target_career_title = 'Software Development Engineer',
             roadmap_state = ?,
             interview_history = ?
         WHERE email LIKE '%samiksha%'
-    """, (sam_roadmap, sam_interview))
+    """, (sam_resume, sam_roadmap, sam_interview))
 
     jyo_roadmap = json.dumps({
         "s1_m1": True, "s1_m2": True, "s1_m3": True,
@@ -495,6 +522,12 @@ def init_db():
     jyo_interview = json.dumps({
         "aptitudeScore": 7, "aptitudeTotal": 10, "technicalScore": 8, "technicalTotal": 10,
         "mockAttempts": [{"date": "2026-10-04", "role": "Full Stack Web Developer", "score": 84, "feedback": "Strong React architecture and REST design. Review Node event loop internals."}]
+    })
+    jyo_resume = json.dumps({
+        "fileName": "Jyoti_Kore_WebDev_Resume.pdf",
+        "atsScore": 84,
+        "scoreGrade": "ATS Ready",
+        "analyzedAt": "2026-10-06"
     })
     cursor.execute("""
         UPDATE users SET
@@ -509,12 +542,19 @@ def init_db():
             backlogs = 0,
             aptitude_score = 82,
             coding_rating = 1620,
+            programming_language = 'JavaScript',
+            dsa_skill = 'Intermediate',
+            core_cs_knowledge = 'Moderate',
+            dev_skills = 'Full Stack & APIs',
+            communication_score = 88,
+            resume_score = 84,
+            resume_details = ?,
             target_career_id = 'webdev',
             target_career_title = 'Full Stack Web Developer',
             roadmap_state = ?,
             interview_history = ?
         WHERE email LIKE '%jyoti%'
-    """, (jyo_roadmap, jyo_interview))
+    """, (jyo_resume, jyo_roadmap, jyo_interview))
 
     # Seed Predictions for accounts if not present
     cursor.execute('SELECT id FROM users WHERE email = ?', ('samiksha@engg.edu',))
@@ -615,17 +655,28 @@ def user_to_dict(user_row):
     except Exception:
         d['interviewHistory'] = {}
 
+    try:
+        d['resumeDetails'] = json.loads(d.get('resume_details') or '{}')
+    except Exception:
+        d['resumeDetails'] = {}
+
     # Provide camelCase aliases for seamless frontend compatibility
     d['fullName'] = d.get('fullname', '')
-    d['phone'] = d.get('phone', '+91 98765 00000')
+    d['phone'] = d.get('phone', '')
     d['rollNumber'] = d.get('roll_number', '')
     d['gradYear'] = d.get('grad_year', '')
     d['tenthMarks'] = d.get('tenth_marks', 0)
     d['twelfthMarks'] = d.get('twelfth_marks', 0)
-    d['aptitudeScore'] = d.get('aptitude_score', 80)
-    d['codingRating'] = d.get('coding_rating', 1600)
+    d['aptitudeScore'] = d.get('aptitude_score', 0)
+    d['codingRating'] = d.get('coding_rating', 0)
     d['targetCareerId'] = d.get('target_career_id', 'sde')
     d['targetCareerTitle'] = d.get('target_career_title', '')
+    d['programmingLanguage'] = d.get('programming_language', '')
+    d['dsaSkill'] = d.get('dsa_skill', '')
+    d['coreCsKnowledge'] = d.get('core_cs_knowledge', '')
+    d['devSkills'] = d.get('dev_skills', '')
+    d['communicationScore'] = d.get('communication_score', 0)
+    d['resumeScore'] = d.get('resume_score', 0)
     return d
 
 # ==============================================================================
@@ -701,14 +752,18 @@ def register():
             grad_year, roll_number, cgpa, tenth_marks, twelfth_marks,
             backlogs, aptitude_score, coding_rating, target_career_id,
             target_career_title, skills, certifications, projects, internships,
-            roadmap_state, interview_history
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            roadmap_state, interview_history, programming_language, dsa_skill,
+            core_cs_knowledge, dev_skills, communication_score, resume_score,
+            resume_details
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         fullname, email, hashed_pw, clean_phone, college, 'B.Tech', branch,
-        grad_year, roll, 8.0, 85.0, 82.0,
-        0, 80, 1600, 'sde',
+        grad_year, roll, 0.0, 0.0, 0.0,
+        0, 0, 0, 'sde',
         'Software Development Engineer', '[]', '[]', '[]', '[]',
-        '{}', '{}'
+        '{}', '{}', '', '',
+        '', '', 0, 0,
+        '{}'
     ))
     user_id = cursor.lastrowid
 
@@ -835,15 +890,52 @@ def logout():
 # ==============================================================================
 # STUDENT PROFILE & PREDICTION DATA ENDPOINTS
 # ==============================================================================
-@app.route('/api/user/profile', methods=['PUT'])
-def update_profile():
+@app.route('/api/user/profile', methods=['GET', 'PUT'])
+def user_profile():
     user = get_current_user()
     if not user:
-        return jsonify({'success': False, 'message': 'Unauthorized.'}), 401
+        return jsonify({'success': False, 'message': 'Unauthorized or expired session.'}), 401
 
-    data = request.get_json() or {}
     conn = get_db()
     cursor = conn.cursor()
+
+    if request.method == 'GET':
+        # Enforce student profile isolation (Requirement 4 & 11)
+        req_uid = request.args.get('uid')
+        if req_uid and str(req_uid) != str(user['id']):
+            conn.close()
+            return jsonify({'success': False, 'message': 'Access forbidden: You cannot access another student\'s profile.'}), 403
+
+        cursor.execute('SELECT * FROM predictions WHERE user_id = ? ORDER BY calculated_at DESC LIMIT 1', (user['id'],))
+        pred_row = cursor.fetchone()
+        pred_data = None
+        if pred_row:
+            pred_dict = dict(pred_row)
+            try:
+                factors_json = json.loads(pred_dict.get('factors') or '{}')
+            except Exception:
+                factors_json = {}
+            pred_data = {
+                'probability': pred_dict.get('probability', 85),
+                'tier': pred_dict.get('tier', 'High'),
+                'tierLabel': pred_dict.get('tier_label', ''),
+                'factors': factors_json
+            }
+        conn.close()
+        return jsonify({
+            'success': True,
+            'user': user_to_dict(user),
+            'prediction': pred_data
+        }), 200
+
+    # PUT: Update profile parameters
+    data = request.get_json() or {}
+
+    # Enforce student profile isolation (Requirement 11)
+    req_uid = data.get('uid') or data.get('id')
+    if req_uid and str(req_uid) != str(user['id']):
+        conn.close()
+        return jsonify({'success': False, 'message': 'Access forbidden: You cannot modify another student\'s profile.'}), 403
 
     cursor.execute('''
         UPDATE users SET
@@ -860,6 +952,13 @@ def update_profile():
             backlogs = COALESCE(?, backlogs),
             aptitude_score = COALESCE(?, aptitude_score),
             coding_rating = COALESCE(?, coding_rating),
+            programming_language = COALESCE(?, programming_language),
+            dsa_skill = COALESCE(?, dsa_skill),
+            core_cs_knowledge = COALESCE(?, core_cs_knowledge),
+            dev_skills = COALESCE(?, dev_skills),
+            communication_score = COALESCE(?, communication_score),
+            resume_score = COALESCE(?, resume_score),
+            resume_details = COALESCE(?, resume_details),
             target_career_id = COALESCE(?, target_career_id),
             target_career_title = COALESCE(?, target_career_title),
             skills = COALESCE(?, skills),
@@ -875,7 +974,7 @@ def update_profile():
         data.get('college'),
         data.get('degree'),
         data.get('branch'),
-        data.get('gradYear'),
+        data.get('gradYear') or data.get('grad_year'),
         data.get('rollNumber'),
         data.get('cgpa'),
         data.get('tenthMarks'),
@@ -883,6 +982,13 @@ def update_profile():
         data.get('backlogs'),
         data.get('aptitudeScore'),
         data.get('codingRating'),
+        data.get('programmingLanguage') or data.get('programming_language'),
+        data.get('dsaSkill') or data.get('dsa_skill'),
+        data.get('coreCsKnowledge') or data.get('core_cs_knowledge'),
+        data.get('devSkills') or data.get('dev_skills'),
+        data.get('communicationScore') or data.get('communication_score'),
+        data.get('resumeScore') or data.get('resume_score'),
+        json.dumps(data.get('resumeDetails')) if 'resumeDetails' in data else (json.dumps(data.get('resume_details')) if 'resume_details' in data else None),
         data.get('targetCareerId'),
         data.get('targetCareerTitle'),
         json.dumps(data.get('skills')) if 'skills' in data else None,

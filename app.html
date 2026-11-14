@@ -459,6 +459,58 @@
                   </div>
 
                   <h4 class="mt-4 mb-3" style="font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                    Technical Depth & Predictor Parameters
+                  </h4>
+
+                  <div class="grid-responsive-2 gap-3 mb-3">
+                    <div class="form-group">
+                      <label class="form-label">Primary Programming Language</label>
+                      <select id="profile-language" class="form-control">
+                        <option value="">Select Primary Language...</option>
+                        <option value="Java">Java (Core & OOP)</option>
+                        <option value="C++">C++ (STL & High Performance)</option>
+                        <option value="Python">Python (Standard & ML)</option>
+                        <option value="JavaScript">JavaScript / TypeScript</option>
+                        <option value="Go">Go / Golang</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">DSA Competency Level</label>
+                      <select id="profile-dsa-skill" class="form-control">
+                        <option value="">Select DSA Level...</option>
+                        <option value="Beginner">Beginner (Basic Arrays & Loops)</option>
+                        <option value="Intermediate">Intermediate (Stacks, Queues, Linked Lists)</option>
+                        <option value="Advanced">Advanced (Trees, Graphs, DP, LeetCode 150+)</option>
+                        <option value="Expert">Expert (Competitive Programming, LeetCode 300+)</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Core Computer Science Knowledge</label>
+                      <select id="profile-corecs" class="form-control">
+                        <option value="">Select Core CS Knowledge...</option>
+                        <option value="Basic">Basic (Elementary definitions)</option>
+                        <option value="Moderate">Moderate (Familiar with OS & SQL)</option>
+                        <option value="Strong">Strong (OS, DBMS, Networks & OOP Viva ready)</option>
+                        <option value="Comprehensive">Comprehensive (Deep internal architecture & System Design)</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Development & System Skills</label>
+                      <select id="profile-dev-skills" class="form-control">
+                        <option value="">Select Development Skills...</option>
+                        <option value="None">None (Pure DSA only)</option>
+                        <option value="Frontend">Frontend UI (React/HTML/CSS)</option>
+                        <option value="Backend">Backend APIs (Node/Express/Spring)</option>
+                        <option value="Full Stack & APIs">Full Stack & REST APIs</option>
+                        <option value="Cloud & DevOps">Cloud & DevOps (Docker/AWS)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <h4 class="mt-4 mb-3" style="font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
                     Technical Skills Matrix
                   </h4>
 
@@ -656,9 +708,40 @@
                   <h3 class="card-title"><i class="fa-solid fa-sliders text-primary"></i> Smart Placement Predictor Parameters</h3>
                   <p class="card-subtitle">Algorithmic multi-factor evaluation engine matching your exact student profile</p>
                 </div>
-                <button class="btn btn-secondary btn-sm" onclick="syncPredictionFormWithProfile()" title="Sync with Profile">
-                  <i class="fa-solid fa-arrows-rotate"></i> Sync Profile
-                </button>
+                <div class="flex items-center gap-2" style="display: flex; gap: 0.5rem; align-items: center;">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-sync-prediction-profile" onclick="syncPredictionFormWithProfile(true)" title="Sync latest parameters from SQLite database">
+                    <i class="fa-solid fa-arrows-rotate"></i> <span id="btn-sync-text">Sync Profile</span>
+                  </button>
+                  <button type="button" class="btn btn-ghost btn-sm text-primary" onclick="savePredictionParamsToProfile()" title="Save current form values to your student profile">
+                    <i class="fa-solid fa-floppy-disk"></i> Save to Profile
+                  </button>
+                </div>
+              </div>
+
+              <!-- Profile Synchronization Status Banner -->
+              <div id="pred-profile-sync-status" class="alert-box alert-success mb-3" style="display: none; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent-emerald);">
+                <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                  <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Connected Profile: <strong id="pred-sync-user-name">Student</strong> (UID: <span id="pred-sync-user-uid">#1</span>) — Real parameters loaded from database.</span>
+                  </div>
+                  <span class="badge badge-success text-xs" id="pred-sync-timestamp">Synced</span>
+                </div>
+              </div>
+
+              <!-- Missing Profile Data Warning Alert (Requirement 6) -->
+              <div id="pred-profile-missing-alert" class="alert-box alert-warning mb-3" style="display: none; padding: 0.85rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #d97706;">
+                <div class="flex items-start gap-2" style="display: flex; align-items: flex-start; gap: 0.6rem;">
+                  <i class="fa-solid fa-triangle-exclamation" style="margin-top: 3px;"></i>
+                  <div style="flex: 1;">
+                    <strong>Profile Incomplete:</strong>
+                    <span id="pred-missing-fields-text">Some parameters have not been set yet.</span>
+                    <div class="mt-2 flex gap-2" style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                      <a href="#profile" class="btn btn-xs btn-primary"><i class="fa-solid fa-user-pen"></i> Complete Student Profile</a>
+                      <button type="button" class="btn btn-xs btn-secondary" onclick="savePredictionParamsToProfile()"><i class="fa-solid fa-floppy-disk"></i> Save Current Form to Profile</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <form onsubmit="handleRunPrediction(event)">
@@ -671,22 +754,22 @@
                 <div class="grid-responsive-2 gap-3 mb-3">
                   <div class="form-group">
                     <label class="form-label text-xs">College / Institute</label>
-                    <input type="text" id="pred-college" class="form-control" value="National Institute of Engineering & Technology">
+                    <input type="text" id="pred-college" class="form-control" placeholder="College / University Name">
                   </div>
 
                   <div class="form-group">
                     <label class="form-label text-xs">Degree Program</label>
-                    <input type="text" id="pred-degree" class="form-control" value="B.Tech">
+                    <input type="text" id="pred-degree" class="form-control" placeholder="Degree Program (e.g. B.Tech)">
                   </div>
 
                   <div class="form-group">
                     <label class="form-label text-xs">Branch / Specialization</label>
-                    <input type="text" id="pred-branch" class="form-control" value="Computer Science & Engineering">
+                    <input type="text" id="pred-branch" class="form-control" placeholder="Course / Branch">
                   </div>
 
                   <div class="form-group">
                     <label class="form-label text-xs">Graduation Year</label>
-                    <input type="number" id="pred-gradyear" class="form-control" value="2026">
+                    <input type="number" id="pred-gradyear" class="form-control" placeholder="Year of Graduation">
                   </div>
                 </div>
 
@@ -695,9 +778,9 @@
                   <div class="form-group">
                     <div class="range-header">
                       <label class="form-label text-xs">Current CGPA (0 - 10)</label>
-                      <span class="range-value font-bold text-primary" id="pred-cgpa-val">8.45</span>
+                      <span class="range-value font-bold text-primary" id="pred-cgpa-val">0.00</span>
                     </div>
-                    <input type="range" id="pred-cgpa" min="5.0" max="10.0" step="0.05" value="8.45" class="range-slider" oninput="handleRangeInput('pred-cgpa', 'pred-cgpa-val')">
+                    <input type="range" id="pred-cgpa" min="0.0" max="10.0" step="0.05" value="0.00" class="range-slider" oninput="handleRangeInput('pred-cgpa', 'pred-cgpa-val')">
                   </div>
 
                   <div class="form-group">
@@ -719,7 +802,8 @@
                   <div class="form-group">
                     <label class="form-label text-xs">Primary Programming Language</label>
                     <select id="pred-language" class="form-control">
-                      <option value="Java" selected>Java (Core & OOP)</option>
+                      <option value="">Select Primary Language...</option>
+                      <option value="Java">Java (Core & OOP)</option>
                       <option value="C++">C++ (STL & High Performance)</option>
                       <option value="Python">Python (Standard & ML)</option>
                       <option value="JavaScript">JavaScript / TypeScript</option>
@@ -730,9 +814,10 @@
                   <div class="form-group">
                     <label class="form-label text-xs">Data Structures & Algorithms (DSA)</label>
                     <select id="pred-dsa-skill" class="form-control">
+                      <option value="">Select DSA Level...</option>
                       <option value="Beginner">Beginner (Basic Arrays & Loops)</option>
                       <option value="Intermediate">Intermediate (Stacks, Queues, Linked Lists)</option>
-                      <option value="Advanced" selected>Advanced (Trees, Graphs, DP, LeetCode 150+)</option>
+                      <option value="Advanced">Advanced (Trees, Graphs, DP, LeetCode 150+)</option>
                       <option value="Expert">Expert (Competitive Programming, LeetCode 300+)</option>
                     </select>
                   </div>
@@ -740,9 +825,10 @@
                   <div class="form-group">
                     <label class="form-label text-xs">Core Computer Science Knowledge</label>
                     <select id="pred-corecs" class="form-control">
+                      <option value="">Select Core CS Knowledge...</option>
                       <option value="Basic">Basic (Elementary definitions)</option>
                       <option value="Moderate">Moderate (Familiar with OS & SQL)</option>
-                      <option value="Strong" selected>Strong (OS, DBMS, Networks & OOP Viva ready)</option>
+                      <option value="Strong">Strong (OS, DBMS, Networks & OOP Viva ready)</option>
                       <option value="Comprehensive">Comprehensive (Deep internal architecture & System Design)</option>
                     </select>
                   </div>
@@ -750,12 +836,24 @@
                   <div class="form-group">
                     <label class="form-label text-xs">Development & System Skills</label>
                     <select id="pred-dev-skills" class="form-control">
+                      <option value="">Select Development Skills...</option>
                       <option value="None">None (Pure DSA only)</option>
                       <option value="Frontend">Frontend UI (React/HTML/CSS)</option>
                       <option value="Backend">Backend APIs (Node/Express/Spring)</option>
-                      <option value="Full Stack & APIs" selected>Full Stack & REST APIs</option>
+                      <option value="Full Stack & APIs">Full Stack & REST APIs</option>
                       <option value="Cloud & DevOps">Cloud & DevOps (Docker/AWS)</option>
                     </select>
+                  </div>
+                </div>
+
+                <!-- Technical Skills Matrix Synchronized from Profile -->
+                <div class="form-group mb-3">
+                  <div class="flex justify-between items-center mb-1" style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="form-label text-xs">Technical Skills (Synchronized from Profile)</label>
+                    <a href="#profile" class="text-xs text-primary font-semibold"><i class="fa-solid fa-pen-to-square"></i> Manage in Profile</a>
+                  </div>
+                  <div id="pred-skills-tags" class="tags-wrapper" style="min-height: 38px; padding: 0.4rem 0.6rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;">
+                    <span class="text-xs text-muted">Loading technical skills...</span>
                   </div>
                 </div>
 
@@ -764,13 +862,13 @@
                   <i class="fa-solid fa-briefcase text-emerald"></i> 3. Portfolio, Experience & Certifications
                 </div>
 
-                <div class="grid-responsive-3 gap-3 mb-4">
+                <div class="grid-responsive-3 gap-3 mb-2">
                   <div class="form-group">
                     <label class="form-label text-xs">Major Capstone Projects</label>
                     <select id="pred-projects" class="form-control">
                       <option value="0">0 Projects</option>
                       <option value="1">1 Project</option>
-                      <option value="2" selected>2 Projects</option>
+                      <option value="2">2 Projects</option>
                       <option value="3">3+ Production Projects</option>
                     </select>
                   </div>
@@ -779,7 +877,7 @@
                     <label class="form-label text-xs">Internships Completed</label>
                     <select id="pred-internships" class="form-control">
                       <option value="0">0 Internships</option>
-                      <option value="1" selected>1 Internship (3+ Months)</option>
+                      <option value="1">1 Internship (3+ Months)</option>
                       <option value="2">2+ Industry Internships</option>
                     </select>
                   </div>
@@ -789,10 +887,18 @@
                     <select id="pred-certs" class="form-control">
                       <option value="0">0 Certifications</option>
                       <option value="1">1 Certification</option>
-                      <option value="2" selected>2 Certifications (AWS / HackerRank)</option>
+                      <option value="2">2 Certifications (AWS / HackerRank)</option>
                       <option value="3">3+ Industry Credentials</option>
                     </select>
                   </div>
+                </div>
+
+                <!-- Portfolio Summary Counts Display -->
+                <div id="pred-portfolio-summary" class="text-xs text-muted mb-3" style="padding: 0.5rem 0.75rem; background: var(--bg-card-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                  <span><i class="fa-solid fa-folder-open text-primary"></i> <strong id="pred-projects-summary-count">0</strong> Projects in Profile</span>
+                  <span><i class="fa-solid fa-briefcase text-emerald"></i> <strong id="pred-internships-summary-count">0</strong> Internships in Profile</span>
+                  <span><i class="fa-solid fa-certificate text-amber"></i> <strong id="pred-certs-summary-count">0</strong> Certifications in Profile</span>
+                  <a href="#profile" class="text-primary font-bold"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Profile Portfolio</a>
                 </div>
 
                 <!-- Section 4: Aptitude, Soft Skills, ATS Resume & Preferred Role -->
@@ -804,25 +910,25 @@
                   <div class="form-group">
                     <div class="range-header">
                       <label class="form-label text-xs">Aptitude & Reasoning Score (%)</label>
-                      <span class="range-value font-bold text-amber" id="pred-aptitude-val">84</span>
+                      <span class="range-value font-bold text-amber" id="pred-aptitude-val">0</span>
                     </div>
-                    <input type="range" id="pred-aptitude" min="30" max="100" step="1" value="84" class="range-slider" oninput="handleRangeInput('pred-aptitude', 'pred-aptitude-val')">
+                    <input type="range" id="pred-aptitude" min="0" max="100" step="1" value="0" class="range-slider" oninput="handleRangeInput('pred-aptitude', 'pred-aptitude-val')">
                   </div>
 
                   <div class="form-group">
                     <div class="range-header">
                       <label class="form-label text-xs">Communication & Soft Skills (%)</label>
-                      <span class="range-value font-bold text-cyan" id="pred-comm-val">85</span>
+                      <span class="range-value font-bold text-cyan" id="pred-comm-val">0</span>
                     </div>
-                    <input type="range" id="pred-comm" min="40" max="100" step="1" value="85" class="range-slider" oninput="handleRangeInput('pred-comm', 'pred-comm-val')">
+                    <input type="range" id="pred-comm" min="0" max="100" step="1" value="0" class="range-slider" oninput="handleRangeInput('pred-comm', 'pred-comm-val')">
                   </div>
 
                   <div class="form-group">
                     <div class="range-header">
                       <label class="form-label text-xs">Resume Score (ATS / 100)</label>
-                      <span class="range-value font-bold text-emerald" id="pred-resume-val">82</span>
+                      <span class="range-value font-bold text-emerald" id="pred-resume-val">0</span>
                     </div>
-                    <input type="range" id="pred-resume" min="40" max="100" step="1" value="82" class="range-slider" oninput="handleRangeInput('pred-resume', 'pred-resume-val')">
+                    <input type="range" id="pred-resume" min="0" max="100" step="1" value="0" class="range-slider" oninput="handleRangeInput('pred-resume', 'pred-resume-val')">
                   </div>
 
                   <div class="form-group">
@@ -838,9 +944,23 @@
                   </div>
                 </div>
 
-                <div class="mt-4" style="margin-top: 1.5rem;">
-                  <button type="submit" class="btn btn-primary btn-lg w-full">
+                <!-- Resume Details Box (ATS Integration) -->
+                <div id="pred-resume-details-box" class="form-group mb-3" style="padding: 0.65rem 0.85rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                  <div class="flex justify-between items-center mb-1" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="text-xs font-bold text-muted"><i class="fa-solid fa-file-invoice text-primary"></i> Resume Details (ATS Integration)</span>
+                    <a href="#resume" class="text-xs text-primary font-semibold"><i class="fa-solid fa-cloud-arrow-up"></i> Upload / Re-analyze</a>
+                  </div>
+                  <div id="pred-resume-status-text" class="text-xs text-muted">
+                    <span>Checking resume status...</span>
+                  </div>
+                </div>
+
+                <div class="flex gap-2 mt-4" style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                  <button type="submit" class="btn btn-primary btn-lg" style="flex: 2;">
                     <i class="fa-solid fa-calculator"></i> Calculate Placement Readiness & Predict Categories
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-lg" style="flex: 1;" onclick="savePredictionParamsToProfile()" title="Save these values as your permanent student profile parameters">
+                    <i class="fa-solid fa-floppy-disk"></i> Save to Profile
                   </button>
                 </div>
               </form>

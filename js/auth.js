@@ -176,22 +176,30 @@ class AuthManager {
   normalizeUser(user) {
     if (!user) return null;
     const norm = { ...user };
-    norm.id = user.id || null;
+    norm.id = user.id !== undefined && user.id !== null ? user.id : null;
     norm.fullName = user.fullName || user.fullname || 'Student';
-    norm.rollNumber = user.rollNumber || user.roll_number || 'CS22B1000';
-    norm.gradYear = user.gradYear || user.grad_year || '2026';
-    norm.college = user.college || 'National Institute of Engineering & Technology';
-    norm.degree = user.degree || 'B.Tech';
-    norm.branch = user.branch || 'Computer Science & Engineering';
-    norm.phone = user.phone || '+91 98765 00000';
-    norm.cgpa = parseFloat(user.cgpa !== undefined ? user.cgpa : 8.0);
-    norm.tenthMarks = parseFloat(user.tenthMarks !== undefined ? user.tenthMarks : (user.tenth_marks || 90.0));
-    norm.twelfthMarks = parseFloat(user.twelfthMarks !== undefined ? user.twelfthMarks : (user.twelfth_marks || 88.0));
-    norm.backlogs = parseInt(user.backlogs !== undefined ? user.backlogs : 0);
-    norm.aptitudeScore = parseInt(user.aptitudeScore !== undefined ? user.aptitudeScore : (user.aptitude_score || 80));
-    norm.codingRating = parseInt(user.codingRating !== undefined ? user.codingRating : (user.coding_rating || 1600));
+    norm.email = user.email || '';
+    norm.phone = user.phone || '';
+    norm.rollNumber = user.rollNumber || user.roll_number || '';
+    norm.gradYear = user.gradYear || user.grad_year || '';
+    norm.college = user.college || '';
+    norm.degree = user.degree || '';
+    norm.branch = user.branch || '';
+    norm.cgpa = (user.cgpa !== undefined && user.cgpa !== null) ? parseFloat(user.cgpa) : 0;
+    norm.tenthMarks = (user.tenthMarks !== undefined && user.tenthMarks !== null) ? parseFloat(user.tenthMarks) : ((user.tenth_marks !== undefined && user.tenth_marks !== null) ? parseFloat(user.tenth_marks) : 0);
+    norm.twelfthMarks = (user.twelfthMarks !== undefined && user.twelfthMarks !== null) ? parseFloat(user.twelfthMarks) : ((user.twelfth_marks !== undefined && user.twelfth_marks !== null) ? parseFloat(user.twelfth_marks) : 0);
+    norm.backlogs = user.backlogs !== undefined ? parseInt(user.backlogs) : 0;
+    norm.aptitudeScore = (user.aptitudeScore !== undefined && user.aptitudeScore !== null) ? parseInt(user.aptitudeScore) : (user.aptitude_score ? parseInt(user.aptitude_score) : 0);
+    norm.codingRating = (user.codingRating !== undefined && user.codingRating !== null) ? parseInt(user.codingRating) : (user.coding_rating ? parseInt(user.coding_rating) : 0);
+    norm.programmingLanguage = user.programmingLanguage || user.programming_language || '';
+    norm.dsaSkill = user.dsaSkill || user.dsa_skill || '';
+    norm.coreCsKnowledge = user.coreCsKnowledge || user.core_cs_knowledge || '';
+    norm.devSkills = user.devSkills || user.dev_skills || '';
+    norm.communicationScore = (user.communicationScore !== undefined && user.communicationScore !== null) ? parseInt(user.communicationScore) : (user.communication_score ? parseInt(user.communication_score) : 0);
+    norm.resumeScore = (user.resumeScore !== undefined && user.resumeScore !== null) ? parseInt(user.resumeScore) : (user.resume_score ? parseInt(user.resume_score) : 0);
+    norm.resumeDetails = user.resumeDetails || (typeof user.resume_details === 'string' ? JSON.parse(user.resume_details || '{}') : (user.resume_details || {}));
     norm.targetCareerId = user.targetCareerId || user.target_career_id || 'sde';
-    norm.targetCareerTitle = user.targetCareerTitle || user.target_career_title || 'Software Development Engineer';
+    norm.targetCareerTitle = user.targetCareerTitle || user.target_career_title || '';
 
     // Parse array and object properties
     norm.skills = Array.isArray(user.skills) ? user.skills : (typeof user.skills === 'string' ? JSON.parse(user.skills || '[]') : []);
@@ -259,9 +267,16 @@ class AuthManager {
   async fetchCurrentUser() {
     if (!this.token) return null;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      const uidParam = (this.currentUser && this.currentUser.id) ? `?uid=${this.currentUser.id}` : '';
+      let res = await fetch(`${API_BASE_URL}/api/user/profile${uidParam}`, {
         headers: { 'Authorization': `Bearer ${this.token}` }
       });
+      if (!res.ok && res.status !== 401 && res.status !== 403) {
+        res = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${this.token}` }
+        });
+      }
+
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.user) {
@@ -483,18 +498,29 @@ class AuthManager {
     }
   }
 
-  async refreshUserProfile() {
+  async refreshUserProfile(showFeedback = true) {
     if (!this.token) {
-      showToast('No active session token.', 'warning');
-      return;
+      if (showFeedback && typeof showToast === 'function') showToast('No active session token.', 'warning');
+      return null;
     }
-    showToast('Syncing profile from SQLite database...', 'info');
+    if (showFeedback && typeof showToast === 'function') showToast('Syncing profile from SQLite database...', 'info');
     const user = await this.fetchCurrentUser();
     if (user) {
-      if (window.renderAllAppViews) window.renderAllAppViews();
-      showToast(`Profile re-synced from database for ${user.fullName}!`, 'success');
+      if (typeof renderAllAppViews === 'function') renderAllAppViews();
+      else if (window.renderAllAppViews) window.renderAllAppViews();
+
+      if (typeof syncPredictionFormWithProfile === 'function') {
+        syncPredictionFormWithProfile(false);
+      }
+      if (showFeedback && typeof showToast === 'function') {
+        showToast(`Profile re-synced from database for ${user.fullName}!`, 'success');
+      }
+      return user;
     } else {
-      showToast('Failed to sync profile from database.', 'danger');
+      if (showFeedback && typeof showToast === 'function') {
+        showToast('Failed to sync profile from database.', 'danger');
+      }
+      return null;
     }
   }
 

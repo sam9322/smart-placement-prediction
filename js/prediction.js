@@ -317,47 +317,214 @@ function updateGaugeDisplay(gaugeSvgId, textElementId, targetPercent) {
 /**
  * Sync Prediction Form with Profile
  */
-function syncPredictionFormWithProfile() {
+/**
+ * Synchronize Smart Placement Predictor Parameters form with authenticated student profile
+ * Real-time SQLite / Database synchronization without dummy/hardcoded fallbacks
+ */
+async function syncPredictionFormWithProfile(isManualClick = false) {
+  const syncBtn = document.getElementById('btn-sync-prediction-profile');
+  const syncText = document.getElementById('btn-sync-text');
+
+  if (isManualClick) {
+    if (syncBtn) syncBtn.disabled = true;
+    if (syncText) syncText.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Syncing...';
+    try {
+      if (window.authManager && typeof authManager.refreshUserProfile === 'function') {
+        await authManager.refreshUserProfile(false);
+      }
+    } catch (e) {
+      console.warn('Sync error:', e);
+    }
+  }
+
   const profile = appState.getProfile();
   if (!profile) return;
 
   const setVal = (id, val) => {
     const el = document.getElementById(id);
-    if (el) el.value = val;
+    if (el) el.value = (val !== undefined && val !== null) ? val : '';
   };
 
-  const setSlider = (id, valId, val) => {
+  const setSlider = (id, valId, val, fallback = 0) => {
     const el = document.getElementById(id);
     const valEl = document.getElementById(valId);
-    if (el) el.value = val;
-    if (valEl) valEl.innerText = val;
+    const num = (val !== undefined && val !== null && !isNaN(val)) ? parseFloat(val) : fallback;
+    if (el) el.value = num;
+    if (valEl) valEl.innerText = (num % 1 !== 0) ? num.toFixed(2) : num;
   };
 
-  // Basic inputs
-  setVal('pred-college', profile.college || 'National Institute of Engineering & Technology');
-  setVal('pred-degree', profile.degree || 'B.Tech');
-  setVal('pred-branch', profile.branch || 'Computer Science & Engineering');
-  setVal('pred-gradyear', profile.gradYear || '2026');
-  setSlider('pred-cgpa', 'pred-cgpa-val', profile.cgpa || 8.45);
-  setVal('pred-backlogs', profile.backlogs || 0);
+  // 1-4. College, Degree, Branch, Graduation Year
+  setVal('pred-college', profile.college || '');
+  setVal('pred-degree', profile.degree || '');
+  setVal('pred-branch', profile.branch || '');
+  setVal('pred-gradyear', profile.gradYear || '');
 
-  // Technical & Skill inputs
-  setVal('pred-language', profile.programmingLanguage || 'Java');
-  setVal('pred-dsa-skill', profile.dsaSkill || 'Advanced');
-  setVal('pred-corecs', profile.coreCsKnowledge || 'Strong');
-  setVal('pred-dev-skills', profile.devSkills || 'Full Stack & APIs');
-  setVal('pred-projects', Math.min(3, (profile.projects || []).length || 2));
-  setVal('pred-internships', Math.min(2, (profile.internships || []).length || 1));
-  setVal('pred-certs', Math.min(3, (profile.certifications || []).length || 2));
-  
-  // Aptitude, Soft skills & ATS Resume scores
-  setSlider('pred-aptitude', 'pred-aptitude-val', profile.aptitudeScore || 84);
-  setSlider('pred-coding', 'pred-coding-val', profile.codingRating || 1680);
-  setSlider('pred-comm', 'pred-comm-val', profile.communicationScore || 85);
-  setSlider('pred-resume', 'pred-resume-val', profile.resumeScore || 82);
+  // 5. Current CGPA
+  const currentCgpa = (profile.cgpa !== undefined && profile.cgpa !== null) ? parseFloat(profile.cgpa) : 0;
+  setSlider('pred-cgpa', 'pred-cgpa-val', currentCgpa, 0);
+
+  // 6. Active Standing Backlogs
+  setVal('pred-backlogs', (profile.backlogs !== undefined) ? String(profile.backlogs) : '0');
+
+  // 7-10. Technical parameters: Language, DSA, Core CS, Dev Skills
+  setVal('pred-language', profile.programmingLanguage || '');
+  setVal('pred-dsa-skill', profile.dsaSkill || '');
+  setVal('pred-corecs', profile.coreCsKnowledge || '');
+  setVal('pred-dev-skills', profile.devSkills || '');
+
+  // 11. Technical Skills Matrix
+  const skillsContainer = document.getElementById('pred-skills-tags');
+  if (skillsContainer) {
+    const skills = Array.isArray(profile.skills) ? profile.skills : [];
+    if (skills.length > 0) {
+      skillsContainer.innerHTML = skills.map(s => `
+        <span class="tag-item skill-tag-matched" style="font-size: 0.78rem; padding: 0.2rem 0.55rem; background: var(--primary-light); color: var(--primary); border-radius: var(--radius-sm); border: 1px solid rgba(124, 58, 237, 0.2);">
+          <i class="fa-solid fa-code text-primary"></i> ${s}
+        </span>
+      `).join('');
+    } else {
+      skillsContainer.innerHTML = `
+        <span class="text-xs text-muted" style="color: var(--text-muted);">
+          <i class="fa-solid fa-circle-info"></i> No technical skills in profile yet.
+          <a href="#profile" class="text-primary font-bold" style="text-decoration: underline; margin-left: 4px;">Add skills in Profile</a>
+        </span>
+      `;
+    }
+  }
+
+  // 12. Projects Count & Summary
+  const projects = Array.isArray(profile.projects) ? profile.projects : [];
+  const projCount = Math.min(3, projects.length);
+  setVal('pred-projects', String(projCount));
+  const projsCountEl = document.getElementById('pred-projects-summary-count');
+  if (projsCountEl) projsCountEl.innerText = projects.length;
+
+  // 13. Internships Count & Summary
+  const interns = Array.isArray(profile.internships) ? profile.internships : [];
+  const internCount = Math.min(2, interns.length);
+  setVal('pred-internships', String(internCount));
+  const internsCountEl = document.getElementById('pred-internships-summary-count');
+  if (internsCountEl) internsCountEl.innerText = interns.length;
+
+  // 14. Certifications Count & Summary
+  const certs = Array.isArray(profile.certifications) ? profile.certifications : [];
+  const certCount = Math.min(3, certs.length);
+  setVal('pred-certs', String(certCount));
+  const certsCountEl = document.getElementById('pred-certs-summary-count');
+  if (certsCountEl) certsCountEl.innerText = certs.length;
+
+  // 15. Resume Details & ATS Score
+  const resumeScore = (profile.resumeScore !== undefined && profile.resumeScore !== null) ? parseInt(profile.resumeScore) : 0;
+  setSlider('pred-resume', 'pred-resume-val', resumeScore, 0);
+
+  const resumeStatusText = document.getElementById('pred-resume-status-text');
+  if (resumeStatusText) {
+    const details = profile.resumeDetails || {};
+    if (details.fileName && resumeScore > 0) {
+      resumeStatusText.innerHTML = `
+        <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center;">
+          <span><i class="fa-solid fa-file-pdf text-rose"></i> <strong>${details.fileName}</strong></span>
+          <span class="badge ${resumeScore >= 80 ? 'badge-success' : 'badge-warning'} text-xs">${details.scoreGrade || 'ATS Ready'} (${resumeScore}/100)</span>
+        </div>
+      `;
+    } else if (resumeScore > 0) {
+      resumeStatusText.innerHTML = `<span><i class="fa-solid fa-circle-check text-emerald"></i> ATS Resume Score: <strong>${resumeScore}/100</strong> (Synchronized from profile)</span>`;
+    } else {
+      resumeStatusText.innerHTML = `<span style="color: #d97706;"><i class="fa-solid fa-triangle-exclamation"></i> No resume analyzed yet. <a href="#resume" class="text-primary font-semibold">Upload resume to evaluate ATS score</a></span>`;
+    }
+  }
+
+  // Aptitude, Soft skills & Preferred Role
+  setSlider('pred-aptitude', 'pred-aptitude-val', (profile.aptitudeScore !== undefined ? profile.aptitudeScore : 0), 0);
+  setSlider('pred-comm', 'pred-comm-val', (profile.communicationScore !== undefined ? profile.communicationScore : 0), 0);
   setVal('pred-preferred-role', profile.targetCareerId || 'sde');
 
-  showToast('Scoring parameters synchronized with your active student profile.', 'info');
+  // Check for missing profile information (Requirement 6)
+  const missing = [];
+  if (!profile.college) missing.push('College');
+  if (!profile.branch) missing.push('Branch');
+  if (!profile.cgpa || profile.cgpa <= 0) missing.push('Current CGPA');
+  if (!profile.programmingLanguage) missing.push('Primary Programming Language');
+  if (!profile.skills || profile.skills.length === 0) missing.push('Technical Skills');
+  if (!profile.projects || profile.projects.length === 0) missing.push('Projects');
+  if (!profile.resumeScore || profile.resumeScore <= 0) missing.push('ATS Resume Analysis');
+
+  const missingAlert = document.getElementById('pred-profile-missing-alert');
+  const syncStatus = document.getElementById('pred-profile-sync-status');
+  const missingText = document.getElementById('pred-missing-fields-text');
+  const syncUserName = document.getElementById('pred-sync-user-name');
+  const syncUserUid = document.getElementById('pred-sync-user-uid');
+  const syncTimestamp = document.getElementById('pred-sync-timestamp');
+
+  const uid = profile.id || (window.authManager && authManager.currentUser ? authManager.currentUser.id : 'Active');
+  if (syncUserName) syncUserName.innerText = profile.fullName || 'Student';
+  if (syncUserUid) syncUserUid.innerText = `#${uid}`;
+  if (syncTimestamp) syncTimestamp.innerText = `Synced ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+  if (missing.length > 0) {
+    if (missingText) missingText.innerHTML = `The following parameters are not populated in your profile: <strong>${missing.join(', ')}</strong>.`;
+    if (missingAlert) missingAlert.style.display = 'block';
+    if (syncStatus) syncStatus.style.display = 'none';
+  } else {
+    if (missingAlert) missingAlert.style.display = 'none';
+    if (syncStatus) syncStatus.style.display = 'block';
+  }
+
+  if (isManualClick) {
+    if (syncBtn) syncBtn.disabled = false;
+    if (syncText) syncText.innerText = 'Sync Profile';
+    if (typeof showToast === 'function') {
+      showToast(`Placement parameters synchronized for ${profile.fullName} (UID: #${uid}) from SQLite!`, 'success');
+    }
+  }
+}
+
+/**
+ * Save user adjusted parameters from the form directly back to student profile in database
+ */
+async function savePredictionParamsToProfile() {
+  const getStr = (id, fallback = '') => {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : fallback;
+  };
+  const getNum = (id, fallback = 0) => {
+    const el = document.getElementById(id);
+    return el ? parseFloat(el.value) || fallback : fallback;
+  };
+
+  const updatedParams = {
+    college: getStr('pred-college'),
+    degree: getStr('pred-degree'),
+    branch: getStr('pred-branch'),
+    gradYear: getStr('pred-gradyear'),
+    cgpa: getNum('pred-cgpa'),
+    backlogs: getNum('pred-backlogs'),
+    programmingLanguage: getStr('pred-language'),
+    dsaSkill: getStr('pred-dsa-skill'),
+    coreCsKnowledge: getStr('pred-corecs'),
+    devSkills: getStr('pred-dev-skills'),
+    aptitudeScore: getNum('pred-aptitude'),
+    communicationScore: getNum('pred-comm'),
+    resumeScore: getNum('pred-resume'),
+    targetCareerId: getStr('pred-preferred-role')
+  };
+
+  // Update in local state
+  appState.updateProfile(updatedParams);
+
+  // Sync to SQLite backend associated with authenticated student
+  if (window.authManager && typeof authManager.syncProfileToBackend === 'function') {
+    await authManager.syncProfileToBackend(updatedParams);
+  }
+
+  if (typeof showToast === 'function') {
+    showToast('Predictor parameters saved and synchronized with your verified SQLite database profile! ✨', 'success');
+  }
+
+  // Re-run sync to update status banners and UI
+  syncPredictionFormWithProfile(false);
+  if (window.renderDashboard) renderDashboard();
+  if (window.renderProfileView) renderProfileView();
 }
 
 /**
@@ -377,26 +544,47 @@ function handleRunPrediction(e) {
   };
 
   const params = {
-    college: getStr('pred-college', 'National Institute of Engineering & Technology'),
-    degree: getStr('pred-degree', 'B.Tech'),
-    branch: getStr('pred-branch', 'Computer Science & Engineering'),
+    college: getStr('pred-college'),
+    degree: getStr('pred-degree'),
+    branch: getStr('pred-branch'),
     gradYear: getNum('pred-gradyear', 2026),
-    cgpa: getNum('pred-cgpa', 8.45),
+    cgpa: getNum('pred-cgpa', 0),
     backlogs: getNum('pred-backlogs', 0),
     programmingLanguage: getStr('pred-language', 'Java'),
-    dsaSkill: getStr('pred-dsa-skill', 'Advanced'),
-    coreCsKnowledge: getStr('pred-corecs', 'Strong'),
+    dsaSkill: getStr('pred-dsa-skill', 'Intermediate'),
+    coreCsKnowledge: getStr('pred-corecs', 'Moderate'),
     devSkills: getStr('pred-dev-skills', 'Full Stack & APIs'),
-    projectsCount: getNum('pred-projects', 2),
-    internshipsCount: getNum('pred-internships', 1),
-    certsCount: getNum('pred-certs', 2),
-    aptitudeScore: getNum('pred-aptitude', 84),
-    communicationScore: getNum('pred-comm', 85),
-    resumeScore: getNum('pred-resume', 82),
+    projectsCount: getNum('pred-projects', 0),
+    internshipsCount: getNum('pred-internships', 0),
+    certsCount: getNum('pred-certs', 0),
+    aptitudeScore: getNum('pred-aptitude', 75),
+    communicationScore: getNum('pred-comm', 75),
+    resumeScore: getNum('pred-resume', 75),
     preferredJobRole: getStr('pred-preferred-role', 'sde')
   };
 
   const result = calculateSmartPlacementPrediction(params);
+
+  // Persist updated parameters and prediction to database
+  if (window.authManager) {
+    authManager.syncProfileToBackend({
+      college: params.college,
+      degree: params.degree,
+      branch: params.branch,
+      gradYear: String(params.gradYear),
+      cgpa: params.cgpa,
+      backlogs: params.backlogs,
+      programmingLanguage: params.programmingLanguage,
+      dsaSkill: params.dsaSkill,
+      coreCsKnowledge: params.coreCsKnowledge,
+      devSkills: params.devSkills,
+      aptitudeScore: params.aptitudeScore,
+      communicationScore: params.communicationScore,
+      resumeScore: params.resumeScore,
+      targetCareerId: params.preferredJobRole
+    });
+    authManager.syncPredictionToBackend(result);
+  }
 
   // Update App State
   appState.updatePrediction({
@@ -544,3 +732,4 @@ function handleRunPrediction(e) {
 window.calculateSmartPlacementPrediction = calculateSmartPlacementPrediction;
 window.handleRunPrediction = handleRunPrediction;
 window.syncPredictionFormWithProfile = syncPredictionFormWithProfile;
+window.savePredictionParamsToProfile = savePredictionParamsToProfile;
