@@ -1371,7 +1371,15 @@ def analyze_resume():
     return jsonify({
         'success': True,
         'message': f'Resume successfully analyzed! ATS Score: {analysis["atsScore"]}/100',
-        'data': analysis
+        'data': analysis,
+        'atsScore': analysis['atsScore'],
+        'scoreGrade': analysis['scoreGrade'],
+        'skills': analysis['skills'],
+        'projects': analysis['projects'],
+        'certifications': analysis['certifications'],
+        'internships': analysis['internships'],
+        'targetRoleMatch': analysis['targetRoleMatch'],
+        'suggestions': analysis['suggestions']
     }), 200
 
 # ==============================================================================
