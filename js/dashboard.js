@@ -281,4 +281,9 @@ function initDashboardCharts(profile, prediction) {
       }
     });
   }
+
+  // 3. Render Top Recommended YouTube Picks on Dashboard
+  if (typeof renderDashboardYouTubeWidget === 'function') {
+    renderDashboardYouTubeWidget();
+  }
 }

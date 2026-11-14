@@ -899,6 +899,9 @@ function renderSkillGapAnalysis() {
             <a href="#roadmap" class="btn btn-secondary btn-sm" onclick="switchView('roadmap')">
               <i class="fa-solid fa-route"></i> View Month-by-Month Roadmap
             </a>
+            <a href="#youtube" class="btn btn-ghost btn-sm" onclick="switchView('youtube')">
+              <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> YouTube Learning Hub ↗
+            </a>
             <button class="btn btn-outline btn-sm" onclick="addSkillToProfile('${escapeHtml(topPriority)}')">
               <i class="fa-solid fa-check"></i> Mark Acquired
             </button>

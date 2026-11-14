@@ -710,12 +710,19 @@ function handleRunPrediction(e) {
   // Render Actionable Suggestions
   const sugList = document.getElementById('pred-suggestions-list');
   if (sugList) {
-    sugList.innerHTML = result.suggestions.map(s => `
+    const items = result.suggestions.map(s => `
       <li class="suggestion-item">
         <i class="${s.icon}"></i>
         <span>${s.text}</span>
       </li>
-    `).join('');
+    `);
+    items.push(`
+      <li class="suggestion-item" style="border-top: 1px dashed var(--border-color); padding-top: 0.75rem; margin-top: 0.5rem;">
+        <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
+        <span>Targeted YouTube Learning Hub: Boost placement odds by watching curated lectures matched to your weak areas. <a href="#youtube" onclick="switchView('youtube')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Open Learning Hub ↗</a></span>
+      </li>
+    `);
+    sugList.innerHTML = items.join('');
   }
 
   // Trigger celebration confetti if High readiness

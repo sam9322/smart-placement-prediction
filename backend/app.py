@@ -92,6 +92,7 @@ def init_db():
             communication_score INTEGER DEFAULT 0,
             resume_score INTEGER DEFAULT 0,
             resume_details TEXT DEFAULT '{}',
+            completed_videos TEXT DEFAULT '[]',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -462,7 +463,8 @@ def init_db():
         ('dev_skills', "TEXT DEFAULT ''"),
         ('communication_score', "INTEGER DEFAULT 0"),
         ('resume_score', "INTEGER DEFAULT 0"),
-        ('resume_details', "TEXT DEFAULT '{}'")
+        ('resume_details', "TEXT DEFAULT '{}'"),
+        ('completed_videos', "TEXT DEFAULT '[]'")
     ]:
         try:
             cursor.execute(f"ALTER TABLE users ADD COLUMN {col[0]} {col[1]}")
@@ -659,6 +661,11 @@ def user_to_dict(user_row):
         d['resumeDetails'] = json.loads(d.get('resume_details') or '{}')
     except Exception:
         d['resumeDetails'] = {}
+
+    try:
+        d['completedVideos'] = json.loads(d.get('completed_videos') or '[]')
+    except Exception:
+        d['completedVideos'] = []
 
     # Provide camelCase aliases for seamless frontend compatibility
     d['fullName'] = d.get('fullname', '')
@@ -966,7 +973,8 @@ def user_profile():
             projects = COALESCE(?, projects),
             internships = COALESCE(?, internships),
             roadmap_state = COALESCE(?, roadmap_state),
-            interview_history = COALESCE(?, interview_history)
+            interview_history = COALESCE(?, interview_history),
+            completed_videos = COALESCE(?, completed_videos)
         WHERE id = ?
     ''', (
         data.get('fullName'),
@@ -997,6 +1005,7 @@ def user_profile():
         json.dumps(data.get('internships')) if 'internships' in data else None,
         json.dumps(data.get('roadmapState')) if 'roadmapState' in data else None,
         json.dumps(data.get('interviewHistory')) if 'interviewHistory' in data else None,
+        json.dumps(data.get('completedVideos')) if 'completedVideos' in data else (json.dumps(data.get('completed_videos')) if 'completed_videos' in data else None),
         user['id']
     ))
     conn.commit()
@@ -1383,8 +1392,775 @@ def analyze_resume():
     }), 200
 
 # ==============================================================================
-# CAREER ENGINE, YOUTUBE & PLACEMENT PREDICTION API ENDPOINTS
+# PERSONALIZED YOUTUBE LEARNING RECOMMENDATION SYSTEM
 # ==============================================================================
+
+PERSONALIZED_YOUTUBE_REGISTRY = {
+    'programming': {
+        'Java': [
+            {
+                'id': 'yt-prog-java-1',
+                'videoId': 'luc49p_m5tU',
+                'title': 'Java Tutorial for Beginners | Complete Java + DSA Course',
+                'channel': 'Kunal Kushwaha',
+                'duration': '12 hrs 30 mins',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'Java & Object Oriented Programming',
+                'thumbnail': 'https://img.youtube.com/vi/luc49p_m5tU/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=luc49p_m5tU',
+                'whyRecommended': 'Comprehensive Java tutorial from scratch covering JVM architecture, memory management, and OOP fundamentals.'
+            },
+            {
+                'id': 'yt-prog-java-2',
+                'videoId': 'bm0OyhwFDuY',
+                'title': 'Java Tutorial for Beginners [2024]',
+                'channel': 'Telusko',
+                'duration': '9 hrs 15 mins',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'Core Java & Multi-Threading',
+                'thumbnail': 'https://img.youtube.com/vi/bm0OyhwFDuY/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=bm0OyhwFDuY',
+                'whyRecommended': 'Practical industry walkthrough of exception handling, collections framework, and multi-threaded programming.'
+            },
+            {
+                'id': 'yt-prog-java-3',
+                'videoId': 'A74TOX803D0',
+                'title': 'Java Full Course - freeCodeCamp',
+                'channel': 'freeCodeCamp.org',
+                'duration': '9 hrs 30 mins',
+                'level': 'Intermediate',
+                'category': 'Java/Programming',
+                'topic': 'Java Collections & Streams API',
+                'thumbnail': 'https://img.youtube.com/vi/A74TOX803D0/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=A74TOX803D0',
+                'whyRecommended': 'Advanced Java features including lambdas, stream pipelines, generics, and concurrent collections.'
+            }
+        ],
+        'Python': [
+            {
+                'id': 'yt-prog-py-1',
+                'videoId': '_uQrJ0TkZlc',
+                'title': 'Python Tutorial for Beginners - Full Course',
+                'channel': 'Programming with Mosh',
+                'duration': '6 hrs 14 mins',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'Python Syntax & Data Structures',
+                'thumbnail': 'https://img.youtube.com/vi/_uQrJ0TkZlc/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=_uQrJ0TkZlc',
+                'whyRecommended': 'Clear foundational programming course covering lists, dictionaries, tuples, and clean coding practices.'
+            },
+            {
+                'id': 'yt-prog-py-2',
+                'videoId': 'rfscVS0vtbw',
+                'title': 'Learn Python - Full Course for Beginners',
+                'channel': 'freeCodeCamp.org',
+                'duration': '4 hrs 26 mins',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'Python Automation & Modules',
+                'thumbnail': 'https://img.youtube.com/vi/rfscVS0vtbw/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=rfscVS0vtbw',
+                'whyRecommended': 'Hands-on project-based Python tutorial for building scripts, data processing, and algorithmic problem solving.'
+            }
+        ],
+        'C++': [
+            {
+                'id': 'yt-prog-cpp-1',
+                'videoId': 'vLnPwxZdW4Y',
+                'title': 'C++ Tutorial for Beginners - Full Course',
+                'channel': 'freeCodeCamp.org',
+                'duration': '4 hrs 01 min',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'C++ STL & Pointers',
+                'thumbnail': 'https://img.youtube.com/vi/vLnPwxZdW4Y/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=vLnPwxZdW4Y',
+                'whyRecommended': 'Master pointers, references, memory addresses, and the Standard Template Library (STL).'
+            },
+            {
+                'id': 'yt-prog-cpp-2',
+                'videoId': 'z9bZufPHFLU',
+                'title': 'C++ Full Course : Free',
+                'channel': 'Bro Code',
+                'duration': '6 hrs 00 mins',
+                'level': 'Intermediate',
+                'category': 'Java/Programming',
+                'topic': 'Object-Oriented C++ & Memory',
+                'thumbnail': 'https://img.youtube.com/vi/z9bZufPHFLU/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=z9bZufPHFLU',
+                'whyRecommended': 'Fast-paced comprehensive review of C++ templates, vectors, memory allocation, and structs.'
+            }
+        ],
+        'JavaScript': [
+            {
+                'id': 'yt-prog-js-1',
+                'videoId': 'W6NZfCO5SIk',
+                'title': 'JavaScript Course for Beginners – Your First Step to Web Development',
+                'channel': 'Programming with Mosh',
+                'duration': '1 hr 48 mins',
+                'level': 'Beginner',
+                'category': 'Java/Programming',
+                'topic': 'JavaScript ES6 & Async',
+                'thumbnail': 'https://img.youtube.com/vi/W6NZfCO5SIk/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
+                'whyRecommended': 'Core JavaScript essentials: closures, scopes, event loop, Promises, and modern ES6+ syntax.'
+            },
+            {
+                'id': 'yt-prog-js-2',
+                'videoId': '30LWjhZzg50',
+                'title': 'TypeScript Course for Beginners - Learn TypeScript from Scratch',
+                'channel': 'freeCodeCamp.org',
+                'duration': '1 hr 34 mins',
+                'level': 'Intermediate',
+                'category': 'Java/Programming',
+                'topic': 'TypeScript Static Typing & Generics',
+                'thumbnail': 'https://img.youtube.com/vi/30LWjhZzg50/hqdefault.jpg',
+                'videoUrl': 'https://www.youtube.com/watch?v=30LWjhZzg50',
+                'whyRecommended': 'Essential for modern frontend/fullstack roles: Interfaces, Generics, Type Narrowing, and TS compiler config.'
+            }
+        ]
+    },
+    'dsa': [
+        {
+            'id': 'yt-dsa-1',
+            'videoId': '0IAPZzGSbME',
+            'title': '1. Introduction to Algorithms',
+            'channel': 'Abdul Bari',
+            'duration': '10 hrs 45 mins',
+            'level': 'Beginner',
+            'category': 'DSA',
+            'topic': 'Asymptotic Analysis & Big-O Notation',
+            'thumbnail': 'https://img.youtube.com/vi/0IAPZzGSbME/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=0IAPZzGSbME',
+            'whyRecommended': 'World-renowned visual explanations of recursion trees, time & space complexity analysis.'
+        },
+        {
+            'id': 'yt-dsa-2',
+            'videoId': 'RBSGKlAvoiM',
+            'title': 'Data Structures Easy to Advanced Course - Full Tutorial from a Google Engineer',
+            'channel': 'freeCodeCamp.org',
+            'duration': '8 hrs 03 mins',
+            'level': 'Beginner',
+            'category': 'DSA',
+            'topic': 'Data Structures Fundamentals',
+            'thumbnail': 'https://img.youtube.com/vi/RBSGKlAvoiM/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=RBSGKlAvoiM',
+            'whyRecommended': 'Complete walkthrough of Arrays, Linked Lists, Stacks, Queues, Binary Trees, and Hash Tables.'
+        },
+        {
+            'id': 'yt-dsa-3',
+            'videoId': 'KLlXCFG5TnA',
+            'title': 'Two Sum - Leetcode 1 - HashMap - Python',
+            'channel': 'NeetCode',
+            'duration': '8 mins',
+            'level': 'Intermediate',
+            'category': 'DSA',
+            'topic': 'LeetCode 150 & Sliding Window',
+            'thumbnail': 'https://img.youtube.com/vi/KLlXCFG5TnA/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=KLlXCFG5TnA',
+            'whyRecommended': 'Learn optimal HashMap lookups reducing O(N^2) brute force to linear O(N) time complexity.'
+        },
+        {
+            'id': 'yt-dsa-4',
+            'videoId': 'tyB0ztf0DNY',
+            'title': 'DP 1. Introduction to Dynamic Programming | Memoization | Tabulation',
+            'channel': 'take U forward',
+            'duration': '38 mins',
+            'level': 'Advanced',
+            'category': 'DSA',
+            'topic': 'Dynamic Programming & Memoization',
+            'thumbnail': 'https://img.youtube.com/vi/tyB0ztf0DNY/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=tyB0ztf0DNY',
+            'whyRecommended': 'Striver\'s masterclass on 1D/2D DP recurrence relations, top-down memoization, and bottom-up space optimization.'
+        },
+        {
+            'id': 'yt-dsa-5',
+            'videoId': 'xpDnVSmNFX0',
+            'title': 'System Design BASICS: Horizontal vs. Vertical Scaling',
+            'channel': 'Gaurav Sen',
+            'duration': '11 mins',
+            'level': 'Advanced',
+            'category': 'DSA',
+            'topic': 'System Design & Scalability',
+            'thumbnail': 'https://img.youtube.com/vi/xpDnVSmNFX0/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=xpDnVSmNFX0',
+            'whyRecommended': 'Crucial for Tier-1 Product Company rounds: load balancers, database sharding, and caching layers.'
+        }
+    ],
+    'corecs': [
+        {
+            'id': 'yt-corecs-1',
+            'videoId': 'bkSWJJZNgf8',
+            'title': 'Introduction to Operating Systems',
+            'channel': 'Neso Academy',
+            'duration': '18 mins',
+            'level': 'Beginner',
+            'category': 'Core CS',
+            'topic': 'OS Architecture & Kernel',
+            'thumbnail': 'https://img.youtube.com/vi/bkSWJJZNgf8/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=bkSWJJZNgf8',
+            'whyRecommended': 'Foundational concepts on user vs kernel mode, system calls, and dual-mode operation for tech vivas.'
+        },
+        {
+            'id': 'yt-corecs-2',
+            'videoId': 'HxvTx79f6u4',
+            'title': 'Process Scheduling in Operating Systems',
+            'channel': 'Gate Smashers',
+            'duration': '14 mins',
+            'level': 'Intermediate',
+            'category': 'Core CS',
+            'topic': 'CPU Scheduling & Deadlocks',
+            'thumbnail': 'https://img.youtube.com/vi/HxvTx79f6u4/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=HxvTx79f6u4',
+            'whyRecommended': 'FCFS, SJF, Round Robin, and Banker\'s algorithm explained with high-frequency placement interview questions.'
+        },
+        {
+            'id': 'yt-corecs-3',
+            'videoId': 'HXV3zeQKqGY',
+            'title': 'SQL Tutorial - Full Database Course for Beginners',
+            'channel': 'freeCodeCamp.org',
+            'duration': '4 hrs 20 mins',
+            'level': 'Beginner',
+            'category': 'Core CS',
+            'topic': 'DBMS, SQL Queries & Normalization',
+            'thumbnail': 'https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=HXV3zeQKqGY',
+            'whyRecommended': 'Master relational database schema design, ACID properties, joins, subqueries, and B-Tree indexing.'
+        },
+        {
+            'id': 'yt-corecs-4',
+            'videoId': 'qiQR5rTSshw',
+            'title': 'Computer Networking Course - Network Engineering',
+            'channel': 'freeCodeCamp.org',
+            'duration': '9 hrs 24 mins',
+            'level': 'Intermediate',
+            'category': 'Core CS',
+            'topic': 'Computer Networks & TCP/IP',
+            'thumbnail': 'https://img.youtube.com/vi/qiQR5rTSshw/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=qiQR5rTSshw',
+            'whyRecommended': 'Deep dive into TCP 3-way handshake, DNS, HTTP/HTTPS, subnetting, and socket programming.'
+        }
+    ],
+    'fullstack': [
+        {
+            'id': 'yt-dev-1',
+            'videoId': 'mU6anWqZJcc',
+            'title': 'Learn HTML5 and CSS3 From Scratch - Full Course',
+            'channel': 'freeCodeCamp.org',
+            'duration': '11 hrs 30 mins',
+            'level': 'Beginner',
+            'category': 'Full Stack',
+            'topic': 'Modern Responsive Web Design',
+            'thumbnail': 'https://img.youtube.com/vi/mU6anWqZJcc/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=mU6anWqZJcc',
+            'whyRecommended': 'Essential for web developer screening: Semantic HTML, Flexbox, CSS Grid, and mobile-first layouts.'
+        },
+        {
+            'id': 'yt-dev-2',
+            'videoId': 'bMknfKXIFA8',
+            'title': "React Course - Beginner's Tutorial for React",
+            'channel': 'freeCodeCamp.org',
+            'duration': '11 hrs 55 mins',
+            'level': 'Intermediate',
+            'category': 'Full Stack',
+            'topic': 'React Hooks & State Management',
+            'thumbnail': 'https://img.youtube.com/vi/bMknfKXIFA8/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=bMknfKXIFA8',
+            'whyRecommended': 'Component architecture, useState/useEffect hooks, custom hooks, and context API for frontend interviews.'
+        },
+        {
+            'id': 'yt-dev-3',
+            'videoId': 'Oe421EPjeBE',
+            'title': 'Node.js and Express.js - Full Course',
+            'channel': 'freeCodeCamp.org',
+            'duration': '8 hrs 16 mins',
+            'level': 'Intermediate',
+            'category': 'Full Stack',
+            'topic': 'REST APIs & Backend Architecture',
+            'thumbnail': 'https://img.youtube.com/vi/Oe421EPjeBE/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=Oe421EPjeBE',
+            'whyRecommended': 'Learn routing, middleware authentication, JWT tokens, and database integration for full-stack engineering.'
+        },
+        {
+            'id': 'yt-dev-4',
+            'videoId': '3c-iBn73dDE',
+            'title': 'Docker Tutorial for Beginners [FULL COURSE in 3 Hours]',
+            'channel': 'TechWorld with Nana',
+            'duration': '2 hrs 48 mins',
+            'level': 'Advanced',
+            'category': 'Full Stack',
+            'topic': 'Docker & Containerization',
+            'thumbnail': 'https://img.youtube.com/vi/3c-iBn73dDE/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=3c-iBn73dDE',
+            'whyRecommended': 'High-demand DevOps skill: Containerize your projects, write Dockerfiles, and orchestrate with Docker Compose.'
+        }
+    ],
+    'aptitude': [
+        {
+            'id': 'yt-apt-1',
+            'videoId': 'rsmXhDyoH6M',
+            'title': 'Aptitude Test Questions and Answers for Placement Drives',
+            'channel': 'CareerRide',
+            'duration': '45 mins',
+            'level': 'Beginner',
+            'category': 'Aptitude',
+            'topic': 'Quantitative Aptitude Essentials',
+            'thumbnail': 'https://img.youtube.com/vi/rsmXhDyoH6M/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=rsmXhDyoH6M',
+            'whyRecommended': 'Highest yield practice questions for TCS, Infosys, Cognizant, and Wipro initial placement screening.'
+        },
+        {
+            'id': 'yt-apt-2',
+            'videoId': 'yV9vWk5iC5o',
+            'title': 'Quantitative Aptitude Short Tricks for Placements',
+            'channel': 'Feel Free to Learn',
+            'duration': '38 mins',
+            'level': 'Intermediate',
+            'category': 'Aptitude',
+            'topic': 'Speed Math, Percentages & Profit/Loss',
+            'thumbnail': 'https://img.youtube.com/vi/yV9vWk5iC5o/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=yV9vWk5iC5o',
+            'whyRecommended': 'Shortcut techniques to solve percentage and profit/loss calculations under 30 seconds per question.'
+        },
+        {
+            'id': 'yt-apt-3',
+            'videoId': '58dO_qF3e7I',
+            'title': 'Time and Work Problems Short Tricks',
+            'channel': 'CareerRide',
+            'duration': '24 mins',
+            'level': 'Beginner',
+            'category': 'Aptitude',
+            'topic': 'Time, Work & Efficiency',
+            'thumbnail': 'https://img.youtube.com/vi/58dO_qF3e7I/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=58dO_qF3e7I',
+            'whyRecommended': 'LCM method for solving Pipes & Cisterns and Time & Work problems with 100% accuracy.'
+        },
+        {
+            'id': 'yt-apt-4',
+            'videoId': 'sRkXfKq_TzI',
+            'title': 'Number Series Reasoning Tricks for Tech Placement Exams',
+            'channel': 'Study Smart',
+            'duration': '30 mins',
+            'level': 'Intermediate',
+            'category': 'Aptitude',
+            'topic': 'Logical Reasoning & Pattern Analysis',
+            'thumbnail': 'https://img.youtube.com/vi/sRkXfKq_TzI/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=sRkXfKq_TzI',
+            'whyRecommended': 'Master geometric, alternating, and polynomial number series for aptitude test clearing.'
+        }
+    ],
+    'projects': [
+        {
+            'id': 'yt-proj-1',
+            'videoId': 'nu_pCVPKzTk',
+            'title': 'Full Stack MERN Project with Authentication & Real-Time Sync',
+            'channel': 'freeCodeCamp.org',
+            'duration': '3 hrs 20 mins',
+            'level': 'Advanced',
+            'category': 'Projects',
+            'topic': 'Full-Stack Production Capstone',
+            'thumbnail': 'https://img.youtube.com/vi/nu_pCVPKzTk/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=nu_pCVPKzTk',
+            'whyRecommended': 'Impress recruiters by building a full-featured web app with JWT authentication, MongoDB schemas, and clean UI.'
+        },
+        {
+            'id': 'yt-proj-2',
+            'videoId': 'qfyynHBFOsM',
+            'title': 'Data Analyst Portfolio Project | SQL Data Exploration',
+            'channel': 'Alex The Analyst',
+            'duration': '45 mins',
+            'level': 'Intermediate',
+            'category': 'Projects',
+            'topic': 'SQL Data Exploration Portfolio Project',
+            'thumbnail': 'https://img.youtube.com/vi/qfyynHBFOsM/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=qfyynHBFOsM',
+            'whyRecommended': 'End-to-end portfolio project analyzing COVID-19 datasets using SQL CTEs, window functions, and views.'
+        },
+        {
+            'id': 'yt-proj-3',
+            'videoId': 'L72fhGm1tfE',
+            'title': 'Build and Deploy 10 Projects in React',
+            'channel': 'freeCodeCamp.org',
+            'duration': '9 hrs 00 mins',
+            'level': 'Intermediate',
+            'category': 'Projects',
+            'topic': 'React Portfolio Projects',
+            'thumbnail': 'https://img.youtube.com/vi/L72fhGm1tfE/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=L72fhGm1tfE',
+            'whyRecommended': '10 distinct portfolio-ready React applications with API consumption, filtering, and responsive CSS.'
+        },
+        {
+            'id': 'yt-proj-4',
+            'videoId': 'G3e-cpL7ofc',
+            'title': 'Full Stack Web Development Project from Scratch',
+            'channel': 'Web Dev Simplified',
+            'duration': '1 hr 15 mins',
+            'level': 'Advanced',
+            'category': 'Projects',
+            'topic': 'Production Web Application Deployment',
+            'thumbnail': 'https://img.youtube.com/vi/G3e-cpL7ofc/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=G3e-cpL7ofc',
+            'whyRecommended': 'Professional code organization, security best practices, and automated deployment pipelines.'
+        }
+    ],
+    'interview': [
+        {
+            'id': 'yt-int-1',
+            'videoId': 'wbp-3Bs94DQ',
+            'title': 'How to Prepare for Coding Interviews in 2024',
+            'channel': 'NeetCode',
+            'duration': '14 mins',
+            'level': 'Beginner',
+            'category': 'Interview Preparation',
+            'topic': 'Coding Interview Roadmap & Strategy',
+            'thumbnail': 'https://img.youtube.com/vi/wbp-3Bs94DQ/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=wbp-3Bs94DQ',
+            'whyRecommended': 'Clear blueprint on question prioritization, mock interview frequency, and time management.'
+        },
+        {
+            'id': 'yt-int-2',
+            'videoId': '1mHjMNZZvFo',
+            'title': 'Tell Me About Yourself - Top Answer for Freshers Campus Placement',
+            'channel': 'CareerVidz',
+            'duration': '10 mins',
+            'level': 'Beginner',
+            'category': 'Interview Preparation',
+            'topic': 'HR Interview Self Introduction',
+            'thumbnail': 'https://img.youtube.com/vi/1mHjMNZZvFo/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=1mHjMNZZvFo',
+            'whyRecommended': 'Perfect 90-second script linking your academic projects, skills, and company cultural fit.'
+        },
+        {
+            'id': 'yt-int-3',
+            'videoId': 'uGk_4K6hRrg',
+            'title': 'STAR Method Behavioral Interview Questions and Answers',
+            'channel': 'Dan Croitor',
+            'duration': '16 mins',
+            'level': 'Intermediate',
+            'category': 'Interview Preparation',
+            'topic': 'STAR Technique & Behavioral Competency',
+            'thumbnail': 'https://img.youtube.com/vi/uGk_4K6hRrg/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=uGk_4K6hRrg',
+            'whyRecommended': 'Structure answers using Situation, Task, Action, and Result to score high in technical director rounds.'
+        },
+        {
+            'id': 'yt-int-4',
+            'videoId': 'zC5_H1c5qZ0',
+            'title': 'Technical Coding Mock Interview with Ex-Google Engineer',
+            'channel': 'freeCodeCamp.org',
+            'duration': '55 mins',
+            'level': 'Advanced',
+            'category': 'Interview Preparation',
+            'topic': 'Live Technical Mock Simulation',
+            'thumbnail': 'https://img.youtube.com/vi/zC5_H1c5qZ0/hqdefault.jpg',
+            'videoUrl': 'https://www.youtube.com/watch?v=zC5_H1c5qZ0',
+            'whyRecommended': 'Observe real live problem breakdown, edge case handling, and communication under interview pressure.'
+        }
+    ]
+}
+
+@app.route('/api/youtube/personalized', methods=['GET'])
+def get_personalized_youtube_recommendations():
+    user = get_current_user()
+    
+    # If not authenticated via bearer, check optional ?uid query param or use default
+    if not user:
+        uid = request.args.get('uid')
+        if uid:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM users WHERE id = ?', (uid,))
+            user = cursor.fetchone()
+            conn.close()
+
+    # Fallback to seeded demo user if still none
+    if not user:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE email LIKE '%samiksha%' LIMIT 1")
+        user = cursor.fetchone()
+        conn.close()
+
+    user_dict = user_to_dict(user) if user else {}
+    
+    # Extract student parameters
+    student_name = user_dict.get('fullName', 'Student')
+    student_branch = user_dict.get('branch', 'Computer Science & Engineering')
+    cgpa = float(user_dict.get('cgpa', 8.0) or 8.0)
+    primary_lang = user_dict.get('programmingLanguage') or 'Java'
+    dsa_skill = user_dict.get('dsaSkill') or 'Intermediate'
+    core_cs = user_dict.get('coreCsKnowledge') or 'Moderate'
+    dev_skills = user_dict.get('devSkills') or 'Full Stack & APIs'
+    aptitude_score = int(user_dict.get('aptitudeScore', 80) or 80)
+    coding_rating = int(user_dict.get('codingRating', 1600) or 1600)
+    skills = user_dict.get('skills', [])
+    projects = user_dict.get('projects', [])
+    internships = user_dict.get('internships', [])
+    target_career_id = user_dict.get('targetCareerId', 'sde')
+    completed_videos = set(user_dict.get('completedVideos', []))
+
+    # 1. Identify Weaknesses & Skill Gaps
+    identified_gaps = []
+    priorities = []
+
+    if dsa_skill == 'Beginner' or coding_rating < 1450:
+        identified_gaps.append({
+            'area': 'Data Structures & Algorithms',
+            'severity': 'High Priority',
+            'desc': 'DSA competency is at beginner level (Coding Rating: ' + str(coding_rating) + '). Product company screening requires arrays, hash maps, and tree traversal mastery.'
+        })
+        priorities.append('DSA Foundations & Big-O')
+    elif dsa_skill == 'Intermediate':
+        priorities.append('LeetCode 150 & Tree/Graph Patterns')
+    else:
+        priorities.append('Dynamic Programming & Advanced System Design')
+
+    if core_cs in ['Basic', 'Moderate']:
+        identified_gaps.append({
+            'area': 'Core Computer Science',
+            'severity': 'Critical',
+            'desc': 'Core CS viva readiness requires deeper grasp of Operating Systems (Process Scheduling & Deadlocks) and DBMS (ACID & Indexing).'
+        })
+        priorities.append('OS & DBMS Viva Mastery')
+
+    if aptitude_score < 75:
+        identified_gaps.append({
+            'area': 'Aptitude & Logical Reasoning',
+            'severity': 'Critical Cutoff Alert',
+            'desc': f'Current aptitude score ({aptitude_score}%) is below the 75% cutoff threshold for standard IT & product drive qualification.'
+        })
+        priorities.append('Speed Math & Aptitude Cutoff Clearing')
+
+    if len(projects) < 2:
+        identified_gaps.append({
+            'area': 'Portfolio Capstone Projects',
+            'severity': 'High Priority',
+            'desc': f'Currently {len(projects)} project registered. Campus placement drives favor candidates with at least 2 production-ready applications.'
+        })
+        priorities.append('Full-Stack Production Project')
+
+    if not internships:
+        identified_gaps.append({
+            'area': 'Industry Experience',
+            'severity': 'Medium Priority',
+            'desc': 'No formal internship logged. Building open-source or simulated microservice applications will bridge this gap.'
+        })
+
+    # 2. Curate Video Recommendations across all 7 Categories
+    # Programming category matching primary language
+    prog_key = 'Java'
+    lower_lang = primary_lang.lower()
+    if 'python' in lower_lang: prog_key = 'Python'
+    elif 'c++' in lower_lang: prog_key = 'C++'
+    elif 'script' in lower_lang or 'js' in lower_lang: prog_key = 'JavaScript'
+
+    prog_videos = PERSONALIZED_YOUTUBE_REGISTRY['programming'].get(prog_key, PERSONALIZED_YOUTUBE_REGISTRY['programming']['Java'])
+    dsa_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['dsa'])
+    corecs_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['corecs'])
+    fullstack_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['fullstack'])
+    aptitude_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['aptitude'])
+    projects_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['projects'])
+    interview_videos = list(PERSONALIZED_YOUTUBE_REGISTRY['interview'])
+
+    # Adaptive sorting based on competency
+    if dsa_skill == 'Beginner':
+        dsa_videos.sort(key=lambda v: 0 if v['level'] == 'Beginner' else (1 if v['level'] == 'Intermediate' else 2))
+    elif dsa_skill in ['Advanced', 'Expert']:
+        dsa_videos.sort(key=lambda v: 0 if v['level'] == 'Advanced' else (1 if v['level'] == 'Intermediate' else 2))
+
+    def attach_completion(vlist):
+        result = []
+        for v in vlist:
+            v_copy = dict(v)
+            v_copy['isCompleted'] = v_copy['videoId'] in completed_videos or v_copy['id'] in completed_videos
+            result.append(v_copy)
+        return result
+
+    prog_videos_curated = attach_completion(prog_videos)
+    dsa_videos_curated = attach_completion(dsa_videos)
+    corecs_videos_curated = attach_completion(corecs_videos)
+    fullstack_videos_curated = attach_completion(fullstack_videos)
+    aptitude_videos_curated = attach_completion(aptitude_videos)
+    projects_videos_curated = attach_completion(projects_videos)
+    interview_videos_curated = attach_completion(interview_videos)
+
+    all_recommended_videos = (
+        prog_videos_curated + dsa_videos_curated + corecs_videos_curated +
+        fullstack_videos_curated + aptitude_videos_curated + projects_videos_curated + interview_videos_curated
+    )
+
+    # 3. Generate Personalized 7-Day Daily Study Roadmap
+    daily_roadmap = [
+        {
+            'day': 1,
+            'title': f'Day 1: {prog_key} Mastery & OOP Principles',
+            'category': 'Programming',
+            'targetVideo': prog_videos[0],
+            'dailyTarget': f'Master {prog_key} memory allocation, encapsulation, and inheritance.',
+            'estimatedTime': '1 hr 30 mins',
+            'isCompleted': prog_videos[0]['videoId'] in completed_videos
+        },
+        {
+            'day': 2,
+            'title': 'Day 2: Asymptotic Analysis & Arrays / HashMaps',
+            'category': 'DSA',
+            'targetVideo': dsa_videos[0] if dsa_skill == 'Beginner' else dsa_videos[2],
+            'dailyTarget': 'Solve 3 LeetCode Easy/Medium problems using two-pointers & frequency maps.',
+            'estimatedTime': '2 hrs',
+            'isCompleted': (dsa_videos[0] if dsa_skill == 'Beginner' else dsa_videos[2])['videoId'] in completed_videos
+        },
+        {
+            'day': 3,
+            'title': 'Day 3: Operating Systems Architecture & Process Synchronization',
+            'category': 'Core CS',
+            'targetVideo': corecs_videos[1] if core_cs in ['Basic', 'Moderate'] else corecs_videos[0],
+            'dailyTarget': 'Review CPU scheduling algorithms and mutex/semaphore synchronization.',
+            'estimatedTime': '1 hr 15 mins',
+            'isCompleted': (corecs_videos[1] if core_cs in ['Basic', 'Moderate'] else corecs_videos[0])['videoId'] in completed_videos
+        },
+        {
+            'day': 4,
+            'title': 'Day 4: Relational Databases, SQL Joins & B-Tree Indexing',
+            'category': 'Core CS',
+            'targetVideo': corecs_videos[2],
+            'dailyTarget': 'Write 5 complex SQL queries with CTEs, aggregate joins, and transactions.',
+            'estimatedTime': '1 hr 45 mins',
+            'isCompleted': corecs_videos[2]['videoId'] in completed_videos
+        },
+        {
+            'day': 5,
+            'title': 'Day 5: Placement Aptitude & Speed Math Drills',
+            'category': 'Aptitude',
+            'targetVideo': aptitude_videos[0] if aptitude_score < 80 else aptitude_videos[1],
+            'dailyTarget': 'Complete 25 timed quantitative questions under 30 minutes.',
+            'estimatedTime': '1 hr',
+            'isCompleted': (aptitude_videos[0] if aptitude_score < 80 else aptitude_videos[1])['videoId'] in completed_videos
+        },
+        {
+            'day': 6,
+            'title': 'Day 6: Capstone Project Architecture & RESTful API Integration',
+            'category': 'Projects',
+            'targetVideo': projects_videos[0] if len(projects) < 2 else projects_videos[2],
+            'dailyTarget': 'Deploy backend microservice endpoints with token authentication.',
+            'estimatedTime': '2 hrs 30 mins',
+            'isCompleted': (projects_videos[0] if len(projects) < 2 else projects_videos[2])['videoId'] in completed_videos
+        },
+        {
+            'day': 7,
+            'title': 'Day 7: Mock Technical Coding Viva & HR STAR Behavioral Prep',
+            'category': 'Interview Prep',
+            'targetVideo': interview_videos[1] if aptitude_score < 80 else interview_videos[2],
+            'dailyTarget': 'Simulate 1 technical interview and prepare 3 STAR scenario stories.',
+            'estimatedTime': '1 hr 30 mins',
+            'isCompleted': (interview_videos[1] if aptitude_score < 80 else interview_videos[2])['videoId'] in completed_videos
+        }
+    ]
+
+    # Metrics
+    total_recs = len(all_recommended_videos)
+    completed_recs = sum(1 for v in all_recommended_videos if v.get('isCompleted'))
+    mastery_pct = round((completed_recs / total_recs * 100)) if total_recs > 0 else 0
+
+    return jsonify({
+        'success': True,
+        'student': {
+            'name': student_name,
+            'branch': student_branch,
+            'cgpa': cgpa,
+            'primaryLanguage': primary_lang,
+            'dsaSkill': dsa_skill,
+            'coreCs': core_cs,
+            'devSkills': dev_skills,
+            'aptitudeScore': aptitude_score,
+            'codingRating': coding_rating,
+            'projectsCount': len(projects),
+            'targetCareer': target_career_id
+        },
+        'learningPriorities': priorities,
+        'identifiedSkillGaps': identified_gaps,
+        'categories': {
+            'programming': {
+                'title': f'{prog_key} & Language Architecture',
+                'language': prog_key,
+                'videos': prog_videos_curated
+            },
+            'dsa': {
+                'title': 'Data Structures & Algorithms',
+                'level': dsa_skill,
+                'videos': dsa_videos_curated
+            },
+            'corecs': {
+                'title': 'Core Computer Science (OS, DBMS, Networks)',
+                'level': core_cs,
+                'videos': corecs_videos_curated
+            },
+            'fullstack': {
+                'title': 'Full Stack & System Development',
+                'videos': fullstack_videos_curated
+            },
+            'aptitude': {
+                'title': 'Aptitude & Placement Reasoning',
+                'videos': aptitude_videos_curated
+            },
+            'projects': {
+                'title': 'Capstone Portfolio Projects',
+                'videos': projects_videos_curated
+            },
+            'interview': {
+                'title': 'Interview Preparation & Mock Rounds',
+                'videos': interview_videos_curated
+            }
+        },
+        'dailyRoadmap': daily_roadmap,
+        'progressSummary': {
+            'totalRecommended': total_recs,
+            'completedCount': completed_recs,
+            'masteryPercentage': mastery_pct,
+            'remainingVideos': total_recs - completed_recs
+        }
+    }), 200
+
+@app.route('/api/youtube/progress', methods=['POST'])
+def update_youtube_progress():
+    user = get_current_user()
+    if not user:
+        return jsonify({'success': False, 'message': 'Unauthorized.'}), 401
+
+    data = request.get_json() or {}
+    video_id = data.get('videoId')
+    is_completed = data.get('completed', True)
+
+    if not video_id:
+        return jsonify({'success': False, 'message': 'videoId is required.'}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT completed_videos FROM users WHERE id = ?', (user['id'],))
+    row = cursor.fetchone()
+    
+    try:
+        completed = json.loads(row['completed_videos'] or '[]') if row else []
+    except Exception:
+        completed = []
+
+    if is_completed and video_id not in completed:
+        completed.append(video_id)
+    elif not is_completed and video_id in completed:
+        completed.remove(video_id)
+
+    cursor.execute('UPDATE users SET completed_videos = ? WHERE id = ?', (json.dumps(completed), user['id']))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'success': True,
+        'message': f"Video {'marked as completed' if is_completed else 'unmarked'}.",
+        'completedVideos': completed,
+        'totalCompleted': len(completed)
+    }), 200
 
 CAREER_MAPPING_DATA = [
     {

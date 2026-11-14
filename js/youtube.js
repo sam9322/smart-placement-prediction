@@ -1081,3 +1081,750 @@ class YouTubeRecommendationService {
 
 // Global instance
 window.ytService = new YouTubeRecommendationService();
+
+// ==============================================================================
+// PERSONALIZED YOUTUBE LEARNING HUB CONTROLLER & PROGRESS ENGINE
+// ==============================================================================
+window.currentPersonalizedYouTubeData = null;
+window.ytActiveCategory = 'all';
+
+/**
+ * Fetch personalized recommendations from backend & render learning hub
+ */
+async function renderPersonalizedYouTubeView(forceRefresh = false) {
+  const container = document.getElementById('view-youtube');
+  if (!container) return;
+
+  const profile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
+  const authHeader = (typeof authManager !== 'undefined' && authManager.getAuthHeader) ? authManager.getAuthHeader() : '';
+
+  // Show loading indicator if initial load
+  const gridElem = document.getElementById('yt-videos-grid');
+  if (!window.currentPersonalizedYouTubeData || forceRefresh) {
+    if (gridElem) {
+      gridElem.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem;">
+          <div class="loading-spinner mb-3" style="width: 44px; height: 44px; margin: 0 auto 1rem; border-width: 4px;"></div>
+          <h4 class="font-bold text-lg">Curating Personalized Video Lectures...</h4>
+          <p class="text-sm text-muted">Analyzing your programming language, DSA competency, core CS knowledge, and placement gaps</p>
+        </div>
+      `;
+    }
+  }
+
+  let data = null;
+  try {
+    const url = `/api/youtube/personalized?t=${Date.now()}${profile.id ? `&uid=${encodeURIComponent(profile.id)}` : ''}`;
+    const headers = { 'Accept': 'application/json' };
+    if (authHeader) headers['Authorization'] = authHeader;
+
+    const res = await fetch(url, { headers });
+    if (res.ok) {
+      data = await res.json();
+    }
+  } catch (err) {
+    console.warn('Could not fetch personalized YouTube recommendations from backend, using adaptive fallback:', err);
+  }
+
+  // Fallback to local profile synthesis if network fails
+  if (!data || !data.success) {
+    data = synthesizeLocalYouTubePersonalization(profile);
+  }
+
+  window.currentPersonalizedYouTubeData = data;
+  bindPersonalizedYouTubeUI(data);
+
+  if (forceRefresh && typeof showToast === 'function') {
+    showToast('YouTube Learning Recommendations refreshed with latest profile state!', 'success');
+  }
+}
+
+/**
+ * Fallback synthesizer based on local student profile
+ */
+function synthesizeLocalYouTubePersonalization(profile) {
+  const lang = profile.programmingLanguage || 'Java';
+  const dsaSkill = profile.dsaSkill || 'Intermediate';
+  const coreCs = profile.coreCsKnowledge || 'Moderate';
+  const aptitude = profile.aptitudeScore || 80;
+  const codingRating = profile.codingRating || 1600;
+  const completed = (profile.completedVideos || []);
+
+  let progKey = 'Java';
+  const lowerLang = (lang || '').toLowerCase();
+  if (lowerLang.includes('python')) progKey = 'Python';
+  else if (lowerLang.includes('c++')) progKey = 'C++';
+  else if (lowerLang.includes('script') || lowerLang.includes('js')) progKey = 'JavaScript';
+
+  return {
+    success: true,
+    student: {
+      name: profile.fullName || 'Student',
+      branch: profile.branch || 'Computer Science & Engineering',
+      cgpa: profile.cgpa || 8.4,
+      primaryLanguage: lang,
+      dsaSkill: dsaSkill,
+      coreCs: coreCs,
+      aptitudeScore: aptitude,
+      codingRating: codingRating,
+      projectsCount: (profile.projects || []).length,
+      targetCareer: profile.targetCareerId || 'sde'
+    },
+    learningPriorities: [
+      `${progKey} Object-Oriented Mastery`,
+      `${dsaSkill} Data Structures & Algorithms`,
+      'Core CS (OS, DBMS, Networks) Viva Prep',
+      'Placement Speed Math & Aptitude Drills'
+    ],
+    identifiedSkillGaps: [
+      {
+        area: 'Data Structures & Algorithms',
+        severity: dsaSkill === 'Beginner' ? 'High Priority' : 'Recommended',
+        desc: `Current DSA level is ${dsaSkill}. Tier-1 placement screening requires optimal time and space complexity problem solving.`
+      },
+      {
+        area: 'Core Computer Science',
+        severity: 'Critical',
+        desc: 'Review OS process scheduling, deadlocks, and DBMS relational normal forms before technical interviews.'
+      }
+    ],
+    categories: {
+      programming: {
+        title: `${progKey} & Language Architecture`,
+        language: progKey,
+        videos: [
+          {
+            id: 'yt-prog-1',
+            videoId: progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU',
+            title: `${progKey} Complete Placement Tutorial & Course`,
+            channel: progKey === 'Python' ? 'Programming with Mosh' : progKey === 'JavaScript' ? 'Programming with Mosh' : 'Kunal Kushwaha',
+            duration: '12 hrs',
+            level: 'Beginner',
+            category: 'Java/Programming',
+            topic: `${progKey} Core Concepts & OOP`,
+            thumbnail: `https://img.youtube.com/vi/${progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU'}/hqdefault.jpg`,
+            videoUrl: `https://www.youtube.com/watch?v=${progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU'}`,
+            whyRecommended: `Foundational language architecture and OOP mastery in ${progKey}.`,
+            isCompleted: completed.includes(progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU')
+          }
+        ]
+      },
+      dsa: {
+        title: 'Data Structures & Algorithms',
+        level: dsaSkill,
+        videos: [
+          {
+            id: 'yt-dsa-1',
+            videoId: '0IAPZzGSbME',
+            title: '1. Introduction to Algorithms',
+            channel: 'Abdul Bari',
+            duration: '10 hrs 45 mins',
+            level: 'Beginner',
+            category: 'DSA',
+            topic: 'Asymptotic Analysis & Big-O Notation',
+            thumbnail: 'https://img.youtube.com/vi/0IAPZzGSbME/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=0IAPZzGSbME',
+            whyRecommended: 'World-renowned visual explanations of recursion trees and Big-O complexity.',
+            isCompleted: completed.includes('0IAPZzGSbME')
+          },
+          {
+            id: 'yt-dsa-3',
+            videoId: 'KLlXCFG5TnA',
+            title: 'Two Sum - Leetcode 1 - HashMap - Python',
+            channel: 'NeetCode',
+            duration: '8 mins',
+            level: 'Intermediate',
+            category: 'DSA',
+            topic: 'LeetCode 150 & Sliding Window',
+            thumbnail: 'https://img.youtube.com/vi/KLlXCFG5TnA/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=KLlXCFG5TnA',
+            whyRecommended: 'Optimal HashMap lookup reducing O(N^2) to linear O(N) time complexity.',
+            isCompleted: completed.includes('KLlXCFG5TnA')
+          },
+          {
+            id: 'yt-dsa-4',
+            videoId: 'tyB0ztf0DNY',
+            title: 'DP 1. Introduction to Dynamic Programming | Memoization | Tabulation',
+            channel: 'take U forward',
+            duration: '38 mins',
+            level: 'Advanced',
+            category: 'DSA',
+            topic: 'Dynamic Programming & Memoization',
+            thumbnail: 'https://img.youtube.com/vi/tyB0ztf0DNY/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=tyB0ztf0DNY',
+            whyRecommended: 'Striver DP masterclass on recurrence relations and bottom-up space optimization.',
+            isCompleted: completed.includes('tyB0ztf0DNY')
+          }
+        ]
+      },
+      corecs: {
+        title: 'Core Computer Science',
+        level: coreCs,
+        videos: [
+          {
+            id: 'yt-corecs-1',
+            videoId: 'bkSWJJZNgf8',
+            title: 'Introduction to Operating Systems',
+            channel: 'Neso Academy',
+            duration: '18 mins',
+            level: 'Beginner',
+            category: 'Core CS',
+            topic: 'OS Architecture & Kernel',
+            thumbnail: 'https://img.youtube.com/vi/bkSWJJZNgf8/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=bkSWJJZNgf8',
+            whyRecommended: 'Foundational concepts on user vs kernel mode and system calls.',
+            isCompleted: completed.includes('bkSWJJZNgf8')
+          },
+          {
+            id: 'yt-corecs-3',
+            videoId: 'HXV3zeQKqGY',
+            title: 'SQL Tutorial - Full Database Course for Beginners',
+            channel: 'freeCodeCamp.org',
+            duration: '4 hrs 20 mins',
+            level: 'Beginner',
+            category: 'Core CS',
+            topic: 'DBMS, SQL Queries & Normalization',
+            thumbnail: 'https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=HXV3zeQKqGY',
+            whyRecommended: 'Master relational database design, joins, subqueries, and indexing.',
+            isCompleted: completed.includes('HXV3zeQKqGY')
+          }
+        ]
+      },
+      fullstack: {
+        title: 'Full Stack & System Development',
+        videos: [
+          {
+            id: 'yt-dev-2',
+            videoId: 'bMknfKXIFA8',
+            title: "React Course - Beginner's Tutorial for React",
+            channel: 'freeCodeCamp.org',
+            duration: '11 hrs 55 mins',
+            level: 'Intermediate',
+            category: 'Full Stack',
+            topic: 'React Hooks & State Management',
+            thumbnail: 'https://img.youtube.com/vi/bMknfKXIFA8/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
+            whyRecommended: 'Component architecture, hooks, and context API for frontend interviews.',
+            isCompleted: completed.includes('bMknfKXIFA8')
+          }
+        ]
+      },
+      aptitude: {
+        title: 'Aptitude & Placement Reasoning',
+        videos: [
+          {
+            id: 'yt-apt-1',
+            videoId: 'rsmXhDyoH6M',
+            title: 'Aptitude Test Questions and Answers for Placement Drives',
+            channel: 'CareerRide',
+            duration: '45 mins',
+            level: 'Beginner',
+            category: 'Aptitude',
+            topic: 'Quantitative Aptitude Essentials',
+            thumbnail: 'https://img.youtube.com/vi/rsmXhDyoH6M/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=rsmXhDyoH6M',
+            whyRecommended: 'Highest yield practice questions for IT and product drive screening.',
+            isCompleted: completed.includes('rsmXhDyoH6M')
+          }
+        ]
+      },
+      projects: {
+        title: 'Capstone Portfolio Projects',
+        videos: [
+          {
+            id: 'yt-proj-1',
+            videoId: 'nu_pCVPKzTk',
+            title: 'Full Stack MERN Project with Authentication & Real-Time Sync',
+            channel: 'freeCodeCamp.org',
+            duration: '3 hrs 20 mins',
+            level: 'Advanced',
+            category: 'Projects',
+            topic: 'Full-Stack Production Capstone',
+            thumbnail: 'https://img.youtube.com/vi/nu_pCVPKzTk/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=nu_pCVPKzTk',
+            whyRecommended: 'Build a production web application with JWT authentication and clean UI.',
+            isCompleted: completed.includes('nu_pCVPKzTk')
+          }
+        ]
+      },
+      interview: {
+        title: 'Interview Preparation & Mock Rounds',
+        videos: [
+          {
+            id: 'yt-int-1',
+            videoId: 'wbp-3Bs94DQ',
+            title: 'How to Prepare for Coding Interviews in 2024',
+            channel: 'NeetCode',
+            duration: '14 mins',
+            level: 'Beginner',
+            category: 'Interview Preparation',
+            topic: 'Coding Interview Roadmap & Strategy',
+            thumbnail: 'https://img.youtube.com/vi/wbp-3Bs94DQ/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=wbp-3Bs94DQ',
+            whyRecommended: 'Clear blueprint on question prioritization and mock interview practice.',
+            isCompleted: completed.includes('wbp-3Bs94DQ')
+          }
+        ]
+      }
+    },
+    dailyRoadmap: [
+      {
+        day: 1,
+        title: `Day 1: ${progKey} Mastery & OOP Principles`,
+        category: 'Programming',
+        targetVideo: { videoId: 'luc49p_m5tU', videoUrl: 'https://www.youtube.com/watch?v=luc49p_m5tU' },
+        dailyTarget: `Master ${progKey} memory allocation, encapsulation, and inheritance.`,
+        estimatedTime: '1 hr 30 mins',
+        isCompleted: completed.includes('luc49p_m5tU')
+      },
+      {
+        day: 2,
+        title: 'Day 2: Asymptotic Analysis & Arrays / HashMaps',
+        category: 'DSA',
+        targetVideo: { videoId: 'KLlXCFG5TnA', videoUrl: 'https://www.youtube.com/watch?v=KLlXCFG5TnA' },
+        dailyTarget: 'Solve 3 LeetCode Easy/Medium problems using two-pointers & frequency maps.',
+        estimatedTime: '2 hrs',
+        isCompleted: completed.includes('KLlXCFG5TnA')
+      },
+      {
+        day: 3,
+        title: 'Day 3: Operating Systems Architecture & Process Synchronization',
+        category: 'Core CS',
+        targetVideo: { videoId: 'bkSWJJZNgf8', videoUrl: 'https://www.youtube.com/watch?v=bkSWJJZNgf8' },
+        dailyTarget: 'Review CPU scheduling algorithms and mutex/semaphore synchronization.',
+        estimatedTime: '1 hr 15 mins',
+        isCompleted: completed.includes('bkSWJJZNgf8')
+      },
+      {
+        day: 4,
+        title: 'Day 4: Relational Databases, SQL Joins & B-Tree Indexing',
+        category: 'Core CS',
+        targetVideo: { videoId: 'HXV3zeQKqGY', videoUrl: 'https://www.youtube.com/watch?v=HXV3zeQKqGY' },
+        dailyTarget: 'Write 5 complex SQL queries with CTEs, aggregate joins, and transactions.',
+        estimatedTime: '1 hr 45 mins',
+        isCompleted: completed.includes('HXV3zeQKqGY')
+      },
+      {
+        day: 5,
+        title: 'Day 5: Placement Aptitude & Speed Math Drills',
+        category: 'Aptitude',
+        targetVideo: { videoId: 'rsmXhDyoH6M', videoUrl: 'https://www.youtube.com/watch?v=rsmXhDyoH6M' },
+        dailyTarget: 'Complete 25 timed quantitative questions under 30 minutes.',
+        estimatedTime: '1 hr',
+        isCompleted: completed.includes('rsmXhDyoH6M')
+      },
+      {
+        day: 6,
+        title: 'Day 6: Capstone Project Architecture & RESTful API Integration',
+        category: 'Projects',
+        targetVideo: { videoId: 'nu_pCVPKzTk', videoUrl: 'https://www.youtube.com/watch?v=nu_pCVPKzTk' },
+        dailyTarget: 'Deploy backend microservice endpoints with token authentication.',
+        estimatedTime: '2 hrs 30 mins',
+        isCompleted: completed.includes('nu_pCVPKzTk')
+      },
+      {
+        day: 7,
+        title: 'Day 7: Mock Technical Coding Viva & HR STAR Behavioral Prep',
+        category: 'Interview Prep',
+        targetVideo: { videoId: 'wbp-3Bs94DQ', videoUrl: 'https://www.youtube.com/watch?v=wbp-3Bs94DQ' },
+        dailyTarget: 'Simulate 1 technical interview and prepare 3 STAR scenario stories.',
+        estimatedTime: '1 hr 30 mins',
+        isCompleted: completed.includes('wbp-3Bs94DQ')
+      }
+    ],
+    progressSummary: {
+      totalRecommended: 12,
+      completedCount: completed.length,
+      masteryPercentage: Math.round((completed.length / 12) * 100),
+      remainingVideos: Math.max(0, 12 - completed.length)
+    }
+  };
+}
+
+/**
+ * Bind data to YouTube Learning View DOM
+ */
+function bindPersonalizedYouTubeUI(data) {
+  if (!data) return;
+
+  const st = data.student || {};
+  const progress = data.progressSummary || {};
+  const gaps = data.identifiedSkillGaps || [];
+  const roadmap = data.dailyRoadmap || [];
+  const categories = data.categories || {};
+
+  // 1. Top Hero Meta Tags
+  const badgeElem = document.getElementById('yt-student-badge');
+  if (badgeElem && st.name) {
+    badgeElem.innerText = `Curated for ${st.name}`;
+  }
+
+  const metaTagsElem = document.getElementById('yt-student-meta-tags');
+  if (metaTagsElem) {
+    metaTagsElem.innerHTML = `
+      <span class="badge badge-primary"><i class="fa-solid fa-code mr-1"></i> Language: <strong>${escapeHtml(st.primaryLanguage || 'Java')}</strong></span>
+      <span class="badge badge-success"><i class="fa-solid fa-brain mr-1"></i> DSA Level: <strong>${escapeHtml(st.dsaSkill || 'Intermediate')}</strong></span>
+      <span class="badge badge-info"><i class="fa-solid fa-microchip mr-1"></i> Core CS: <strong>${escapeHtml(st.coreCs || 'Moderate')}</strong></span>
+      <span class="badge badge-warning"><i class="fa-solid fa-calculator mr-1"></i> Aptitude: <strong>${st.aptitudeScore || 80}%</strong></span>
+      <span class="badge badge-secondary"><i class="fa-solid fa-graduation-cap mr-1"></i> CGPA: <strong>${st.cgpa || 8.0}</strong></span>
+    `;
+  }
+
+  // 2. Progress Tracker KPIs
+  const totalElem = document.getElementById('yt-stat-total');
+  const compElem = document.getElementById('yt-stat-completed');
+  const compDescElem = document.getElementById('yt-stat-completed-desc');
+  const remElem = document.getElementById('yt-stat-remaining');
+  const pctElem = document.getElementById('yt-stat-pct');
+  const barElem = document.getElementById('yt-overall-progress-bar');
+
+  if (totalElem) totalElem.innerText = progress.totalRecommended || 0;
+  if (compElem) compElem.innerText = progress.completedCount || 0;
+  if (compDescElem) compDescElem.innerText = `${progress.masteryPercentage || 0}% Completed`;
+  if (remElem) remElem.innerText = progress.remainingVideos || 0;
+  if (pctElem) pctElem.innerText = `${progress.masteryPercentage || 0}%`;
+  if (barElem) barElem.style.width = `${progress.masteryPercentage || 0}%`;
+
+  // 3. Identified Skill Gaps Banner
+  const gapsBox = document.getElementById('yt-gaps-box');
+  const gapsList = document.getElementById('yt-gaps-list');
+  if (gapsBox && gapsList) {
+    if (gaps && gaps.length > 0) {
+      gapsBox.style.display = 'block';
+      gapsList.innerHTML = gaps.map(g => {
+        const severityClass = g.severity.includes('Critical') ? 'badge-danger' : 'badge-warning';
+        return `
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 0.75rem; background: var(--bg-card-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div>
+              <div class="flex items-center gap-2 mb-1" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+                <span class="badge ${severityClass}" style="font-size: 0.72rem;">${escapeHtml(g.severity)}</span>
+                <strong style="font-size: 0.95rem;">${escapeHtml(g.area)}</strong>
+              </div>
+              <p class="text-sm text-muted" style="margin: 0;">${escapeHtml(g.desc)}</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="ytFilterCategory('${g.area.toLowerCase().includes('dsa') ? 'dsa' : g.area.toLowerCase().includes('aptitude') ? 'aptitude' : 'corecs'}', event)" title="View recommended videos for this skill gap" style="white-space: nowrap;">
+              <i class="fa-solid fa-filter"></i> Filter Category
+            </button>
+          </div>
+        `;
+      }).join('');
+    } else {
+      gapsBox.style.display = 'none';
+    }
+  }
+
+  // 4. 7-Day Personalized Daily Target Roadmap
+  const roadmapGrid = document.getElementById('yt-roadmap-grid');
+  if (roadmapGrid) {
+    roadmapGrid.innerHTML = roadmap.map(day => {
+      const isDone = !!day.isCompleted;
+      const v = day.targetVideo || {};
+      return `
+        <div class="card p-3" style="border: 1px solid ${isDone ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${isDone ? 'rgba(16, 185, 129, 0.05)' : 'var(--bg-card)'}; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
+          <div>
+            <div class="flex items-center justify-between mb-2" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge ${isDone ? 'badge-success' : 'badge-primary'}" style="font-size: 0.72rem;">
+                ${isDone ? '<i class="fa-solid fa-check mr-1"></i> Done' : escapeHtml(day.category)}
+              </span>
+              <span class="text-xs text-muted"><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(day.estimatedTime)}</span>
+            </div>
+            <h4 class="font-bold text-sm mb-1" style="line-height: 1.35;">${escapeHtml(day.title)}</h4>
+            <p class="text-xs text-muted mb-3" style="line-height: 1.4;">${escapeHtml(day.dailyTarget)}</p>
+          </div>
+          <div class="pt-2 flex items-center justify-between" style="border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <a href="${v.videoUrl || (v.videoId ? `https://www.youtube.com/watch?v=${v.videoId}` : '#')}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;">
+              <i class="fa-brands fa-youtube mr-1" style="color: #ff0000; background: #fff; border-radius: 2px;"></i> Watch ↗
+            </a>
+            <button class="btn btn-ghost btn-sm ${isDone ? 'text-emerald font-bold' : ''}" onclick="toggleVideoCompletion('${v.videoId || v.id}')" title="Toggle completion" style="font-size: 0.75rem;">
+              <i class="fa-solid ${isDone ? 'fa-square-check' : 'fa-square'} mr-1"></i> ${isDone ? 'Completed' : 'Mark Done'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 5. Render Video Grid
+  ytApplyFilters();
+}
+
+/**
+ * Filter videos by Category, Difficulty Level, and Search Query
+ */
+function ytFilterCategory(category, event) {
+  window.ytActiveCategory = category;
+
+  // Update tabs active state
+  const tabs = document.querySelectorAll('#yt-category-tabs .tab-btn');
+  tabs.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('data-cat') === category) {
+      btn.classList.add('active');
+    }
+  });
+
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('active');
+  }
+
+  ytApplyFilters();
+}
+
+/**
+ * Apply all active filters to the video cards
+ */
+function ytApplyFilters() {
+  const data = window.currentPersonalizedYouTubeData;
+  const grid = document.getElementById('yt-videos-grid');
+  if (!data || !grid) return;
+
+  const categories = data.categories || {};
+  const activeCat = window.ytActiveCategory || 'all';
+  const levelFilter = (document.getElementById('yt-level-filter')?.value || 'all');
+  const searchInput = (document.getElementById('yt-search-input')?.value || '').toLowerCase().trim();
+
+  // Aggregate videos based on category selection
+  let list = [];
+  if (activeCat === 'all') {
+    Object.keys(categories).forEach(k => {
+      const catObj = categories[k] || {};
+      list = list.concat(catObj.videos || []);
+    });
+  } else if (categories[activeCat]) {
+    list = categories[activeCat].videos || [];
+  }
+
+  // Remove potential duplicates
+  const seenIds = new Set();
+  list = list.filter(v => {
+    const key = v.videoId || v.id;
+    if (!key || seenIds.has(key)) return false;
+    seenIds.add(key);
+    return true;
+  });
+
+  // Filter by difficulty level
+  if (levelFilter !== 'all') {
+    list = list.filter(v => (v.level || '').toLowerCase() === levelFilter.toLowerCase());
+  }
+
+  // Filter by search query
+  if (searchInput) {
+    list = list.filter(v => {
+      const title = (v.title || '').toLowerCase();
+      const channel = (v.channel || '').toLowerCase();
+      const topic = (v.topic || '').toLowerCase();
+      return title.includes(searchInput) || channel.includes(searchInput) || topic.includes(searchInput);
+    });
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px dashed var(--border-color);">
+        <i class="fa-solid fa-video-slash text-muted mb-2" style="font-size: 2.5rem;"></i>
+        <h4 class="font-bold text-lg">No video lectures found</h4>
+        <p class="text-sm text-muted">Try clearing the difficulty level filter or searching with different keywords.</p>
+        <button class="btn btn-secondary btn-sm mt-3" onclick="document.getElementById('yt-search-input').value=''; document.getElementById('yt-level-filter').value='all'; ytFilterCategory('all');">
+          Reset All Filters
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = list.map(v => renderPersonalizedVideoCard(v)).join('');
+}
+
+/**
+ * Render single video card with verified thumbnail, play overlay, metadata & completion button
+ */
+function renderPersonalizedVideoCard(v) {
+  const isDone = !!v.isCompleted;
+  const levelClass = v.level === 'Beginner' ? 'badge-success' : v.level === 'Intermediate' ? 'badge-primary' : 'badge-warning';
+  const videoId = v.videoId || v.id;
+
+  return `
+    <div class="yt-resource-card ${isDone ? 'yt-card-completed' : ''}" id="yt-card-${videoId}">
+      <div class="yt-thumbnail-box">
+        <img src="${v.thumbnail || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}" 
+             alt="${escapeHtml(v.title)}" 
+             loading="lazy" 
+             class="yt-thumbnail-img"
+             onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg';">
+        <div class="yt-duration-pill">${v.duration || 'Full Course'}</div>
+        <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="yt-play-overlay" title="Watch Video ↗">
+          <i class="fa-solid fa-play"></i>
+        </a>
+      </div>
+
+      <div class="yt-content-box">
+        <div class="yt-header-row">
+          <span class="badge ${levelClass}">${escapeHtml(v.level || 'Beginner')}</span>
+          <span class="yt-topic-badge"><i class="fa-solid fa-graduation-cap text-primary"></i> ${escapeHtml(v.topic || v.category || 'Skill Prep')}</span>
+        </div>
+
+        <h4 class="yt-title" title="${escapeHtml(v.title)}">
+          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer">
+            ${escapeHtml(v.title)}
+          </a>
+        </h4>
+
+        <div class="yt-channel-meta">
+          <i class="fa-brands fa-youtube yt-icon-red"></i>
+          <span>Channel: <strong class="yt-channel-name">${escapeHtml(v.channel)}</strong></span>
+          <span class="yt-meta-dot">•</span>
+          <span class="text-xs text-muted"><i class="fa-solid fa-circle-check text-emerald" title="Verified Creator"></i> Verified</span>
+        </div>
+
+        <div class="yt-why-box">
+          <div class="yt-why-label"><i class="fa-solid fa-circle-check text-emerald"></i> Why Recommended:</div>
+          <p class="yt-why-text">"${escapeHtml(v.whyRecommended || 'Essential placement topic with top campus recruitment alignment.')}"</p>
+        </div>
+
+        <div class="yt-actions-bar" style="margin-top: auto; display: flex; gap: 0.5rem; flex-direction: column;">
+          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm yt-watch-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; width: 100%;">
+            <i class="fa-brands fa-youtube" style="font-size: 1.15rem; color: #ff0000; background: #fff; border-radius: 4px; padding: 1px 3px;"></i> Watch Video ↗
+          </a>
+          <button type="button" class="btn btn-secondary btn-sm ${isDone ? 'btn-success text-white' : ''}" onclick="toggleVideoCompletion('${videoId}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-weight: 600;">
+            <i class="fa-solid ${isDone ? 'fa-check-circle' : 'fa-circle'}"></i> ${isDone ? 'Mastered / Completed ✓' : 'Mark as Completed'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Toggle video completion status and sync with backend
+ */
+async function toggleVideoCompletion(videoId) {
+  if (!videoId) return;
+
+  const data = window.currentPersonalizedYouTubeData;
+  let currentlyDone = false;
+
+  // Find video in current data
+  if (data && data.categories) {
+    Object.keys(data.categories).forEach(cat => {
+      const vids = data.categories[cat].videos || [];
+      const found = vids.find(v => (v.videoId === videoId || v.id === videoId));
+      if (found) currentlyDone = !!found.isCompleted;
+    });
+  }
+
+  const newStatus = !currentlyDone;
+  const authHeader = (typeof authManager !== 'undefined' && authManager.getAuthHeader) ? authManager.getAuthHeader() : '';
+
+  try {
+    const res = await fetch('/api/youtube/progress', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader
+      },
+      body: JSON.stringify({ videoId, completed: newStatus })
+    });
+
+    if (res.ok) {
+      const respData = await res.json();
+      if (respData.completedVideos && typeof appState !== 'undefined' && appState.data && appState.data.studentProfile) {
+        appState.data.studentProfile.completedVideos = respData.completedVideos;
+      }
+    }
+  } catch (err) {
+    console.warn('Network error saving progress to backend, updating local state:', err);
+  }
+
+  // Update in-memory state
+  if (data && data.categories) {
+    let completedCount = 0;
+    let totalCount = 0;
+
+    Object.keys(data.categories).forEach(cat => {
+      const vids = data.categories[cat].videos || [];
+      vids.forEach(v => {
+        if (v.videoId === videoId || v.id === videoId) {
+          v.isCompleted = newStatus;
+        }
+        totalCount++;
+        if (v.isCompleted) completedCount++;
+      });
+    });
+
+    if (data.dailyRoadmap) {
+      data.dailyRoadmap.forEach(d => {
+        if (d.targetVideo && (d.targetVideo.videoId === videoId || d.targetVideo.id === videoId)) {
+          d.isCompleted = newStatus;
+        }
+      });
+    }
+
+    if (data.progressSummary) {
+      data.progressSummary.completedCount = completedCount;
+      data.progressSummary.masteryPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+      data.progressSummary.remainingVideos = Math.max(0, totalCount - completedCount);
+    }
+
+    // Re-bind UI
+    bindPersonalizedYouTubeUI(data);
+  }
+
+  if (typeof showToast === 'function') {
+    showToast(newStatus ? 'Video marked as mastered! Progress updated.' : 'Video unmarked.', newStatus ? 'success' : 'info');
+  }
+
+  // Also update dashboard widget if visible
+  if (typeof renderDashboardYouTubeWidget === 'function') {
+    renderDashboardYouTubeWidget();
+  }
+}
+
+/**
+ * Render Top 3 Personalized YouTube Learning Picks in Dashboard Widget
+ */
+async function renderDashboardYouTubeWidget() {
+  const container = document.getElementById('dash-youtube-cards');
+  if (!container) return;
+
+  let data = window.currentPersonalizedYouTubeData;
+  if (!data) {
+    const profile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
+    const authHeader = (typeof authManager !== 'undefined' && authManager.getAuthHeader) ? authManager.getAuthHeader() : '';
+    try {
+      const res = await fetch(`/api/youtube/personalized?uid=${encodeURIComponent(profile.id || '')}`, {
+        headers: authHeader ? { 'Authorization': authHeader } : {}
+      });
+      if (res.ok) data = await res.json();
+    } catch (e) {}
+    if (!data || !data.success) {
+      data = synthesizeLocalYouTubePersonalization(profile);
+    }
+    window.currentPersonalizedYouTubeData = data;
+  }
+
+  const categories = data.categories || {};
+  // Pick top 3 most critical: 1 from Programming (adapts to primary language), 1 from DSA, 1 from Core CS / Aptitude
+  const picks = [];
+  if (categories.programming && categories.programming.videos && categories.programming.videos[0]) {
+    picks.push(categories.programming.videos[0]);
+  }
+  if (categories.dsa && categories.dsa.videos && categories.dsa.videos[0]) {
+    picks.push(categories.dsa.videos[0]);
+  }
+  const aptitudeOrCore = (data.student?.aptitudeScore < 75 && categories.aptitude?.videos?.[0]) 
+    ? categories.aptitude.videos[0] 
+    : (categories.corecs?.videos?.[0] || categories.projects?.videos?.[0]);
+  if (aptitudeOrCore) {
+    picks.push(aptitudeOrCore);
+  }
+
+  container.innerHTML = picks.map(v => renderPersonalizedVideoCard(v)).join('');
+}
+
+// Global exports
+window.renderPersonalizedYouTubeView = renderPersonalizedYouTubeView;
+window.renderDashboardYouTubeWidget = renderDashboardYouTubeWidget;
+window.toggleVideoCompletion = toggleVideoCompletion;
+window.ytFilterCategory = ytFilterCategory;
+window.ytApplyFilters = ytApplyFilters;

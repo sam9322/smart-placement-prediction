@@ -614,6 +614,8 @@ class AuthManager {
         },
         body: JSON.stringify(profileData)
       });
+      // Invalidate cached YouTube recommendations so fresh profile parameters are loaded
+      window.currentPersonalizedYouTubeData = null;
     } catch (e) {
       console.warn('Backend sync deferred:', e);
     }

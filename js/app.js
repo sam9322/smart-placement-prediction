@@ -32,7 +32,7 @@ function showToast(message, type = 'info') {
 
 // Router: Switch active view based on hash
 function switchView(viewName) {
-  const views = ['dashboard', 'profile', 'resume', 'prediction', 'coach', 'skillgap', 'roadmap', 'interview'];
+  const views = ['dashboard', 'profile', 'resume', 'prediction', 'coach', 'skillgap', 'roadmap', 'interview', 'youtube'];
   if (!views.includes(viewName)) viewName = 'dashboard';
 
   // Update hash
@@ -64,7 +64,8 @@ function switchView(viewName) {
     coach: { title: 'AI Career Coach & Matcher', desc: 'Explore tech roles, take the career quiz, and discover target pathways' },
     skillgap: { title: 'Skill Gap Analysis & Roadmap', desc: 'Compare your skills against target role requirements and bridge deficiencies' },
     roadmap: { title: 'Interactive Placement Roadmap', desc: '6-month structured timeline with verified real YouTube lectures, practice problems, & milestone checklists' },
-    interview: { title: 'Interview Preparation Hub', desc: 'Timed aptitude drill, core CS technical cards, HR STAR guide, & mock simulator' }
+    interview: { title: 'Interview Preparation Hub', desc: 'Timed aptitude drill, core CS technical cards, HR STAR guide, & mock simulator' },
+    youtube: { title: 'Personalized YouTube Learning Hub', desc: 'Curated video lectures, 7-day daily study roadmap & progress tracking tailored to your profile' }
   };
 
   const headerTitle = document.getElementById('header-view-title');
@@ -87,6 +88,9 @@ function switchView(viewName) {
   if (viewName === 'skillgap') renderSkillGapAnalysis();
   if (viewName === 'roadmap') renderRoadmapView();
   if (viewName === 'interview') interviewManager.init();
+  if (viewName === 'youtube') {
+    if (typeof renderPersonalizedYouTubeView === 'function') renderPersonalizedYouTubeView();
+  }
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
