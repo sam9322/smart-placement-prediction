@@ -1456,6 +1456,51 @@
             </div>
           </div>
 
+          <!-- Featured Spotlight 16:9 YouTube Video Player Frame -->
+          <div class="card mb-4 yt-spotlight-player-card" id="yt-spotlight-card">
+            <div class="card-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <h3 class="card-title">
+                  <i class="fa-solid fa-play-circle text-primary"></i> Featured YouTube Lecture Spotlight
+                </h3>
+                <p class="card-subtitle">Highest leverage video for your current placement preparation sprint</p>
+              </div>
+              <span class="badge badge-danger"><i class="fa-brands fa-youtube mr-1"></i> Interactive 16:9 Player</span>
+            </div>
+            <div class="yt-spotlight-frame" id="yt-spotlight-frame">
+              <img id="yt-spotlight-thumb" src="https://i.ytimg.com/vi/eIrMbAQSU34/hqdefault.jpg" alt="Featured Video" class="yt-thumbnail-img" onerror="this.onerror=null; this.src='https://img.youtube.com/vi/eIrMbAQSU34/mqdefault.jpg';">
+              <div class="yt-duration-pill" id="yt-spotlight-duration">Featured Lecture</div>
+              <button type="button" class="yt-centered-play-btn" id="yt-spotlight-play-btn" onclick="playSpotlightVideo()" aria-label="Play Featured Video">
+                <div class="yt-play-btn-circle">
+                  <i class="fa-solid fa-play"></i>
+                </div>
+              </button>
+            </div>
+            <div class="p-4" style="padding: 1.25rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid var(--border-color);">
+              <div style="flex: 1; min-width: 260px;">
+                <div class="flex items-center gap-2 mb-1" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+                  <span class="badge badge-primary" id="yt-spotlight-category">Java / Programming</span>
+                  <span class="badge badge-success" id="yt-spotlight-level">Beginner</span>
+                </div>
+                <h3 class="font-bold text-lg mb-1" id="yt-spotlight-title">Java Tutorial for Beginners - Full Course</h3>
+                <div class="text-sm text-muted flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
+                  <span id="yt-spotlight-channel">Programming with Mosh</span>
+                  <span>•</span>
+                  <span class="text-xs text-muted"><i class="fa-solid fa-circle-check text-emerald"></i> Verified Placement Course</span>
+                </div>
+              </div>
+              <div class="flex gap-2" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <a id="yt-spotlight-watch-btn" href="https://www.youtube.com/watch?v=eIrMbAQSU34" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                  <i class="fa-brands fa-youtube mr-1"></i> Watch on YouTube ↗
+                </a>
+                <button type="button" class="btn btn-secondary btn-sm" id="yt-spotlight-complete-btn" onclick="toggleSpotlightCompletion()">
+                  <i class="fa-solid fa-circle-check mr-1"></i> Mark Completed
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- 7-Day Personalized Daily Target Roadmap -->
           <div class="card mb-4">
             <div class="card-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">

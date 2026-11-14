@@ -1156,6 +1156,9 @@ function synthesizeLocalYouTubePersonalization(profile) {
   else if (lowerLang.includes('c++')) progKey = 'C++';
   else if (lowerLang.includes('script') || lowerLang.includes('js')) progKey = 'JavaScript';
 
+  const progVidId = progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : progKey === 'C++' ? 'vLnPwxZdW4Y' : 'eIrMbAQSU34';
+  const progChannel = progKey === 'Python' ? 'Programming with Mosh' : progKey === 'JavaScript' ? 'Programming with Mosh' : progKey === 'C++' ? 'freeCodeCamp.org' : 'Programming with Mosh';
+
   return {
     success: true,
     student: {
@@ -1195,17 +1198,17 @@ function synthesizeLocalYouTubePersonalization(profile) {
         videos: [
           {
             id: 'yt-prog-1',
-            videoId: progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU',
-            title: `${progKey} Complete Placement Tutorial & Course`,
-            channel: progKey === 'Python' ? 'Programming with Mosh' : progKey === 'JavaScript' ? 'Programming with Mosh' : 'Kunal Kushwaha',
-            duration: '12 hrs',
+            videoId: progVidId,
+            title: `${progKey} Tutorial for Beginners - Full Course`,
+            channel: progChannel,
+            duration: '2 hrs 30 mins',
             level: 'Beginner',
             category: 'Java/Programming',
             topic: `${progKey} Core Concepts & OOP`,
-            thumbnail: `https://img.youtube.com/vi/${progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU'}/hqdefault.jpg`,
-            videoUrl: `https://www.youtube.com/watch?v=${progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU'}`,
+            thumbnail: `https://i.ytimg.com/vi/${progVidId}/hqdefault.jpg`,
+            videoUrl: `https://www.youtube.com/watch?v=${progVidId}`,
             whyRecommended: `Foundational language architecture and OOP mastery in ${progKey}.`,
-            isCompleted: completed.includes(progKey === 'Python' ? '_uQrJ0TkZlc' : progKey === 'JavaScript' ? 'W6NZfCO5SIk' : 'luc49p_m5tU')
+            isCompleted: completed.includes(progVidId)
           }
         ]
       },
@@ -1222,7 +1225,7 @@ function synthesizeLocalYouTubePersonalization(profile) {
             level: 'Beginner',
             category: 'DSA',
             topic: 'Asymptotic Analysis & Big-O Notation',
-            thumbnail: 'https://img.youtube.com/vi/0IAPZzGSbME/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/0IAPZzGSbME/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=0IAPZzGSbME',
             whyRecommended: 'World-renowned visual explanations of recursion trees and Big-O complexity.',
             isCompleted: completed.includes('0IAPZzGSbME')
@@ -1236,7 +1239,7 @@ function synthesizeLocalYouTubePersonalization(profile) {
             level: 'Intermediate',
             category: 'DSA',
             topic: 'LeetCode 150 & Sliding Window',
-            thumbnail: 'https://img.youtube.com/vi/KLlXCFG5TnA/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/KLlXCFG5TnA/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=KLlXCFG5TnA',
             whyRecommended: 'Optimal HashMap lookup reducing O(N^2) to linear O(N) time complexity.',
             isCompleted: completed.includes('KLlXCFG5TnA')
@@ -1250,7 +1253,7 @@ function synthesizeLocalYouTubePersonalization(profile) {
             level: 'Advanced',
             category: 'DSA',
             topic: 'Dynamic Programming & Memoization',
-            thumbnail: 'https://img.youtube.com/vi/tyB0ztf0DNY/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/tyB0ztf0DNY/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=tyB0ztf0DNY',
             whyRecommended: 'Striver DP masterclass on recurrence relations and bottom-up space optimization.',
             isCompleted: completed.includes('tyB0ztf0DNY')
@@ -1265,15 +1268,29 @@ function synthesizeLocalYouTubePersonalization(profile) {
             id: 'yt-corecs-1',
             videoId: 'bkSWJJZNgf8',
             title: 'Introduction to Operating Systems',
-            channel: 'Neso Academy',
+            channel: 'Gate Smashers',
             duration: '18 mins',
             level: 'Beginner',
             category: 'Core CS',
             topic: 'OS Architecture & Kernel',
-            thumbnail: 'https://img.youtube.com/vi/bkSWJJZNgf8/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/bkSWJJZNgf8/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=bkSWJJZNgf8',
             whyRecommended: 'Foundational concepts on user vs kernel mode and system calls.',
             isCompleted: completed.includes('bkSWJJZNgf8')
+          },
+          {
+            id: 'yt-corecs-2',
+            videoId: 'WJ-UaAaumNA',
+            title: 'Operating System and Process Management',
+            channel: 'Gate Smashers',
+            duration: '24 mins',
+            level: 'Intermediate',
+            category: 'Core CS',
+            topic: 'CPU Scheduling & Deadlocks',
+            thumbnail: 'https://i.ytimg.com/vi/WJ-UaAaumNA/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=WJ-UaAaumNA',
+            whyRecommended: 'Process states, CPU scheduling algorithms, and synchronization primitives.',
+            isCompleted: completed.includes('WJ-UaAaumNA')
           },
           {
             id: 'yt-corecs-3',
@@ -1284,7 +1301,7 @@ function synthesizeLocalYouTubePersonalization(profile) {
             level: 'Beginner',
             category: 'Core CS',
             topic: 'DBMS, SQL Queries & Normalization',
-            thumbnail: 'https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/HXV3zeQKqGY/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=HXV3zeQKqGY',
             whyRecommended: 'Master relational database design, joins, subqueries, and indexing.',
             isCompleted: completed.includes('HXV3zeQKqGY')
@@ -1303,7 +1320,7 @@ function synthesizeLocalYouTubePersonalization(profile) {
             level: 'Intermediate',
             category: 'Full Stack',
             topic: 'React Hooks & State Management',
-            thumbnail: 'https://img.youtube.com/vi/bMknfKXIFA8/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/bMknfKXIFA8/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
             whyRecommended: 'Component architecture, hooks, and context API for frontend interviews.',
             isCompleted: completed.includes('bMknfKXIFA8')
@@ -1315,17 +1332,31 @@ function synthesizeLocalYouTubePersonalization(profile) {
         videos: [
           {
             id: 'yt-apt-1',
-            videoId: 'rsmXhDyoH6M',
-            title: 'Aptitude Test Questions and Answers for Placement Drives',
-            channel: 'CareerRide',
-            duration: '45 mins',
+            videoId: 'xxpc-HPKN28',
+            title: 'Statistics & Quantitative Aptitude Course',
+            channel: 'freeCodeCamp.org',
+            duration: '8 hrs 15 mins',
             level: 'Beginner',
             category: 'Aptitude',
             topic: 'Quantitative Aptitude Essentials',
-            thumbnail: 'https://img.youtube.com/vi/rsmXhDyoH6M/hqdefault.jpg',
-            videoUrl: 'https://www.youtube.com/watch?v=rsmXhDyoH6M',
-            whyRecommended: 'Highest yield practice questions for IT and product drive screening.',
-            isCompleted: completed.includes('rsmXhDyoH6M')
+            thumbnail: 'https://i.ytimg.com/vi/xxpc-HPKN28/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=xxpc-HPKN28',
+            whyRecommended: 'Highest yield probability, statistics, and numerical reasoning practice questions for initial screening.',
+            isCompleted: completed.includes('xxpc-HPKN28')
+          },
+          {
+            id: 'yt-apt-2',
+            videoId: 'Vl0H-qTclOg',
+            title: 'Data Analysis & Quantitative Reasoning',
+            channel: 'freeCodeCamp.org',
+            duration: '2 hrs 26 mins',
+            level: 'Intermediate',
+            category: 'Aptitude',
+            topic: 'Data Interpretation & Percentages',
+            thumbnail: 'https://i.ytimg.com/vi/Vl0H-qTclOg/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=Vl0H-qTclOg',
+            whyRecommended: 'Shortcut techniques to solve percentage, tables, and data interpretation under timed conditions.',
+            isCompleted: completed.includes('Vl0H-qTclOg')
           }
         ]
       },
@@ -1335,16 +1366,30 @@ function synthesizeLocalYouTubePersonalization(profile) {
           {
             id: 'yt-proj-1',
             videoId: 'nu_pCVPKzTk',
-            title: 'Full Stack MERN Project with Authentication & Real-Time Sync',
+            title: 'Full Stack Web Development Capstone Project',
             channel: 'freeCodeCamp.org',
-            duration: '3 hrs 20 mins',
+            duration: '7 hrs 10 mins',
             level: 'Advanced',
             category: 'Projects',
             topic: 'Full-Stack Production Capstone',
-            thumbnail: 'https://img.youtube.com/vi/nu_pCVPKzTk/hqdefault.jpg',
+            thumbnail: 'https://i.ytimg.com/vi/nu_pCVPKzTk/hqdefault.jpg',
             videoUrl: 'https://www.youtube.com/watch?v=nu_pCVPKzTk',
             whyRecommended: 'Build a production web application with JWT authentication and clean UI.',
             isCompleted: completed.includes('nu_pCVPKzTk')
+          },
+          {
+            id: 'yt-proj-4',
+            videoId: 'a_7Z7C_JCyo',
+            title: 'Code 15 React Projects - Complete Course',
+            channel: 'freeCodeCamp.org',
+            duration: '9 hrs 18 mins',
+            level: 'Advanced',
+            category: 'Projects',
+            topic: 'Production React Applications',
+            thumbnail: 'https://i.ytimg.com/vi/a_7Z7C_JCyo/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=a_7Z7C_JCyo',
+            whyRecommended: '15 distinct portfolio-ready React applications with API consumption, filtering, and responsive CSS.',
+            isCompleted: completed.includes('a_7Z7C_JCyo')
           }
         ]
       },
@@ -1353,17 +1398,59 @@ function synthesizeLocalYouTubePersonalization(profile) {
         videos: [
           {
             id: 'yt-int-1',
-            videoId: 'wbp-3Bs94DQ',
-            title: 'How to Prepare for Coding Interviews in 2024',
-            channel: 'NeetCode',
-            duration: '14 mins',
+            videoId: '2m1Kc9uvLvc',
+            title: 'Top Common Technical & HR Interview Questions and Answers',
+            channel: 'CareerVidz',
+            duration: '15 mins',
             level: 'Beginner',
             category: 'Interview Preparation',
             topic: 'Coding Interview Roadmap & Strategy',
-            thumbnail: 'https://img.youtube.com/vi/wbp-3Bs94DQ/hqdefault.jpg',
-            videoUrl: 'https://www.youtube.com/watch?v=wbp-3Bs94DQ',
-            whyRecommended: 'Clear blueprint on question prioritization and mock interview practice.',
-            isCompleted: completed.includes('wbp-3Bs94DQ')
+            thumbnail: 'https://i.ytimg.com/vi/2m1Kc9uvLvc/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=2m1Kc9uvLvc',
+            whyRecommended: 'High-frequency campus placement interview answers.',
+            isCompleted: completed.includes('2m1Kc9uvLvc')
+          },
+          {
+            id: 'yt-int-2',
+            videoId: '1mHjMNZZvFo',
+            title: 'Tell Me About Yourself - Top Answer for Freshers Campus Placement',
+            channel: 'CareerVidz',
+            duration: '10 mins',
+            level: 'Beginner',
+            category: 'Interview Preparation',
+            topic: 'HR Interview Self Introduction',
+            thumbnail: 'https://i.ytimg.com/vi/1mHjMNZZvFo/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=1mHjMNZZvFo',
+            whyRecommended: 'Perfect 90-second script linking your academic projects, skills, and company cultural fit.',
+            isCompleted: completed.includes('1mHjMNZZvFo')
+          },
+          {
+            id: 'yt-int-3',
+            videoId: 'uQEuo7woEEk',
+            title: 'STAR Method Behavioral Interview Questions and Answers',
+            channel: 'CareerVidz',
+            duration: '14 mins',
+            level: 'Intermediate',
+            category: 'Interview Preparation',
+            topic: 'STAR Technique & Behavioral Competency',
+            thumbnail: 'https://i.ytimg.com/vi/uQEuo7woEEk/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=uQEuo7woEEk',
+            whyRecommended: 'Structure answers using Situation, Task, Action, and Result to score high in technical director rounds.',
+            isCompleted: completed.includes('uQEuo7woEEk')
+          },
+          {
+            id: 'yt-int-4',
+            videoId: '1qw5ITr3k9E',
+            title: 'Software Engineering Job Interview – Full Mock Interview',
+            channel: 'freeCodeCamp.org',
+            duration: '42 mins',
+            level: 'Advanced',
+            category: 'Interview Preparation',
+            topic: 'Live Technical Mock Simulation',
+            thumbnail: 'https://i.ytimg.com/vi/1qw5ITr3k9E/hqdefault.jpg',
+            videoUrl: 'https://www.youtube.com/watch?v=1qw5ITr3k9E',
+            whyRecommended: 'Observe real live problem breakdown, edge case handling, and communication under interview pressure.',
+            isCompleted: completed.includes('1qw5ITr3k9E')
           }
         ]
       }
@@ -1373,10 +1460,10 @@ function synthesizeLocalYouTubePersonalization(profile) {
         day: 1,
         title: `Day 1: ${progKey} Mastery & OOP Principles`,
         category: 'Programming',
-        targetVideo: { videoId: 'luc49p_m5tU', videoUrl: 'https://www.youtube.com/watch?v=luc49p_m5tU' },
+        targetVideo: { videoId: progVidId, videoUrl: `https://www.youtube.com/watch?v=${progVidId}` },
         dailyTarget: `Master ${progKey} memory allocation, encapsulation, and inheritance.`,
         estimatedTime: '1 hr 30 mins',
-        isCompleted: completed.includes('luc49p_m5tU')
+        isCompleted: completed.includes(progVidId)
       },
       {
         day: 2,
@@ -1391,10 +1478,10 @@ function synthesizeLocalYouTubePersonalization(profile) {
         day: 3,
         title: 'Day 3: Operating Systems Architecture & Process Synchronization',
         category: 'Core CS',
-        targetVideo: { videoId: 'bkSWJJZNgf8', videoUrl: 'https://www.youtube.com/watch?v=bkSWJJZNgf8' },
+        targetVideo: { videoId: 'WJ-UaAaumNA', videoUrl: 'https://www.youtube.com/watch?v=WJ-UaAaumNA' },
         dailyTarget: 'Review CPU scheduling algorithms and mutex/semaphore synchronization.',
         estimatedTime: '1 hr 15 mins',
-        isCompleted: completed.includes('bkSWJJZNgf8')
+        isCompleted: completed.includes('WJ-UaAaumNA')
       },
       {
         day: 4,
@@ -1409,10 +1496,10 @@ function synthesizeLocalYouTubePersonalization(profile) {
         day: 5,
         title: 'Day 5: Placement Aptitude & Speed Math Drills',
         category: 'Aptitude',
-        targetVideo: { videoId: 'rsmXhDyoH6M', videoUrl: 'https://www.youtube.com/watch?v=rsmXhDyoH6M' },
+        targetVideo: { videoId: 'xxpc-HPKN28', videoUrl: 'https://www.youtube.com/watch?v=xxpc-HPKN28' },
         dailyTarget: 'Complete 25 timed quantitative questions under 30 minutes.',
         estimatedTime: '1 hr',
-        isCompleted: completed.includes('rsmXhDyoH6M')
+        isCompleted: completed.includes('xxpc-HPKN28')
       },
       {
         day: 6,
@@ -1427,19 +1514,136 @@ function synthesizeLocalYouTubePersonalization(profile) {
         day: 7,
         title: 'Day 7: Mock Technical Coding Viva & HR STAR Behavioral Prep',
         category: 'Interview Prep',
-        targetVideo: { videoId: 'wbp-3Bs94DQ', videoUrl: 'https://www.youtube.com/watch?v=wbp-3Bs94DQ' },
+        targetVideo: { videoId: '1mHjMNZZvFo', videoUrl: 'https://www.youtube.com/watch?v=1mHjMNZZvFo' },
         dailyTarget: 'Simulate 1 technical interview and prepare 3 STAR scenario stories.',
         estimatedTime: '1 hr 30 mins',
-        isCompleted: completed.includes('wbp-3Bs94DQ')
+        isCompleted: completed.includes('1mHjMNZZvFo')
       }
     ],
     progressSummary: {
-      totalRecommended: 12,
+      totalRecommended: 14,
       completedCount: completed.length,
-      masteryPercentage: Math.round((completed.length / 12) * 100),
-      remainingVideos: Math.max(0, 12 - completed.length)
+      masteryPercentage: Math.round((completed.length / 14) * 100),
+      remainingVideos: Math.max(0, 14 - completed.length)
     }
   };
+}
+
+/**
+ * Global Spotlight Video State
+ */
+window.currentSpotlightVideo = null;
+
+function loadSpotlightVideo(v) {
+  if (!v) return;
+  window.currentSpotlightVideo = v;
+  const videoId = v.videoId || v.id;
+
+  const titleEl = document.getElementById('yt-spotlight-title');
+  const catEl = document.getElementById('yt-spotlight-category');
+  const levelEl = document.getElementById('yt-spotlight-level');
+  const channelEl = document.getElementById('yt-spotlight-channel');
+  const durEl = document.getElementById('yt-spotlight-duration');
+  const watchEl = document.getElementById('yt-spotlight-watch-btn');
+  const frameEl = document.getElementById('yt-spotlight-frame');
+  const compBtn = document.getElementById('yt-spotlight-complete-btn');
+
+  if (titleEl) titleEl.innerText = v.title;
+  if (catEl) catEl.innerText = v.category || 'Placement Course';
+  if (levelEl) {
+    levelEl.innerText = v.level || 'Beginner';
+    levelEl.className = `badge ${v.level === 'Beginner' ? 'badge-success' : v.level === 'Intermediate' ? 'badge-primary' : 'badge-warning'}`;
+  }
+  if (channelEl) channelEl.innerText = v.channel || 'Verified Channel';
+  if (durEl) durEl.innerText = v.duration || 'Full Course';
+  if (watchEl) watchEl.href = v.videoUrl || `https://www.youtube.com/watch?v=${videoId}`;
+  if (compBtn) {
+    const isDone = !!v.isCompleted;
+    compBtn.innerHTML = `<i class="fa-solid ${isDone ? 'fa-circle-check text-emerald' : 'fa-circle'} mr-1"></i> ${isDone ? 'Mastered ✓' : 'Mark Completed'}`;
+    compBtn.className = `btn btn-secondary btn-sm ${isDone ? 'btn-success text-white' : ''}`;
+  }
+
+  if (frameEl) {
+    frameEl.innerHTML = `
+      <img id="yt-spotlight-thumb" 
+           src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" 
+           alt="${escapeHtml(v.title)}" 
+           class="yt-thumbnail-img" 
+           onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/mqdefault.jpg';">
+      <div class="yt-duration-pill" id="yt-spotlight-duration">${v.duration || 'Full Course'}</div>
+      <button type="button" class="yt-centered-play-btn" id="yt-spotlight-play-btn" onclick="playSpotlightVideo()" aria-label="Play Featured Video" title="Click to Play Video">
+        <div class="yt-play-btn-circle">
+          <i class="fa-solid fa-play"></i>
+        </div>
+      </button>
+    `;
+  }
+}
+
+function loadSpotlightVideoById(videoId) {
+  const data = window.currentPersonalizedYouTubeData;
+  if (!data || !data.categories) return;
+  for (const cat of Object.keys(data.categories)) {
+    const vids = data.categories[cat].videos || [];
+    const found = vids.find(v => (v.videoId === videoId || v.id === videoId));
+    if (found) {
+      loadSpotlightVideo(found);
+      break;
+    }
+  }
+}
+
+function playSpotlightVideo() {
+  const v = window.currentSpotlightVideo;
+  if (!v) return;
+  const videoId = v.videoId || v.id;
+  const frameEl = document.getElementById('yt-spotlight-frame');
+  if (frameEl) {
+    frameEl.innerHTML = `
+      <iframe 
+        src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" 
+        title="${escapeHtml(v.title)}" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen 
+        class="yt-embedded-iframe" 
+        style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: inherit;">
+      </iframe>
+    `;
+  }
+}
+
+function toggleSpotlightCompletion() {
+  const v = window.currentSpotlightVideo;
+  if (!v) return;
+  toggleVideoCompletion(v.videoId || v.id);
+  v.isCompleted = !v.isCompleted;
+  const compBtn = document.getElementById('yt-spotlight-complete-btn');
+  if (compBtn) {
+    const isDone = !!v.isCompleted;
+    compBtn.innerHTML = `<i class="fa-solid ${isDone ? 'fa-circle-check text-emerald' : 'fa-circle'} mr-1"></i> ${isDone ? 'Mastered ✓' : 'Mark Completed'}`;
+    compBtn.className = `btn btn-secondary btn-sm ${isDone ? 'btn-success text-white' : ''}`;
+  }
+}
+
+function playYouTubeIframe(videoId, frameId, title = 'YouTube video') {
+  const frame = document.getElementById(frameId);
+  if (!frame) return;
+
+  frame.innerHTML = `
+    <iframe 
+      src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1" 
+      title="${escapeHtml(title)}" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      allowfullscreen 
+      class="yt-embedded-iframe" 
+      style="position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: inherit;">
+    </iframe>
+  `;
+
+  // Also update spotlight header info
+  loadSpotlightVideoById(videoId);
 }
 
 /**
@@ -1486,7 +1690,18 @@ function bindPersonalizedYouTubeUI(data) {
   if (pctElem) pctElem.innerText = `${progress.masteryPercentage || 0}%`;
   if (barElem) barElem.style.width = `${progress.masteryPercentage || 0}%`;
 
-  // 3. Identified Skill Gaps Banner
+  // 3. Initialize Spotlight Player with top recommendation
+  let firstVideo = null;
+  if (categories.programming && categories.programming.videos && categories.programming.videos[0]) {
+    firstVideo = categories.programming.videos[0];
+  } else if (categories.dsa && categories.dsa.videos && categories.dsa.videos[0]) {
+    firstVideo = categories.dsa.videos[0];
+  }
+  if (firstVideo && !window.currentSpotlightVideo) {
+    loadSpotlightVideo(firstVideo);
+  }
+
+  // 4. Identified Skill Gaps Banner
   const gapsBox = document.getElementById('yt-gaps-box');
   const gapsList = document.getElementById('yt-gaps-list');
   if (gapsBox && gapsList) {
@@ -1514,12 +1729,13 @@ function bindPersonalizedYouTubeUI(data) {
     }
   }
 
-  // 4. 7-Day Personalized Daily Target Roadmap
+  // 5. 7-Day Personalized Daily Target Roadmap
   const roadmapGrid = document.getElementById('yt-roadmap-grid');
   if (roadmapGrid) {
     roadmapGrid.innerHTML = roadmap.map(day => {
       const isDone = !!day.isCompleted;
       const v = day.targetVideo || {};
+      const videoId = v.videoId || v.id;
       return `
         <div class="card p-3" style="border: 1px solid ${isDone ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${isDone ? 'rgba(16, 185, 129, 0.05)' : 'var(--bg-card)'}; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
           <div>
@@ -1532,11 +1748,16 @@ function bindPersonalizedYouTubeUI(data) {
             <h4 class="font-bold text-sm mb-1" style="line-height: 1.35;">${escapeHtml(day.title)}</h4>
             <p class="text-xs text-muted mb-3" style="line-height: 1.4;">${escapeHtml(day.dailyTarget)}</p>
           </div>
-          <div class="pt-2 flex items-center justify-between" style="border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-            <a href="${v.videoUrl || (v.videoId ? `https://www.youtube.com/watch?v=${v.videoId}` : '#')}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.65rem;">
-              <i class="fa-brands fa-youtube mr-1" style="color: #ff0000; background: #fff; border-radius: 2px;"></i> Watch ↗
-            </a>
-            <button class="btn btn-ghost btn-sm ${isDone ? 'text-emerald font-bold' : ''}" onclick="toggleVideoCompletion('${v.videoId || v.id}')" title="Toggle completion" style="font-size: 0.75rem;">
+          <div class="pt-2 flex items-center justify-between" style="border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <div class="flex gap-1" style="display: flex; gap: 0.25rem;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="loadSpotlightVideoById('${videoId}'); playSpotlightVideo(); const sc = document.getElementById('yt-spotlight-card'); if (sc) window.scrollTo({top: sc.offsetTop - 80, behavior: 'smooth'});" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+                <i class="fa-solid fa-play mr-1"></i> Play
+              </button>
+              <a href="${v.videoUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : '#')}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" title="Open on YouTube">
+                <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
+              </a>
+            </div>
+            <button class="btn btn-ghost btn-sm ${isDone ? 'text-emerald font-bold' : ''}" onclick="toggleVideoCompletion('${videoId}')" title="Toggle completion" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;">
               <i class="fa-solid ${isDone ? 'fa-square-check' : 'fa-square'} mr-1"></i> ${isDone ? 'Completed' : 'Mark Done'}
             </button>
           </div>
@@ -1545,7 +1766,7 @@ function bindPersonalizedYouTubeUI(data) {
     }).join('');
   }
 
-  // 5. Render Video Grid
+  // 6. Render Video Grid
   ytApplyFilters();
 }
 
@@ -1637,25 +1858,30 @@ function ytApplyFilters() {
 }
 
 /**
- * Render single video card with verified thumbnail, play overlay, metadata & completion button
+ * Render single video card with responsive 16:9 YouTube video frame,
+ * crisp thumbnail, centered play button, rounded corners, and inline iframe support
  */
-function renderPersonalizedVideoCard(v) {
+function renderPersonalizedVideoCard(v, framePrefix = 'yt-frame-') {
   const isDone = !!v.isCompleted;
   const levelClass = v.level === 'Beginner' ? 'badge-success' : v.level === 'Intermediate' ? 'badge-primary' : 'badge-warning';
   const videoId = v.videoId || v.id;
+  const frameId = `${framePrefix}${videoId}`;
 
   return `
     <div class="yt-resource-card ${isDone ? 'yt-card-completed' : ''}" id="yt-card-${videoId}">
-      <div class="yt-thumbnail-box">
-        <img src="${v.thumbnail || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}" 
+      <!-- Responsive 16:9 YouTube Video Frame -->
+      <div class="yt-thumbnail-box" id="${frameId}">
+        <img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" 
              alt="${escapeHtml(v.title)}" 
              loading="lazy" 
              class="yt-thumbnail-img"
-             onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg';">
+             onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/mqdefault.jpg';">
         <div class="yt-duration-pill">${v.duration || 'Full Course'}</div>
-        <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="yt-play-overlay" title="Watch Video ↗">
-          <i class="fa-solid fa-play"></i>
-        </a>
+        <button type="button" class="yt-centered-play-btn" onclick="playYouTubeIframe('${videoId}', '${frameId}', '${escapeHtml(v.title)}')" aria-label="Play ${escapeHtml(v.title)}" title="Click to Play Video">
+          <div class="yt-play-btn-circle">
+            <i class="fa-solid fa-play"></i>
+          </div>
+        </button>
       </div>
 
       <div class="yt-content-box">
@@ -1683,10 +1909,15 @@ function renderPersonalizedVideoCard(v) {
         </div>
 
         <div class="yt-actions-bar" style="margin-top: auto; display: flex; gap: 0.5rem; flex-direction: column;">
-          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm yt-watch-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; width: 100%;">
-            <i class="fa-brands fa-youtube" style="font-size: 1.15rem; color: #ff0000; background: #fff; border-radius: 4px; padding: 1px 3px;"></i> Watch Video ↗
-          </a>
-          <button type="button" class="btn btn-secondary btn-sm ${isDone ? 'btn-success text-white' : ''}" onclick="toggleVideoCompletion('${videoId}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-weight: 600;">
+          <div class="flex gap-2" style="display: flex; gap: 0.5rem; width: 100%;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="playYouTubeIframe('${videoId}', '${frameId}', '${escapeHtml(v.title)}')" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; font-weight: 700;">
+              <i class="fa-solid fa-play"></i> Play Video
+            </button>
+            <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; font-weight: 600;" title="Watch in new tab on YouTube">
+              <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> Watch ↗
+            </a>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm ${isDone ? 'btn-success text-white' : ''}" onclick="toggleVideoCompletion('${videoId}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-weight: 600; border: 1px solid var(--border-color);">
             <i class="fa-solid ${isDone ? 'fa-check-circle' : 'fa-circle'}"></i> ${isDone ? 'Mastered / Completed ✓' : 'Mark as Completed'}
           </button>
         </div>
@@ -1828,3 +2059,8 @@ window.renderDashboardYouTubeWidget = renderDashboardYouTubeWidget;
 window.toggleVideoCompletion = toggleVideoCompletion;
 window.ytFilterCategory = ytFilterCategory;
 window.ytApplyFilters = ytApplyFilters;
+window.playYouTubeIframe = playYouTubeIframe;
+window.loadSpotlightVideo = loadSpotlightVideo;
+window.loadSpotlightVideoById = loadSpotlightVideoById;
+window.playSpotlightVideo = playSpotlightVideo;
+window.toggleSpotlightCompletion = toggleSpotlightCompletion;

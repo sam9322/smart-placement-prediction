@@ -606,15 +606,15 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
     Java: [
       {
         id: 'yt-prog-java-1',
-        videoId: 'luc49p_m5tU',
-        title: 'Java Tutorial for Beginners | Complete Java + DSA Course',
-        channel: 'Kunal Kushwaha',
-        duration: '12 hrs 30 mins',
+        videoId: 'eIrMbAQSU34',
+        title: 'Java Tutorial for Beginners - Full Course',
+        channel: 'Programming with Mosh',
+        duration: '2 hrs 30 mins',
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'Java & Object Oriented Programming',
-        thumbnail: 'https://img.youtube.com/vi/luc49p_m5tU/hqdefault.jpg',
-        videoUrl: 'https://www.youtube.com/watch?v=luc49p_m5tU',
+        thumbnail: 'https://i.ytimg.com/vi/eIrMbAQSU34/hqdefault.jpg',
+        videoUrl: 'https://www.youtube.com/watch?v=eIrMbAQSU34',
         whyRecommended: 'Comprehensive Java tutorial from scratch covering JVM architecture, memory management, and OOP fundamentals.'
       },
       {
@@ -626,7 +626,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'Core Java & Multi-Threading',
-        thumbnail: 'https://img.youtube.com/vi/bm0OyhwFDuY/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/bm0OyhwFDuY/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=bm0OyhwFDuY',
         whyRecommended: 'Practical industry walkthrough of exception handling, collections framework, and multi-threaded programming.'
       },
@@ -639,7 +639,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Intermediate',
         category: 'Java/Programming',
         topic: 'Java Collections & Streams API',
-        thumbnail: 'https://img.youtube.com/vi/A74TOX803D0/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/A74TOX803D0/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=A74TOX803D0',
         whyRecommended: 'Advanced Java features including lambdas, stream pipelines, generics, and concurrent collections.'
       }
@@ -654,7 +654,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'Python Syntax & Data Structures',
-        thumbnail: 'https://img.youtube.com/vi/_uQrJ0TkZlc/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/_uQrJ0TkZlc/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=_uQrJ0TkZlc',
         whyRecommended: 'Clear foundational programming course covering lists, dictionaries, tuples, and clean coding practices.'
       },
@@ -667,7 +667,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'Python Automation & Modules',
-        thumbnail: 'https://img.youtube.com/vi/rfscVS0vtbw/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/rfscVS0vtbw/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=rfscVS0vtbw',
         whyRecommended: 'Hands-on project-based Python tutorial for building scripts, data processing, and algorithmic problem solving.'
       }
@@ -682,7 +682,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'C++ STL & Pointers',
-        thumbnail: 'https://img.youtube.com/vi/vLnPwxZdW4Y/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/vLnPwxZdW4Y/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=vLnPwxZdW4Y',
         whyRecommended: 'Master pointers, references, memory addresses, and the Standard Template Library (STL).'
       },
@@ -690,12 +690,12 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         id: 'yt-prog-cpp-2',
         videoId: 'z9bZufPHFLU',
         title: 'C++ Full Course : Free',
-        channel: 'Bro Code',
+        channel: 'Apna College',
         duration: '6 hrs 00 mins',
         level: 'Intermediate',
         category: 'Java/Programming',
         topic: 'Object-Oriented C++ & Memory',
-        thumbnail: 'https://img.youtube.com/vi/z9bZufPHFLU/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/z9bZufPHFLU/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=z9bZufPHFLU',
         whyRecommended: 'Fast-paced comprehensive review of C++ templates, vectors, memory allocation, and structs.'
       }
@@ -710,7 +710,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Beginner',
         category: 'Java/Programming',
         topic: 'JavaScript ES6 & Async',
-        thumbnail: 'https://img.youtube.com/vi/W6NZfCO5SIk/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/W6NZfCO5SIk/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
         whyRecommended: 'Core JavaScript essentials: closures, scopes, event loop, Promises, and modern ES6+ syntax.'
       },
@@ -723,7 +723,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
         level: 'Intermediate',
         category: 'Java/Programming',
         topic: 'TypeScript Static Typing & Generics',
-        thumbnail: 'https://img.youtube.com/vi/30LWjhZzg50/hqdefault.jpg',
+        thumbnail: 'https://i.ytimg.com/vi/30LWjhZzg50/hqdefault.jpg',
         videoUrl: 'https://www.youtube.com/watch?v=30LWjhZzg50',
         whyRecommended: 'Essential for modern frontend/fullstack roles: Interfaces, Generics, Type Narrowing, and TS compiler config.'
       }
@@ -739,7 +739,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Beginner',
       category: 'DSA',
       topic: 'Asymptotic Analysis & Big-O Notation',
-      thumbnail: 'https://img.youtube.com/vi/0IAPZzGSbME/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/0IAPZzGSbME/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=0IAPZzGSbME',
       whyRecommended: 'World-renowned visual explanations of recursion trees, time & space complexity analysis.'
     },
@@ -752,7 +752,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Beginner',
       category: 'DSA',
       topic: 'Data Structures Fundamentals',
-      thumbnail: 'https://img.youtube.com/vi/RBSGKlAvoiM/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/RBSGKlAvoiM/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=RBSGKlAvoiM',
       whyRecommended: 'Complete walkthrough of Arrays, Linked Lists, Stacks, Queues, Binary Trees, and Hash Tables.'
     },
@@ -765,7 +765,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Intermediate',
       category: 'DSA',
       topic: 'LeetCode 150 & Sliding Window',
-      thumbnail: 'https://img.youtube.com/vi/KLlXCFG5TnA/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/KLlXCFG5TnA/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=KLlXCFG5TnA',
       whyRecommended: 'Learn optimal HashMap lookups reducing O(N^2) brute force to linear O(N) time complexity.'
     },
@@ -778,7 +778,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Advanced',
       category: 'DSA',
       topic: 'Dynamic Programming & Memoization',
-      thumbnail: 'https://img.youtube.com/vi/tyB0ztf0DNY/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/tyB0ztf0DNY/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=tyB0ztf0DNY',
       whyRecommended: "Striver's masterclass on 1D/2D DP recurrence relations, top-down memoization, and bottom-up space optimization."
     },
@@ -791,7 +791,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Advanced',
       category: 'DSA',
       topic: 'System Design & Scalability',
-      thumbnail: 'https://img.youtube.com/vi/xpDnVSmNFX0/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/xpDnVSmNFX0/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=xpDnVSmNFX0',
       whyRecommended: 'Crucial for Tier-1 Product Company rounds: load balancers, database sharding, and caching layers.'
     }
@@ -801,27 +801,27 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       id: 'yt-corecs-1',
       videoId: 'bkSWJJZNgf8',
       title: 'Introduction to Operating Systems',
-      channel: 'Neso Academy',
+      channel: 'Gate Smashers',
       duration: '18 mins',
       level: 'Beginner',
       category: 'Core CS',
       topic: 'OS Architecture & Kernel',
-      thumbnail: 'https://img.youtube.com/vi/bkSWJJZNgf8/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/bkSWJJZNgf8/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=bkSWJJZNgf8',
       whyRecommended: 'Foundational concepts on user vs kernel mode, system calls, and dual-mode operation for tech vivas.'
     },
     {
       id: 'yt-corecs-2',
-      videoId: 'HxvTx79f6u4',
-      title: 'Process Scheduling in Operating Systems',
+      videoId: 'WJ-UaAaumNA',
+      title: 'Operating System and Process Management',
       channel: 'Gate Smashers',
-      duration: '14 mins',
+      duration: '24 mins',
       level: 'Intermediate',
       category: 'Core CS',
       topic: 'CPU Scheduling & Deadlocks',
-      thumbnail: 'https://img.youtube.com/vi/HxvTx79f6u4/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=HxvTx79f6u4',
-      whyRecommended: "FCFS, SJF, Round Robin, and Banker's algorithm explained with high-frequency placement interview questions."
+      thumbnail: 'https://i.ytimg.com/vi/WJ-UaAaumNA/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=WJ-UaAaumNA',
+      whyRecommended: "Process states, CPU scheduling algorithms, and synchronization primitives explained with interview problems."
     },
     {
       id: 'yt-corecs-3',
@@ -832,7 +832,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Beginner',
       category: 'Core CS',
       topic: 'DBMS, SQL Queries & Normalization',
-      thumbnail: 'https://img.youtube.com/vi/HXV3zeQKqGY/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/HXV3zeQKqGY/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=HXV3zeQKqGY',
       whyRecommended: 'Master relational database schema design, ACID properties, joins, subqueries, and B-Tree indexing.'
     },
@@ -845,7 +845,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Intermediate',
       category: 'Core CS',
       topic: 'Computer Networks & TCP/IP',
-      thumbnail: 'https://img.youtube.com/vi/qiQR5rTSshw/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/qiQR5rTSshw/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=qiQR5rTSshw',
       whyRecommended: 'Deep dive into TCP 3-way handshake, DNS, HTTP/HTTPS, subnetting, and socket programming.'
     }
@@ -860,7 +860,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Beginner',
       category: 'Full Stack',
       topic: 'Modern Responsive Web Design',
-      thumbnail: 'https://img.youtube.com/vi/mU6anWqZJcc/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/mU6anWqZJcc/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=mU6anWqZJcc',
       whyRecommended: 'Essential for web developer screening: Semantic HTML, Flexbox, CSS Grid, and mobile-first layouts.'
     },
@@ -873,7 +873,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Intermediate',
       category: 'Full Stack',
       topic: 'React Hooks & State Management',
-      thumbnail: 'https://img.youtube.com/vi/bMknfKXIFA8/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/bMknfKXIFA8/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=bMknfKXIFA8',
       whyRecommended: 'Component architecture, useState/useEffect hooks, custom hooks, and context API for frontend interviews.'
     },
@@ -886,7 +886,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Intermediate',
       category: 'Full Stack',
       topic: 'REST APIs & Backend Architecture',
-      thumbnail: 'https://img.youtube.com/vi/Oe421EPjeBE/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/Oe421EPjeBE/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=Oe421EPjeBE',
       whyRecommended: 'Learn routing, middleware authentication, JWT tokens, and database integration for full-stack engineering.'
     },
@@ -899,7 +899,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Advanced',
       category: 'Full Stack',
       topic: 'Docker & Containerization',
-      thumbnail: 'https://img.youtube.com/vi/3c-iBn73dDE/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/3c-iBn73dDE/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=3c-iBn73dDE',
       whyRecommended: 'High-demand DevOps skill: Containerize your projects, write Dockerfiles, and orchestrate with Docker Compose.'
     }
@@ -907,68 +907,68 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
   aptitude: [
     {
       id: 'yt-apt-1',
-      videoId: 'rsmXhDyoH6M',
-      title: 'Aptitude Test Questions and Answers for Placement Drives',
-      channel: 'CareerRide',
-      duration: '45 mins',
+      videoId: 'xxpc-HPKN28',
+      title: 'Statistics & Quantitative Aptitude Course',
+      channel: 'freeCodeCamp.org',
+      duration: '8 hrs 15 mins',
       level: 'Beginner',
       category: 'Aptitude',
       topic: 'Quantitative Aptitude Essentials',
-      thumbnail: 'https://img.youtube.com/vi/rsmXhDyoH6M/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=rsmXhDyoH6M',
-      whyRecommended: 'Highest yield practice questions for TCS, Infosys, Cognizant, and Wipro initial placement screening.'
+      thumbnail: 'https://i.ytimg.com/vi/xxpc-HPKN28/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=xxpc-HPKN28',
+      whyRecommended: 'Highest yield probability, statistics, and numerical reasoning practice questions for initial screening.'
     },
     {
       id: 'yt-apt-2',
-      videoId: 'yV9vWk5iC5o',
-      title: 'Quantitative Aptitude Short Tricks for Placements',
-      channel: 'Feel Free to Learn',
-      duration: '38 mins',
+      videoId: 'Vl0H-qTclOg',
+      title: 'Data Analysis & Quantitative Reasoning',
+      channel: 'freeCodeCamp.org',
+      duration: '2 hrs 26 mins',
       level: 'Intermediate',
       category: 'Aptitude',
-      topic: 'Speed Math, Percentages & Profit/Loss',
-      thumbnail: 'https://img.youtube.com/vi/yV9vWk5iC5o/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=yV9vWk5iC5o',
-      whyRecommended: 'Shortcut techniques to solve percentage and profit/loss calculations under 30 seconds per question.'
+      topic: 'Data Interpretation & Percentages',
+      thumbnail: 'https://i.ytimg.com/vi/Vl0H-qTclOg/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=Vl0H-qTclOg',
+      whyRecommended: 'Shortcut techniques to solve percentage, tables, and data interpretation under timed conditions.'
     },
     {
       id: 'yt-apt-3',
-      videoId: '58dO_qF3e7I',
-      title: 'Time and Work Problems Short Tricks',
-      channel: 'CareerRide',
-      duration: '24 mins',
-      level: 'Beginner',
+      videoId: 'HfACrKJ_Y2w',
+      title: 'College Mathematics & Quantitative Reasoning',
+      channel: 'freeCodeCamp.org',
+      duration: '11 hrs 48 mins',
+      level: 'Intermediate',
       category: 'Aptitude',
-      topic: 'Time, Work & Efficiency',
-      thumbnail: 'https://img.youtube.com/vi/58dO_qF3e7I/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=58dO_qF3e7I',
-      whyRecommended: 'LCM method for solving Pipes & Cisterns and Time & Work problems with 100% accuracy.'
+      topic: 'Mathematical Aptitude & Formulations',
+      thumbnail: 'https://i.ytimg.com/vi/HfACrKJ_Y2w/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=HfACrKJ_Y2w',
+      whyRecommended: 'Formulas and shortcuts for rate of change, algebra, and mathematical models in technical screening tests.'
     },
     {
       id: 'yt-apt-4',
-      videoId: 'sRkXfKq_TzI',
-      title: 'Number Series Reasoning Tricks for Tech Placement Exams',
-      channel: 'Study Smart',
-      duration: '30 mins',
-      level: 'Intermediate',
+      videoId: 'L3LMbpZIKhQ',
+      title: 'Mathematics for Computer Science & Logical Reasoning',
+      channel: 'MIT OpenCourseWare',
+      duration: '1 hr 20 mins',
+      level: 'Advanced',
       category: 'Aptitude',
-      topic: 'Logical Reasoning & Pattern Analysis',
-      thumbnail: 'https://img.youtube.com/vi/sRkXfKq_TzI/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=sRkXfKq_TzI',
-      whyRecommended: 'Master geometric, alternating, and polynomial number series for aptitude test clearing.'
+      topic: 'Discrete Math & Logical Proofs',
+      thumbnail: 'https://i.ytimg.com/vi/L3LMbpZIKhQ/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=L3LMbpZIKhQ',
+      whyRecommended: 'Rigorous logic, proof techniques, and graph connectivity questions common in top product aptitude rounds.'
     }
   ],
   projects: [
     {
       id: 'yt-proj-1',
       videoId: 'nu_pCVPKzTk',
-      title: 'Full Stack MERN Project with Authentication & Real-Time Sync',
+      title: 'Full Stack Web Development Capstone Project',
       channel: 'freeCodeCamp.org',
-      duration: '3 hrs 20 mins',
+      duration: '7 hrs 10 mins',
       level: 'Advanced',
       category: 'Projects',
       topic: 'Full-Stack Production Capstone',
-      thumbnail: 'https://img.youtube.com/vi/nu_pCVPKzTk/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/nu_pCVPKzTk/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=nu_pCVPKzTk',
       whyRecommended: 'Impress recruiters by building a full-featured web app with JWT authentication, MongoDB schemas, and clean UI.'
     },
@@ -981,50 +981,50 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Intermediate',
       category: 'Projects',
       topic: 'SQL Data Exploration Portfolio Project',
-      thumbnail: 'https://img.youtube.com/vi/qfyynHBFOsM/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/qfyynHBFOsM/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=qfyynHBFOsM',
-      whyRecommended: 'End-to-end portfolio project analyzing COVID-19 datasets using SQL CTEs, window functions, and views.'
+      whyRecommended: 'End-to-end portfolio project analyzing datasets using SQL CTEs, window functions, and views.'
     },
     {
       id: 'yt-proj-3',
       videoId: 'L72fhGm1tfE',
-      title: 'Build and Deploy 10 Projects in React',
-      channel: 'freeCodeCamp.org',
-      duration: '9 hrs 00 mins',
+      title: 'Express JS Crash Course & Backend Project',
+      channel: 'Traversy Media',
+      duration: '1 hr 15 mins',
       level: 'Intermediate',
       category: 'Projects',
-      topic: 'React Portfolio Projects',
-      thumbnail: 'https://img.youtube.com/vi/L72fhGm1tfE/hqdefault.jpg',
+      topic: 'Express & REST API Project',
+      thumbnail: 'https://i.ytimg.com/vi/L72fhGm1tfE/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=L72fhGm1tfE',
-      whyRecommended: '10 distinct portfolio-ready React applications with API consumption, filtering, and responsive CSS.'
+      whyRecommended: 'Hands-on Express REST API backend with middleware, routing, and deployment.'
     },
     {
       id: 'yt-proj-4',
-      videoId: 'G3e-cpL7ofc',
-      title: 'Full Stack Web Development Project from Scratch',
-      channel: 'Web Dev Simplified',
-      duration: '1 hr 15 mins',
+      videoId: 'a_7Z7C_JCyo',
+      title: 'Code 15 React Projects - Complete Course',
+      channel: 'freeCodeCamp.org',
+      duration: '9 hrs 18 mins',
       level: 'Advanced',
       category: 'Projects',
-      topic: 'Production Web Application Deployment',
-      thumbnail: 'https://img.youtube.com/vi/G3e-cpL7ofc/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=G3e-cpL7ofc',
-      whyRecommended: 'Professional code organization, security best practices, and automated deployment pipelines.'
+      topic: 'Production React Applications',
+      thumbnail: 'https://i.ytimg.com/vi/a_7Z7C_JCyo/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=a_7Z7C_JCyo',
+      whyRecommended: '15 distinct portfolio-ready React applications with API consumption, filtering, and responsive CSS.'
     }
   ],
   interview: [
     {
       id: 'yt-int-1',
-      videoId: 'wbp-3Bs94DQ',
-      title: 'How to Prepare for Coding Interviews in 2024',
-      channel: 'NeetCode',
-      duration: '14 mins',
+      videoId: '2m1Kc9uvLvc',
+      title: 'Top Common Technical & HR Interview Questions and Answers',
+      channel: 'CareerVidz',
+      duration: '15 mins',
       level: 'Beginner',
       category: 'Interview Preparation',
       topic: 'Coding Interview Roadmap & Strategy',
-      thumbnail: 'https://img.youtube.com/vi/wbp-3Bs94DQ/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=wbp-3Bs94DQ',
-      whyRecommended: 'Clear blueprint on question prioritization, mock interview frequency, and time management.'
+      thumbnail: 'https://i.ytimg.com/vi/2m1Kc9uvLvc/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=2m1Kc9uvLvc',
+      whyRecommended: 'Clear blueprint on high-frequency questions, technical viva delivery, and recruiter expectations.'
     },
     {
       id: 'yt-int-2',
@@ -1035,34 +1035,34 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
       level: 'Beginner',
       category: 'Interview Preparation',
       topic: 'HR Interview Self Introduction',
-      thumbnail: 'https://img.youtube.com/vi/1mHjMNZZvFo/hqdefault.jpg',
+      thumbnail: 'https://i.ytimg.com/vi/1mHjMNZZvFo/hqdefault.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=1mHjMNZZvFo',
       whyRecommended: 'Perfect 90-second script linking your academic projects, skills, and company cultural fit.'
     },
     {
       id: 'yt-int-3',
-      videoId: 'uGk_4K6hRrg',
+      videoId: 'uQEuo7woEEk',
       title: 'STAR Method Behavioral Interview Questions and Answers',
-      channel: 'Dan Croitor',
-      duration: '16 mins',
+      channel: 'CareerVidz',
+      duration: '14 mins',
       level: 'Intermediate',
       category: 'Interview Preparation',
       topic: 'STAR Technique & Behavioral Competency',
-      thumbnail: 'https://img.youtube.com/vi/uGk_4K6hRrg/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=uGk_4K6hRrg',
+      thumbnail: 'https://i.ytimg.com/vi/uQEuo7woEEk/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=uQEuo7woEEk',
       whyRecommended: 'Structure answers using Situation, Task, Action, and Result to score high in technical director rounds.'
     },
     {
       id: 'yt-int-4',
-      videoId: 'zC5_H1c5qZ0',
-      title: 'Technical Coding Mock Interview with Ex-Google Engineer',
+      videoId: '1qw5ITr3k9E',
+      title: 'Software Engineering Job Interview – Full Mock Interview',
       channel: 'freeCodeCamp.org',
-      duration: '55 mins',
+      duration: '42 mins',
       level: 'Advanced',
       category: 'Interview Preparation',
       topic: 'Live Technical Mock Simulation',
-      thumbnail: 'https://img.youtube.com/vi/zC5_H1c5qZ0/hqdefault.jpg',
-      videoUrl: 'https://www.youtube.com/watch?v=zC5_H1c5qZ0',
+      thumbnail: 'https://i.ytimg.com/vi/1qw5ITr3k9E/hqdefault.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=1qw5ITr3k9E',
       whyRecommended: 'Observe real live problem breakdown, edge case handling, and communication under interview pressure.'
     }
   ]
