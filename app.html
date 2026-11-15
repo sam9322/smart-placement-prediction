@@ -759,8 +759,8 @@
                   <button type="button" class="btn btn-secondary btn-sm" id="btn-sync-prediction-profile" onclick="syncPredictionFormWithProfile(true)" title="Sync latest parameters from SQLite database">
                     <i class="fa-solid fa-arrows-rotate"></i> <span id="btn-sync-text">Sync Profile</span>
                   </button>
-                  <button type="button" class="btn btn-ghost btn-sm text-primary" onclick="savePredictionParamsToProfile()" title="Save current form values to your student profile">
-                    <i class="fa-solid fa-floppy-disk"></i> Save to Profile
+                  <button type="button" class="btn btn-ghost btn-sm text-primary btn-save-prediction-profile" id="btn-save-prediction-top" onclick="savePredictionParamsToProfile()" title="Save current form values to your student profile">
+                    <i class="fa-solid fa-floppy-disk"></i> <span class="btn-save-pred-text">Save to Profile</span>
                   </button>
                 </div>
               </div>
@@ -1006,8 +1006,8 @@
                   <button type="submit" class="btn btn-primary btn-lg" style="flex: 2;">
                     <i class="fa-solid fa-calculator"></i> Calculate Placement Readiness & Predict Categories
                   </button>
-                  <button type="button" class="btn btn-secondary btn-lg" style="flex: 1;" onclick="savePredictionParamsToProfile()" title="Save these values as your permanent student profile parameters">
-                    <i class="fa-solid fa-floppy-disk"></i> Save to Profile
+                  <button type="button" class="btn btn-secondary btn-lg btn-save-prediction-profile" id="btn-save-prediction-bottom" style="flex: 1;" onclick="savePredictionParamsToProfile()" title="Save these values as your permanent student profile parameters">
+                    <i class="fa-solid fa-floppy-disk"></i> <span class="btn-save-pred-text">Save to Profile</span>
                   </button>
                 </div>
               </form>

@@ -444,6 +444,37 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
         </div>
       `).join('');
     }
+
+    // Automatically synchronize ATS score & extracted metadata into student profile
+    try {
+      const profile = appState.getProfile();
+      if (profile && data.atsScore !== undefined) {
+        profile.resumeScore = data.atsScore;
+        profile.resumeDetails = {
+          fileName: data.fileName || 'Uploaded_Resume.pdf',
+          atsScore: data.atsScore,
+          scoreGrade: data.scoreGrade || 'ATS Ready',
+          analyzedAt: new Date().toISOString()
+        };
+        if (Array.isArray(data.skills) && data.skills.length > 0) {
+          if (!Array.isArray(profile.skills)) profile.skills = [];
+          data.skills.forEach(s => {
+            if (!profile.skills.some(es => es.toLowerCase() === s.toLowerCase())) {
+              profile.skills.push(s);
+            }
+          });
+        }
+        appState.updateProfile(profile);
+        if (window.authManager && typeof authManager.syncProfileToBackend === 'function') {
+          authManager.syncProfileToBackend(profile);
+        }
+        if (typeof syncPredictionFormWithProfile === 'function') {
+          syncPredictionFormWithProfile(false);
+        }
+      }
+    } catch (e) {
+      console.warn('Auto-sync resume to profile notice:', e);
+    }
   }
 
   importExtractedToProfile() {
