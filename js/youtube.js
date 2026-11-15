@@ -1572,7 +1572,7 @@ function loadSpotlightVideo(v) {
            onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/mqdefault.jpg';">
       <div class="yt-duration-pill" id="yt-spotlight-duration">${v.duration || 'Full Course'}</div>
       <button type="button" class="yt-centered-play-btn" id="yt-spotlight-play-btn" onclick="playSpotlightVideo()" aria-label="Play Featured Video" title="Click to Play Video">
-        <div class="yt-play-btn-circle">
+        <div class="yt-play-btn-circle" style="width: 44px; height: 44px; font-size: 1rem;">
           <i class="fa-solid fa-play"></i>
         </div>
       </button>
@@ -1729,7 +1729,7 @@ function bindPersonalizedYouTubeUI(data) {
     }
   }
 
-  // 5. 7-Day Personalized Daily Target Roadmap
+  // 5. 7-Day Personalized Daily Target Roadmap (Compact Sprint Cards)
   const roadmapGrid = document.getElementById('yt-roadmap-grid');
   if (roadmapGrid) {
     roadmapGrid.innerHTML = roadmap.map(day => {
@@ -1737,28 +1737,28 @@ function bindPersonalizedYouTubeUI(data) {
       const v = day.targetVideo || {};
       const videoId = v.videoId || v.id;
       return `
-        <div class="card p-3" style="border: 1px solid ${isDone ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${isDone ? 'rgba(16, 185, 129, 0.05)' : 'var(--bg-card)'}; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
+        <div class="card p-2" style="border: 1px solid ${isDone ? 'var(--accent-emerald)' : 'var(--border-color)'}; background: ${isDone ? 'rgba(16, 185, 129, 0.05)' : 'var(--bg-card)'}; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; padding: 0.6rem 0.75rem; transition: all 0.2s ease;">
           <div>
-            <div class="flex items-center justify-between mb-2" style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="badge ${isDone ? 'badge-success' : 'badge-primary'}" style="font-size: 0.72rem;">
+            <div class="flex items-center justify-between mb-1" style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge ${isDone ? 'badge-success' : 'badge-primary'} badge-xs" style="font-size: 0.68rem; padding: 2px 6px;">
                 ${isDone ? '<i class="fa-solid fa-check mr-1"></i> Done' : escapeHtml(day.category)}
               </span>
-              <span class="text-xs text-muted"><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(day.estimatedTime)}</span>
+              <span class="text-xs text-muted" style="font-size: 0.7rem;"><i class="fa-regular fa-clock mr-1"></i>${escapeHtml(day.estimatedTime)}</span>
             </div>
-            <h4 class="font-bold text-sm mb-1" style="line-height: 1.35;">${escapeHtml(day.title)}</h4>
-            <p class="text-xs text-muted mb-3" style="line-height: 1.4;">${escapeHtml(day.dailyTarget)}</p>
+            <h4 class="font-bold text-xs mb-1" style="line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 1.9rem; margin: 0.2rem 0 0.15rem 0;">${escapeHtml(day.title)}</h4>
+            <p class="text-xs text-muted mb-2" style="font-size: 0.7rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 0 0 0.4rem 0;">${escapeHtml(day.dailyTarget)}</p>
           </div>
-          <div class="pt-2 flex items-center justify-between" style="border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <div class="flex gap-1" style="display: flex; gap: 0.25rem;">
-              <button type="button" class="btn btn-primary btn-sm" onclick="loadSpotlightVideoById('${videoId}'); playSpotlightVideo(); const sc = document.getElementById('yt-spotlight-card'); if (sc) window.scrollTo({top: sc.offsetTop - 80, behavior: 'smooth'});" style="font-size: 0.75rem; padding: 0.3rem 0.6rem;">
+          <div class="pt-2 flex items-center justify-between" style="border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+            <div class="flex gap-1" style="display: flex; gap: 0.2rem;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="loadSpotlightVideoById('${videoId}'); playSpotlightVideo(); const sc = document.getElementById('yt-spotlight-card'); if (sc) sc.scrollIntoView({behavior: 'smooth', block: 'center'});" style="font-size: 0.7rem; padding: 0.22rem 0.5rem;">
                 <i class="fa-solid fa-play mr-1"></i> Play
               </button>
-              <a href="${v.videoUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : '#')}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;" title="Open on YouTube">
+              <a href="${v.videoUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : '#')}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" style="font-size: 0.7rem; padding: 0.22rem 0.4rem;" title="Open on YouTube">
                 <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
               </a>
             </div>
-            <button class="btn btn-ghost btn-sm ${isDone ? 'text-emerald font-bold' : ''}" onclick="toggleVideoCompletion('${videoId}')" title="Toggle completion" style="font-size: 0.75rem; padding: 0.3rem 0.5rem;">
-              <i class="fa-solid ${isDone ? 'fa-square-check' : 'fa-square'} mr-1"></i> ${isDone ? 'Completed' : 'Mark Done'}
+            <button class="btn btn-ghost btn-sm ${isDone ? 'text-emerald font-bold' : ''}" onclick="toggleVideoCompletion('${videoId}')" title="Toggle completion" style="font-size: 0.7rem; padding: 0.22rem 0.45rem;">
+              <i class="fa-solid ${isDone ? 'fa-square-check' : 'fa-square'} mr-1"></i> ${isDone ? 'Done' : 'Mark'}
             </button>
           </div>
         </div>
@@ -1858,67 +1858,90 @@ function ytApplyFilters() {
 }
 
 /**
- * Render single video card with responsive 16:9 YouTube video frame,
- * crisp thumbnail, centered play button, rounded corners, and inline iframe support
+ * Render single video card with responsive 16:9 YouTube video frame in compact Roadmap style
  */
 function renderPersonalizedVideoCard(v, framePrefix = 'yt-frame-') {
   const isDone = !!v.isCompleted;
-  const levelClass = v.level === 'Beginner' ? 'badge-success' : v.level === 'Intermediate' ? 'badge-primary' : 'badge-warning';
+  const levelStr = v.level || 'Beginner';
+  const levelClass = levelStr.toLowerCase() === 'beginner' 
+    ? 'beginner' 
+    : levelStr.toLowerCase() === 'intermediate' 
+      ? 'intermediate' 
+      : 'advanced';
   const videoId = v.videoId || v.id;
   const frameId = `${framePrefix}${videoId}`;
+  const videoUrl = v.videoUrl || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : '#');
+  const duration = v.duration || 'Full Course';
+  const topic = v.topic || v.category || 'Skill Prep';
 
   return `
-    <div class="yt-resource-card ${isDone ? 'yt-card-completed' : ''}" id="yt-card-${videoId}">
-      <!-- Responsive 16:9 YouTube Video Frame -->
-      <div class="yt-thumbnail-box" id="${frameId}">
-        <img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" 
+    <div class="roadmap-lecture-card yt-compact-card ${isDone ? 'lecture-watched' : ''}" id="yt-card-${videoId}">
+      <!-- Compact 16:9 Thumbnail Header -->
+      <div class="roadmap-lecture-thumb-wrapper" id="${frameId}">
+        <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" 
              alt="${escapeHtml(v.title)}" 
+             class="roadmap-lecture-thumb" 
              loading="lazy" 
-             class="yt-thumbnail-img"
              onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/mqdefault.jpg';">
-        <div class="yt-duration-pill">${v.duration || 'Full Course'}</div>
-        <button type="button" class="yt-centered-play-btn" onclick="playYouTubeIframe('${videoId}', '${frameId}', '${escapeHtml(v.title)}')" aria-label="Play ${escapeHtml(v.title)}" title="Click to Play Video">
-          <div class="yt-play-btn-circle">
+        <span class="roadmap-level-badge level-${levelClass}">
+          ${escapeHtml(levelStr)}
+        </span>
+        <span class="roadmap-duration-badge">
+          <i class="fa-regular fa-clock"></i> ${escapeHtml(duration)}
+        </span>
+        <button type="button" 
+                class="roadmap-play-overlay yt-play-action-btn" 
+                onclick="playYouTubeIframe('${videoId}', '${frameId}', '${escapeHtml(v.title)}')" 
+                aria-label="Play ${escapeHtml(v.title)}" 
+                title="Click to Play Inline">
+          <div class="roadmap-play-btn">
             <i class="fa-solid fa-play"></i>
           </div>
         </button>
       </div>
 
-      <div class="yt-content-box">
-        <div class="yt-header-row">
-          <span class="badge ${levelClass}">${escapeHtml(v.level || 'Beginner')}</span>
-          <span class="yt-topic-badge"><i class="fa-solid fa-graduation-cap text-primary"></i> ${escapeHtml(v.topic || v.category || 'Skill Prep')}</span>
+      <!-- Compact Card Body -->
+      <div class="roadmap-lecture-body">
+        <div class="roadmap-lecture-meta-top">
+          <span class="roadmap-topic-pill">
+            <i class="fa-solid fa-graduation-cap"></i> ${escapeHtml(topic)}
+          </span>
+          ${isDone 
+            ? '<span class="badge badge-success badge-xs font-bold"><i class="fa-solid fa-check"></i> Done</span>' 
+            : '<span class="badge badge-outline badge-xs text-emerald font-bold"><i class="fa-solid fa-circle-check"></i> Verified</span>'}
         </div>
 
-        <h4 class="yt-title" title="${escapeHtml(v.title)}">
-          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer">
+        <h4 class="roadmap-lecture-title" title="${escapeHtml(v.title)}">
+          <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">
             ${escapeHtml(v.title)}
           </a>
         </h4>
 
-        <div class="yt-channel-meta">
-          <i class="fa-brands fa-youtube yt-icon-red"></i>
-          <span>Channel: <strong class="yt-channel-name">${escapeHtml(v.channel)}</strong></span>
-          <span class="yt-meta-dot">•</span>
-          <span class="text-xs text-muted"><i class="fa-solid fa-circle-check text-emerald" title="Verified Creator"></i> Verified</span>
+        <div class="roadmap-lecture-channel">
+          <i class="fa-brands fa-youtube text-rose"></i>
+          <span class="channel-name" title="${escapeHtml(v.channel)}">${escapeHtml(v.channel)}</span>
+          <i class="fa-solid fa-circle-check text-primary verified-icon" title="Verified Creator"></i>
         </div>
 
-        <div class="yt-why-box">
-          <div class="yt-why-label"><i class="fa-solid fa-circle-check text-emerald"></i> Why Recommended:</div>
-          <p class="yt-why-text">"${escapeHtml(v.whyRecommended || 'Essential placement topic with top campus recruitment alignment.')}"</p>
-        </div>
-
-        <div class="yt-actions-bar" style="margin-top: auto; display: flex; gap: 0.5rem; flex-direction: column;">
-          <div class="flex gap-2" style="display: flex; gap: 0.5rem; width: 100%;">
-            <button type="button" class="btn btn-primary btn-sm" onclick="playYouTubeIframe('${videoId}', '${frameId}', '${escapeHtml(v.title)}')" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; font-weight: 700;">
-              <i class="fa-solid fa-play"></i> Play Video
-            </button>
-            <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; font-weight: 600;" title="Watch in new tab on YouTube">
-              <i class="fa-brands fa-youtube" style="color: #ef4444;"></i> Watch ↗
-            </a>
-          </div>
-          <button type="button" class="btn btn-ghost btn-sm ${isDone ? 'btn-success text-white' : ''}" onclick="toggleVideoCompletion('${videoId}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-weight: 600; border: 1px solid var(--border-color);">
-            <i class="fa-solid ${isDone ? 'fa-check-circle' : 'fa-circle'}"></i> ${isDone ? 'Mastered / Completed ✓' : 'Mark as Completed'}
+        <div class="roadmap-lecture-actions">
+          <a href="${videoUrl}" 
+             target="_blank" 
+             rel="noopener noreferrer" 
+             class="btn btn-sm btn-primary roadmap-watch-btn" 
+             title="Watch on YouTube (New Tab)">
+            <i class="fa-brands fa-youtube"></i> Watch ↗
+          </a>
+          <button type="button" 
+                  class="btn btn-sm ${isDone ? 'btn-success text-white' : 'btn-outline-secondary'}" 
+                  onclick="toggleVideoCompletion('${videoId}')" 
+                  title="${isDone ? 'Marked as Completed / Done' : 'Mark as Complete'}">
+            <i class="fa-solid ${isDone ? 'fa-check-circle' : 'fa-circle'}"></i> ${isDone ? 'Done' : 'Mark'}
+          </button>
+          <button type="button" 
+                  class="btn btn-sm btn-outline-secondary" 
+                  onclick="loadSpotlightVideoById('${videoId}'); playSpotlightVideo(); const sc = document.getElementById('yt-spotlight-card'); if (sc) sc.scrollIntoView({behavior: 'smooth', block: 'center'});" 
+                  title="Play in Spotlight Theater">
+            <i class="fa-solid fa-expand"></i>
           </button>
         </div>
       </div>

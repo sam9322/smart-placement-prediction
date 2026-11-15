@@ -1510,15 +1510,29 @@ body.sidebar-locked {
   z-index: 5;
 }
 
-/* Spotlight Theater Player */
-.yt-spotlight-player-card {
+/* Spotlight Theater Player (Compact & Responsive) */
+.yt-spotlight-player-card,
+.yt-spotlight-compact-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  margin-bottom: 2rem;
-  box-shadow: var(--shadow-md);
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
   transition: border-color var(--transition-fast);
+}
+
+.yt-spotlight-compact-body {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .yt-spotlight-compact-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 .yt-spotlight-frame {
@@ -1528,7 +1542,7 @@ body.sidebar-locked {
   max-height: 520px;
   background: #050811;
   overflow: hidden;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-md);
 }
 
 .yt-content-box {
@@ -2474,13 +2488,15 @@ body.sidebar-locked {
   transition: all var(--transition-fast);
 }
 
-.roadmap-lectures-grid {
+.roadmap-lectures-grid,
+.yt-compact-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
 }
 
-.roadmap-lecture-card {
+.roadmap-lecture-card,
+.yt-compact-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -2492,7 +2508,8 @@ body.sidebar-locked {
   position: relative;
 }
 
-.roadmap-lecture-card:hover {
+.roadmap-lecture-card:hover,
+.yt-compact-card:hover {
   transform: translateY(-4px);
   border-color: var(--primary);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25), 0 0 15px rgba(99, 102, 241, 0.2);
@@ -2514,7 +2531,8 @@ body.sidebar-locked {
   display: block;
 }
 
-.roadmap-lecture-card:hover .roadmap-lecture-thumb {
+.roadmap-lecture-card:hover .roadmap-lecture-thumb,
+.yt-compact-card:hover .roadmap-lecture-thumb {
   transform: scale(1.06);
 }
 
@@ -2564,10 +2582,20 @@ body.sidebar-locked {
   transition: opacity 0.25s ease;
   z-index: 3;
   text-decoration: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
 }
 
-.roadmap-lecture-card:hover .roadmap-play-overlay {
+.roadmap-lecture-card:hover .roadmap-play-overlay,
+.yt-compact-card:hover .roadmap-play-overlay {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .roadmap-play-overlay {
+    opacity: 0.85;
+  }
 }
 
 .roadmap-play-btn {

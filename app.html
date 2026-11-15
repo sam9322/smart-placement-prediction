@@ -21,7 +21,7 @@
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/app.css?v=2.2">
 
   <!-- Authentication Route Guard: Protect student dashboard from unauthorized access -->
   <script>
@@ -318,7 +318,7 @@
                 Open YouTube Learning Hub <i class="fa-solid fa-arrow-right ml-1"></i>
               </button>
             </div>
-            <div class="grid grid-3" id="dash-youtube-cards" style="padding: 1.25rem; gap: 1.25rem;">
+            <div class="roadmap-lectures-grid yt-compact-grid" id="dash-youtube-cards" style="padding: 1rem; gap: 1rem;">
               <!-- Dynamic injection -->
             </div>
           </div>
@@ -1385,162 +1385,158 @@
              8. PERSONALIZED YOUTUBE LEARNING HUB VIEW
              ==================================================================== -->
         <section id="view-youtube" class="app-view">
-          <!-- Top Hero & Student Context Banner -->
-          <div class="card mb-4" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(124, 58, 237, 0.08)); border: 1px solid rgba(124, 58, 237, 0.25);">
-            <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <!-- Top Hero & Student Context Banner (Compact & Clean) -->
+          <div class="card mb-3" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(124, 58, 237, 0.08)); border: 1px solid rgba(124, 58, 237, 0.25); padding: 0.85rem 1.15rem;">
+            <div class="flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
               <div>
-                <div class="flex items-center gap-2 mb-1" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-                  <span class="badge badge-danger" style="background: #ef4444; color: #fff;">
-                    <i class="fa-brands fa-youtube"></i> 100% Verified Lectures
+                <div class="flex items-center gap-2 mb-1" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                  <span class="badge badge-danger" style="background: #ef4444; color: #fff; font-size: 0.7rem; padding: 2px 7px;">
+                    <i class="fa-brands fa-youtube"></i> Verified Lectures
                   </span>
-                  <span class="badge badge-primary" id="yt-student-badge">Personalized for You</span>
+                  <span class="badge badge-primary" id="yt-student-badge" style="font-size: 0.7rem; padding: 2px 7px;">Personalized for You</span>
                 </div>
-                <h3 class="text-2xl font-bold mt-1" id="yt-hub-heading">Personalized YouTube Learning Hub</h3>
-                <p class="text-muted text-sm" id="yt-hub-subtext">
+                <h3 class="text-xl font-bold" id="yt-hub-heading" style="margin: 0.1rem 0 0.2rem 0; font-size: 1.25rem;">Personalized YouTube Learning Hub</h3>
+                <p class="text-muted text-xs" id="yt-hub-subtext" style="margin: 0; font-size: 0.78rem;">
                   Curated video lectures dynamically adapted to your primary language, DSA competency, core CS knowledge, and placement gaps.
                 </p>
               </div>
               <div class="flex gap-2" style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-secondary btn-sm" onclick="renderPersonalizedYouTubeView(true)">
-                  <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh Recommendations
+                <button class="btn btn-secondary btn-sm" onclick="renderPersonalizedYouTubeView(true)" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;">
+                  <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
                 </button>
               </div>
             </div>
 
             <!-- Student Profile Attributes Quick Tags -->
-            <div class="mt-3 pt-3 flex flex-wrap gap-2" id="yt-student-meta-tags" style="border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem;">
+            <div class="mt-2 pt-2 flex flex-wrap gap-2" id="yt-student-meta-tags" style="border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; flex-wrap: wrap; gap: 0.4rem;">
               <!-- Dynamic tags: Lang, DSA, Core CS, Aptitude, CGPA -->
             </div>
           </div>
 
-          <!-- Readiness & Progress Tracker -->
-          <div class="grid grid-4 mb-4" style="margin-bottom: 1.5rem;" id="yt-progress-kpis">
-            <div class="stat-card">
-              <div class="stat-icon-wrapper" style="background: rgba(79, 70, 229, 0.15); color: var(--primary);">
+          <!-- Readiness & Progress Tracker (Compact Stat Row) -->
+          <div class="grid grid-4 mb-3" style="gap: 0.75rem; margin-bottom: 1rem;" id="yt-progress-kpis">
+            <div class="stat-card" style="padding: 0.65rem 0.85rem;">
+              <div class="stat-icon-wrapper" style="width: 34px; height: 34px; font-size: 0.95rem; background: rgba(79, 70, 229, 0.15); color: var(--primary);">
                 <i class="fa-brands fa-youtube"></i>
               </div>
               <div class="stat-meta">
-                <div class="stat-title">Recommended Videos</div>
-                <div class="stat-value" id="yt-stat-total">0</div>
-                <div class="stat-desc">Across 7 core categories</div>
+                <div class="stat-title" style="font-size: 0.72rem;">Recommended</div>
+                <div class="stat-value" id="yt-stat-total" style="font-size: 1.25rem;">0</div>
+                <div class="stat-desc" style="font-size: 0.68rem;">Across 7 categories</div>
               </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
+            <div class="stat-card" style="padding: 0.65rem 0.85rem;">
+              <div class="stat-icon-wrapper" style="width: 34px; height: 34px; font-size: 0.95rem; background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
                 <i class="fa-solid fa-circle-check"></i>
               </div>
               <div class="stat-meta">
-                <div class="stat-title">Mastered Videos</div>
-                <div class="stat-value" id="yt-stat-completed">0</div>
-                <div class="stat-desc text-emerald font-semibold" id="yt-stat-completed-desc">0% completed</div>
+                <div class="stat-title" style="font-size: 0.72rem;">Mastered</div>
+                <div class="stat-value" id="yt-stat-completed" style="font-size: 1.25rem;">0</div>
+                <div class="stat-desc text-emerald font-semibold" id="yt-stat-completed-desc" style="font-size: 0.68rem;">0% completed</div>
               </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">
+            <div class="stat-card" style="padding: 0.65rem 0.85rem;">
+              <div class="stat-icon-wrapper" style="width: 34px; height: 34px; font-size: 0.95rem; background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">
                 <i class="fa-solid fa-hourglass-half"></i>
               </div>
               <div class="stat-meta">
-                <div class="stat-title">Remaining to Watch</div>
-                <div class="stat-value" id="yt-stat-remaining">0</div>
-                <div class="stat-desc">Target before campus drives</div>
+                <div class="stat-title" style="font-size: 0.72rem;">Remaining</div>
+                <div class="stat-value" id="yt-stat-remaining" style="font-size: 1.25rem;">0</div>
+                <div class="stat-desc" style="font-size: 0.68rem;">Before campus drives</div>
               </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-icon-wrapper" style="background: rgba(14, 165, 233, 0.15); color: var(--accent-cyan);">
+            <div class="stat-card" style="padding: 0.65rem 0.85rem;">
+              <div class="stat-icon-wrapper" style="width: 34px; height: 34px; font-size: 0.95rem; background: rgba(14, 165, 233, 0.15); color: var(--accent-cyan);">
                 <i class="fa-solid fa-bullseye"></i>
               </div>
               <div class="stat-meta">
-                <div class="stat-title">Mastery Progress</div>
-                <div class="stat-value" id="yt-stat-pct">0%</div>
-                <div class="progress-track mt-1" style="width: 100%; height: 6px; margin-top: 0.25rem;">
+                <div class="stat-title" style="font-size: 0.72rem;">Mastery Progress</div>
+                <div class="stat-value" id="yt-stat-pct" style="font-size: 1.25rem;">0%</div>
+                <div class="progress-track mt-1" style="width: 100%; height: 5px; margin-top: 0.2rem;">
                   <div class="progress-fill" id="yt-overall-progress-bar" style="width: 0%; background: linear-gradient(90deg, #4f46e5, #10b981);"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Identified Skill Gaps Banner -->
-          <div class="card mb-4" id="yt-gaps-box" style="display: none; border-left: 4px solid var(--accent-amber);">
-            <div class="card-header">
-              <h3 class="card-title text-amber">
-                <i class="fa-solid fa-triangle-exclamation"></i> Identified Placement Skill Gaps & Weakness Priorities
+          <!-- Identified Skill Gaps Banner (Compact) -->
+          <div class="card mb-3" id="yt-gaps-box" style="display: none; border-left: 4px solid var(--accent-amber); padding: 0.65rem 0.85rem;">
+            <div class="card-header" style="padding: 0 0 0.4rem 0; margin-bottom: 0.4rem; border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
+              <h3 class="card-title text-amber" style="font-size: 0.85rem; font-weight: 700;">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Identified Placement Skill Gaps & Weakness Priorities
               </h3>
             </div>
-            <div class="card-body" id="yt-gaps-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div class="card-body" id="yt-gaps-list" style="padding: 0; display: flex; flex-direction: column; gap: 0.4rem;">
               <!-- Injected gap items -->
             </div>
           </div>
 
-          <!-- Featured Spotlight 16:9 YouTube Video Player Frame -->
-          <div class="card mb-4 yt-spotlight-player-card" id="yt-spotlight-card">
-            <div class="card-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-              <div>
-                <h3 class="card-title">
-                  <i class="fa-solid fa-play-circle text-primary"></i> Featured YouTube Lecture Spotlight
-                </h3>
-                <p class="card-subtitle">Highest leverage video for your current placement preparation sprint</p>
+          <!-- Featured Spotlight 16:9 YouTube Video Player (Compact Theater Layout) -->
+          <div class="card mb-3 yt-spotlight-compact-card" id="yt-spotlight-card" style="padding: 0.85rem 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 0.4rem;">
+                <span class="badge badge-primary badge-xs" style="font-weight: 700;"><i class="fa-solid fa-star mr-1"></i> Featured Spotlight</span>
+                <span class="badge badge-danger badge-xs"><i class="fa-brands fa-youtube mr-1"></i> Interactive 16:9 Player</span>
               </div>
-              <span class="badge badge-danger"><i class="fa-brands fa-youtube mr-1"></i> Interactive 16:9 Player</span>
+              <span class="text-xs text-muted">Highest leverage lecture for your current placement sprint</span>
             </div>
-            <div class="yt-spotlight-frame" id="yt-spotlight-frame">
-              <img id="yt-spotlight-thumb" src="https://i.ytimg.com/vi/eIrMbAQSU34/hqdefault.jpg" alt="Featured Video" class="yt-thumbnail-img" onerror="this.onerror=null; this.src='https://img.youtube.com/vi/eIrMbAQSU34/mqdefault.jpg';">
-              <div class="yt-duration-pill" id="yt-spotlight-duration">Featured Lecture</div>
-              <button type="button" class="yt-centered-play-btn" id="yt-spotlight-play-btn" onclick="playSpotlightVideo()" aria-label="Play Featured Video">
-                <div class="yt-play-btn-circle">
-                  <i class="fa-solid fa-play"></i>
+            <div class="yt-spotlight-compact-body" style="display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 1rem; align-items: center;">
+              <div class="yt-spotlight-frame" id="yt-spotlight-frame" style="aspect-ratio: 16/9; border-radius: var(--radius-md); overflow: hidden; position: relative; background: #000; width: 100%;">
+                <img id="yt-spotlight-thumb" src="https://i.ytimg.com/vi/eIrMbAQSU34/hqdefault.jpg" alt="Featured Video" class="yt-thumbnail-img" onerror="this.onerror=null; this.src='https://img.youtube.com/vi/eIrMbAQSU34/mqdefault.jpg';">
+                <div class="yt-duration-pill" id="yt-spotlight-duration">Featured Lecture</div>
+                <button type="button" class="yt-centered-play-btn" id="yt-spotlight-play-btn" onclick="playSpotlightVideo()" aria-label="Play Featured Video" title="Click to Play Video">
+                  <div class="yt-play-btn-circle" style="width: 44px; height: 44px; font-size: 1rem;">
+                    <i class="fa-solid fa-play"></i>
+                  </div>
+                </button>
+              </div>
+              <div class="yt-spotlight-info" style="display: flex; flex-direction: column; justify-content: center; gap: 0.4rem;">
+                <div class="flex items-center gap-2" style="display: flex; gap: 0.4rem; align-items: center;">
+                  <span class="badge badge-primary badge-xs" id="yt-spotlight-category">Java / Programming</span>
+                  <span class="badge badge-success badge-xs" id="yt-spotlight-level">Beginner</span>
                 </div>
-              </button>
-            </div>
-            <div class="p-4" style="padding: 1.25rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid var(--border-color);">
-              <div style="flex: 1; min-width: 260px;">
-                <div class="flex items-center gap-2 mb-1" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
-                  <span class="badge badge-primary" id="yt-spotlight-category">Java / Programming</span>
-                  <span class="badge badge-success" id="yt-spotlight-level">Beginner</span>
-                </div>
-                <h3 class="font-bold text-lg mb-1" id="yt-spotlight-title">Java Tutorial for Beginners - Full Course</h3>
-                <div class="text-sm text-muted flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
+                <h4 class="font-bold text-base" id="yt-spotlight-title" style="margin: 0; line-height: 1.35;">Java Tutorial for Beginners - Full Course</h4>
+                <div class="text-xs text-muted flex items-center gap-2" style="display: flex; align-items: center; gap: 0.4rem;">
                   <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
                   <span id="yt-spotlight-channel">Programming with Mosh</span>
                   <span>•</span>
-                  <span class="text-xs text-muted"><i class="fa-solid fa-circle-check text-emerald"></i> Verified Placement Course</span>
+                  <span class="text-emerald font-semibold"><i class="fa-solid fa-circle-check"></i> Verified Placement Course</span>
+                </div>
+                <div class="flex gap-2 mt-2" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.35rem;">
+                  <a id="yt-spotlight-watch-btn" href="https://www.youtube.com/watch?v=eIrMbAQSU34" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">
+                    <i class="fa-brands fa-youtube mr-1"></i> Watch on YouTube ↗
+                  </a>
+                  <button type="button" class="btn btn-secondary btn-sm" id="yt-spotlight-complete-btn" onclick="toggleSpotlightCompletion()" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Mark Completed
+                  </button>
                 </div>
               </div>
-              <div class="flex gap-2" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                <a id="yt-spotlight-watch-btn" href="https://www.youtube.com/watch?v=eIrMbAQSU34" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-                  <i class="fa-brands fa-youtube mr-1"></i> Watch on YouTube ↗
-                </a>
-                <button type="button" class="btn btn-secondary btn-sm" id="yt-spotlight-complete-btn" onclick="toggleSpotlightCompletion()">
-                  <i class="fa-solid fa-circle-check mr-1"></i> Mark Completed
-                </button>
-              </div>
             </div>
           </div>
 
-          <!-- 7-Day Personalized Daily Target Roadmap -->
-          <div class="card mb-4">
-            <div class="card-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <!-- 7-Day Personalized Daily Target Roadmap (Compact Sprints) -->
+          <div class="card mb-3" style="padding: 0.75rem 1rem;">
+            <div class="flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.65rem;">
               <div>
-                <h3 class="card-title">
-                  <i class="fa-solid fa-calendar-week text-primary"></i> 7-Day Personalized Placement Preparation Roadmap
+                <h3 class="card-title text-sm font-bold" style="margin: 0; font-size: 0.9rem;">
+                  <i class="fa-solid fa-calendar-week text-primary mr-1"></i> 7-Day Personalized Placement Sprint
                 </h3>
-                <p class="card-subtitle">Daily video assignments and practice milestones tailored to your strengths and gaps</p>
+                <p class="text-xs text-muted" style="margin: 0; font-size: 0.75rem;">Daily video targets tailored to your strengths and placement gaps</p>
               </div>
-              <span class="badge badge-success" id="yt-roadmap-badge">7-Day Sprint</span>
+              <span class="badge badge-success badge-xs" id="yt-roadmap-badge">7-Day Sprint</span>
             </div>
-            <div class="card-body">
-              <div class="grid grid-3" id="yt-roadmap-grid" style="gap: 1rem;">
-                <!-- 7 days cards injected dynamically -->
-              </div>
+            <div class="roadmap-sprint-grid" id="yt-roadmap-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem;">
+              <!-- 7 days compact cards injected dynamically -->
             </div>
           </div>
 
-          <!-- Category Filter Tabs & Search Bar -->
-          <div class="card mb-4">
-            <div style="padding: 1rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
-              <div class="tabs-nav" id="yt-category-tabs" style="margin-bottom: 0; overflow-x: auto;">
+          <!-- Category Filter Tabs & Search Bar (Compact Toolbar) -->
+          <div class="card mb-3" style="padding: 0.6rem 0.85rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; justify-content: space-between;">
+              <div class="tabs-nav yt-category-nav" id="yt-category-tabs" style="margin-bottom: 0; overflow-x: auto; display: flex; gap: 0.3rem;">
                 <button class="tab-btn active" data-cat="all" onclick="ytFilterCategory('all', event)">
                   <i class="fa-solid fa-border-all"></i> All Categories
                 </button>
@@ -1567,21 +1563,21 @@
                 </button>
               </div>
 
-              <div class="flex gap-2" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                <select id="yt-level-filter" class="form-control" style="width: auto; padding: 0.4rem 0.75rem; font-size: 0.85rem;" onchange="ytApplyFilters()">
+              <div class="flex gap-2" style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
+                <select id="yt-level-filter" class="form-control" style="width: auto; padding: 0.35rem 0.65rem; font-size: 0.8rem;" onchange="ytApplyFilters()">
                   <option value="all">All Difficulty Levels</option>
                   <option value="Beginner">Beginner</option>
                   <option value="Intermediate">Intermediate</option>
                   <option value="Advanced">Advanced</option>
                 </select>
-                <input type="text" id="yt-search-input" class="form-control" placeholder="Search topic or video..." style="width: 220px; padding: 0.4rem 0.75rem; font-size: 0.85rem;" oninput="ytApplyFilters()">
+                <input type="text" id="yt-search-input" class="form-control" placeholder="Search topic or video..." style="width: 200px; padding: 0.35rem 0.65rem; font-size: 0.8rem;" oninput="ytApplyFilters()">
               </div>
             </div>
           </div>
 
-          <!-- Video Grid Container -->
-          <div class="grid grid-3" id="yt-videos-grid" style="gap: 1.5rem;">
-            <!-- Dynamically injected verified video cards -->
+          <!-- Video Grid Container (Roadmap-style Responsive Grid) -->
+          <div class="roadmap-lectures-grid yt-compact-grid" id="yt-videos-grid">
+            <!-- Dynamically injected compact verified video cards -->
           </div>
         </section>
 
@@ -1673,7 +1669,7 @@
   <!-- Application Logic Modules in proper dependency sequence -->
   <script src="js/state.js?v=2.1"></script>
   <script src="js/auth.js?v=2.1"></script>
-  <script src="js/youtube.js?v=2.1"></script>
+  <script src="js/youtube.js?v=2.2"></script>
   <script src="js/resume.js?v=2.1"></script>
   <script src="js/prediction.js?v=2.1"></script>
   <script src="js/coach.js?v=2.1"></script>
