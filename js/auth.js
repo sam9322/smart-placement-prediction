@@ -190,7 +190,7 @@ class AuthManager {
     norm.id = user.id !== undefined && user.id !== null ? user.id : null;
     norm.fullName = user.fullName || user.fullname || 'Student';
     norm.email = user.email || '';
-    norm.phone = user.phone || '';
+    norm.phone = user.phone || user.mobileNumber || user.mobile_number || '';
     norm.rollNumber = user.rollNumber || user.roll_number || '';
     norm.gradYear = user.gradYear || user.grad_year || '';
     norm.college = user.college || '';
@@ -628,9 +628,15 @@ class AuthManager {
   }
 
   async syncProfileToBackend(profileData) {
-    if (!this.token || !this.isBackendOnline) return;
+    if (!this.token) {
+      return { success: false, message: 'Authentication required. Please log in.' };
+    }
+    await this.checkBackendHealth();
+    if (!this.isBackendOnline) {
+      return { success: false, message: 'Backend server is currently offline.' };
+    }
     try {
-      await fetch(`${API_BASE_URL}/api/user/profile`, {
+      const res = await fetch(`${API_BASE_URL}/api/user/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -638,10 +644,66 @@ class AuthManager {
         },
         body: JSON.stringify(profileData)
       });
-      // Invalidate cached YouTube recommendations so fresh profile parameters are loaded
-      window.currentPersonalizedYouTubeData = null;
+      const data = await res.json();
+      if (res.ok && data.success) {
+        if (data.user) {
+          const norm = this.normalizeUser(data.user);
+          this.currentUser = norm;
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          const state = getAppState();
+          if (state && typeof state.initUser === 'function') {
+            state.initUser(norm);
+          }
+        }
+        // Invalidate cached YouTube recommendations so fresh profile parameters are loaded
+        window.currentPersonalizedYouTubeData = null;
+        return { success: true, user: this.currentUser, message: data.message || 'Profile successfully updated!' };
+      } else {
+        return { success: false, message: data.message || 'Failed to update profile.' };
+      }
     } catch (e) {
-      console.warn('Backend sync deferred:', e);
+      console.warn('Backend sync failed:', e);
+      return { success: false, message: 'Network error while updating profile.' };
+    }
+  }
+
+  async updateMobileNumber(phone) {
+    if (!this.token) {
+      return { success: false, message: 'Authentication required. Please log in.' };
+    }
+    await this.checkBackendHealth();
+    if (!this.isBackendOnline) {
+      return { success: false, message: 'Backend server is currently offline.' };
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/user/phone`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.token}`
+        },
+        body: JSON.stringify({ phone })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        if (data.user) {
+          const norm = this.normalizeUser(data.user);
+          this.currentUser = norm;
+          localStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(norm));
+          const state = getAppState();
+          if (state && typeof state.initUser === 'function') {
+            state.initUser(norm);
+          }
+        }
+        return { success: true, user: this.currentUser, phone: data.phone, message: data.message || 'Mobile number updated successfully!' };
+      } else {
+        return { success: false, message: data.message || 'Failed to update mobile number.' };
+      }
+    } catch (e) {
+      console.warn('Mobile update network error:', e);
+      return { success: false, message: 'Network error while updating mobile number.' };
     }
   }
 

@@ -176,6 +176,9 @@ function renderProfileView() {
   const summaryRoll = document.getElementById('profile-summary-roll');
   if (summaryRoll) summaryRoll.innerText = `${profile.rollNumber} • ${profile.degree} ${profile.branch}`;
 
+  const summaryPhone = document.getElementById('profile-summary-phone');
+  if (summaryPhone) summaryPhone.innerText = profile.phone || '--';
+
   const summaryCgpa = document.getElementById('profile-summary-cgpa');
   if (summaryCgpa) summaryCgpa.innerText = profile.cgpa;
 
@@ -388,7 +391,7 @@ function deleteInternship(iId) {
   showToast('Internship removed', 'info');
 }
 
-function handleSaveProfileForm(e) {
+async function handleSaveProfileForm(e) {
   if (e) e.preventDefault();
 
   const cgpaVal = parseFloat(document.getElementById('profile-cgpa').value) || 0;
@@ -397,10 +400,37 @@ function handleSaveProfileForm(e) {
     return;
   }
 
+  // 10-digit Indian Mobile Validation
+  const rawPhone = (document.getElementById('profile-phone')?.value || '').trim();
+  const digits = rawPhone.replace(/\D/g, '');
+  let cleanDigits = digits;
+  if (cleanDigits.length === 12 && cleanDigits.startsWith('91')) cleanDigits = cleanDigits.slice(2);
+  else if (cleanDigits.length === 11 && cleanDigits.startsWith('0')) cleanDigits = cleanDigits.slice(1);
+
+  if (!cleanDigits || cleanDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanDigits)) {
+    showToast('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9).', 'danger');
+    const phoneInput = document.getElementById('profile-phone');
+    if (phoneInput) {
+      phoneInput.focus();
+      phoneInput.classList.add('border-danger');
+      setTimeout(() => phoneInput.classList.remove('border-danger'), 3000);
+    }
+    return;
+  }
+
+  const formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+
+  const saveBtn = document.querySelector('#view-profile form button[type="submit"]');
+  const originalBtnHtml = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving to SQLite...';
+  }
+
   const updatedProfile = {
     fullName: document.getElementById('profile-fullname').value.trim() || 'Student',
     email: document.getElementById('profile-email').value.trim(),
-    phone: document.getElementById('profile-phone').value.trim(),
+    phone: formattedPhone,
     college: document.getElementById('profile-college').value.trim(),
     degree: document.getElementById('profile-degree').value.trim(),
     branch: document.getElementById('profile-branch').value.trim(),
@@ -418,11 +448,31 @@ function handleSaveProfileForm(e) {
     devSkills: (document.getElementById('profile-dev-skills')?.value || '').trim()
   };
 
-  appState.updateProfile(updatedProfile);
-  if (window.authManager) authManager.syncProfileToBackend(updatedProfile);
-  renderProfileView();
-  showToast('Profile saved & synchronized with backend database! ✨', 'success');
-  if (window.renderDashboard) renderDashboard();
+  try {
+    appState.updateProfile(updatedProfile);
+    if (window.authManager) {
+      const syncRes = await authManager.syncProfileToBackend(updatedProfile);
+      if (syncRes && syncRes.success === false) {
+        showToast(syncRes.message || 'Failed to sync with backend.', 'danger');
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = originalBtnHtml;
+        }
+        return;
+      }
+    }
+    renderProfileView();
+    showToast(`Profile & Mobile Number (${formattedPhone}) saved to SQLite database! ✨`, 'success');
+    if (window.renderDashboard) renderDashboard();
+  } catch (err) {
+    console.error('Error saving profile:', err);
+    showToast('An unexpected error occurred while saving profile.', 'danger');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalBtnHtml;
+    }
+  }
 }
 
 function resetAllDataToDefault() {

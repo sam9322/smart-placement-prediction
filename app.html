@@ -335,6 +335,7 @@
                 <div class="profile-avatar-large" id="profile-summary-avatar">--</div>
                 <h3 class="text-xl" id="profile-summary-name">Student</h3>
                 <p class="text-sm text-muted" id="profile-summary-roll">Roll No • Branch</p>
+                <p class="text-xs text-muted mb-2"><i class="fa-solid fa-phone text-primary"></i> <span id="profile-summary-phone">--</span></p>
 
                 <div class="profile-metric-pill-grid">
                   <div class="metric-pill">
@@ -399,7 +400,7 @@
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title"><i class="fa-solid fa-user-pen text-primary"></i> Edit Academic & Personal Details</h3>
-                  <span class="badge badge-info">Stored in LocalStorage</span>
+                  <span class="badge badge-success"><i class="fa-solid fa-database"></i> SQLite Database Sync</span>
                 </div>
 
                 <form onsubmit="handleSaveProfileForm(event)">
@@ -415,8 +416,9 @@
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Phone Number</label>
-                      <input type="text" id="profile-phone" class="form-control">
+                      <label class="form-label"><i class="fa-solid fa-phone text-primary"></i> Mobile Number <span class="required">*</span></label>
+                      <input type="tel" id="profile-phone" class="form-control" placeholder="e.g. 9876543210 (10 digits)" maxlength="18" required>
+                      <small class="text-xs text-muted">10-digit Indian mobile number (e.g., 9876543210 or +91 98765 43210)</small>
                     </div>
 
                     <div class="form-group">

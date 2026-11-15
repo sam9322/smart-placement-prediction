@@ -944,6 +944,27 @@ def user_profile():
         conn.close()
         return jsonify({'success': False, 'message': 'Access forbidden: You cannot modify another student\'s profile.'}), 403
 
+    # Validate and format 10-digit Indian mobile number
+    phone_raw = data.get('phone') if 'phone' in data else (data.get('mobileNumber') if 'mobileNumber' in data else (data.get('mobile_number') if 'mobile_number' in data else None))
+    phone_to_save = None
+    if phone_raw is not None:
+        if str(phone_raw).strip() == '':
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': 'Mobile number cannot be empty. Please enter a valid 10-digit Indian mobile number.'
+            }), 400
+        clean_digits = re.sub(r'[\s\-\(\)\+]', '', str(phone_raw).strip())
+        if clean_digits.startswith('91') and len(clean_digits) == 12:
+            clean_digits = clean_digits[2:]
+        if not re.match(r'^[6-9]\d{9}$', clean_digits):
+            conn.close()
+            return jsonify({
+                'success': False,
+                'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+            }), 400
+        phone_to_save = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
+
     cursor.execute('''
         UPDATE users SET
             fullname = COALESCE(?, fullname),
@@ -978,7 +999,7 @@ def user_profile():
         WHERE id = ?
     ''', (
         data.get('fullName'),
-        data.get('phone'),
+        phone_to_save,
         data.get('college'),
         data.get('degree'),
         data.get('branch'),
@@ -1017,6 +1038,41 @@ def user_profile():
     return jsonify({
         'success': True,
         'message': 'Profile successfully synchronized with backend database!',
+        'user': user_to_dict(updated_user)
+    }), 200
+
+@app.route('/api/user/phone', methods=['POST', 'PUT'])
+def update_user_phone():
+    user = get_current_user()
+    if not user:
+        return jsonify({'success': False, 'message': 'Unauthorized or expired session.'}), 401
+
+    data = request.get_json() or {}
+    phone_raw = data.get('phone') if 'phone' in data else (data.get('mobileNumber') if 'mobileNumber' in data else data.get('mobile_number', ''))
+    clean_digits = re.sub(r'[\s\-\(\)\+]', '', str(phone_raw).strip())
+    if clean_digits.startswith('91') and len(clean_digits) == 12:
+        clean_digits = clean_digits[2:]
+
+    if not re.match(r'^[6-9]\d{9}$', clean_digits):
+        return jsonify({
+            'success': False,
+            'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+        }), 400
+
+    formatted_phone = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('UPDATE users SET phone = ? WHERE id = ?', (formatted_phone, user['id']))
+    conn.commit()
+
+    cursor.execute('SELECT * FROM users WHERE id = ?', (user['id'],))
+    updated_user = cursor.fetchone()
+    conn.close()
+
+    return jsonify({
+        'success': True,
+        'message': f'Mobile number successfully updated to {formatted_phone}!',
+        'phone': formatted_phone,
         'user': user_to_dict(updated_user)
     }), 200
 

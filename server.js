@@ -370,10 +370,32 @@ app.get('/api/user/profile', (req, res) => {
 
 app.put('/api/user/profile', (req, res) => {
   const student = getStudentFromReq(req);
-  if (student && req.body) {
+  if (!student) {
+    return res.status(401).json({ success: false, message: 'Authentication required.' });
+  }
+  if (req.body) {
     const updateData = { ...req.body };
     delete updateData.password;
     delete updateData.passwordHash;
+
+    const rawPhone = updateData.phone !== undefined ? updateData.phone : (updateData.mobileNumber !== undefined ? updateData.mobileNumber : updateData.mobile_number);
+    if (rawPhone !== undefined && rawPhone !== null) {
+      const digits = String(rawPhone).replace(/\D/g, '');
+      let cleanDigits = digits;
+      if (cleanDigits.length === 12 && cleanDigits.startsWith('91')) cleanDigits = cleanDigits.slice(2);
+      else if (cleanDigits.length === 11 && cleanDigits.startsWith('0')) cleanDigits = cleanDigits.slice(1);
+
+      if (cleanDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanDigits)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+        });
+      }
+      updateData.phone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+      delete updateData.mobileNumber;
+      delete updateData.mobile_number;
+    }
+
     Object.assign(student, updateData);
     saveDatabase(db);
   }
@@ -381,6 +403,33 @@ app.put('/api/user/profile', (req, res) => {
   if (safeStudent) delete safeStudent.passwordHash;
 
   res.json({ success: true, message: 'Profile synchronized with backend.', user: safeStudent });
+});
+
+app.all('/api/user/phone', (req, res) => {
+  const student = getStudentFromReq(req);
+  if (!student) {
+    return res.status(401).json({ success: false, message: 'Authentication required.' });
+  }
+  const rawPhone = (req.body && (req.body.phone !== undefined ? req.body.phone : (req.body.mobileNumber !== undefined ? req.body.mobileNumber : req.body.mobile_number))) || '';
+  const digits = String(rawPhone).replace(/\D/g, '');
+  let cleanDigits = digits;
+  if (cleanDigits.length === 12 && cleanDigits.startsWith('91')) cleanDigits = cleanDigits.slice(2);
+  else if (cleanDigits.length === 11 && cleanDigits.startsWith('0')) cleanDigits = cleanDigits.slice(1);
+
+  if (cleanDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanDigits)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+    });
+  }
+
+  const formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+  student.phone = formattedPhone;
+  saveDatabase(db);
+
+  const safeStudent = { ...student };
+  delete safeStudent.passwordHash;
+  res.json({ success: true, message: `Mobile number successfully updated to ${formattedPhone}!`, phone: formattedPhone, user: safeStudent });
 });
 
 // User Prediction Save Endpoint
