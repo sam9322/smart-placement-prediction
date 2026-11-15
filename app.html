@@ -54,24 +54,24 @@
       </div>
 
       <div class="sidebar-nav">
-        <div class="nav-section-title">Core Management</div>
+        <div class="nav-section-title">Navigation</div>
         <a href="#dashboard" class="sidebar-link active" onclick="switchView('dashboard')">
           <i class="fa-solid fa-gauge-high"></i>
           <span>Dashboard</span>
         </a>
         <a href="#profile" class="sidebar-link" onclick="switchView('profile')">
-          <i class="fa-solid fa-id-card-clip"></i>
+          <i class="fa-solid fa-user"></i>
           <span>Student Profile</span>
         </a>
         <a href="#resume" class="sidebar-link" onclick="switchView('resume')">
-          <i class="fa-solid fa-file-invoice"></i>
+          <i class="fa-solid fa-file-lines"></i>
           <span>Resume Analyzer</span>
           <span class="sidebar-badge badge-warning">ATS</span>
         </a>
 
-        <div class="nav-section-title">AI Guidance Engine</div>
+        <div class="nav-section-title">Career & Skills</div>
         <a href="#prediction" class="sidebar-link" onclick="switchView('prediction')">
-          <i class="fa-solid fa-calculator"></i>
+          <i class="fa-solid fa-chart-line"></i>
           <span>Placement Predictor</span>
           <span class="sidebar-badge badge-primary">AI</span>
         </a>
@@ -84,7 +84,7 @@
           <span>Skill Gap Analysis</span>
         </a>
 
-        <div class="nav-section-title">Preparation & Practice</div>
+        <div class="nav-section-title">Practice & Prep</div>
         <a href="#youtube" class="sidebar-link" onclick="switchView('youtube')">
           <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
           <span>YouTube Learning</span>
@@ -96,14 +96,14 @@
         </a>
         <a href="#interview" class="sidebar-link" onclick="switchView('interview')">
           <i class="fa-solid fa-user-tie"></i>
-          <span>Interview Prep Hub</span>
+          <span>Interview Prep</span>
           <span class="sidebar-badge badge-success">Quiz</span>
         </a>
 
-        <div class="nav-section-title">Portal Navigation</div>
+        <div class="nav-section-title">Account</div>
         <a href="index.html" class="sidebar-link">
           <i class="fa-solid fa-house"></i>
-          <span>Back to Landing Page</span>
+          <span>Back to Home</span>
         </a>
       </div>
 
@@ -142,12 +142,6 @@
         </div>
 
         <div class="header-right">
-          <!-- Quick Search Button -->
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('search-modal').classList.add('open')" title="Quick Jump">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span class="header-btn-label">Quick Jump</span>
-          </button>
-
           <!-- Active Authenticated Student Badge -->
           <div class="account-switcher-pill" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.75rem;">
             <i class="fa-solid fa-circle-check text-success" style="font-size: 0.85rem;"></i>
@@ -174,42 +168,55 @@
              1. DASHBOARD VIEW
              ==================================================================== -->
         <section id="view-dashboard" class="app-view active">
-          <!-- Welcome Banner -->
-          <div class="welcome-banner">
+          <!-- Welcome Banner (Clean, Modern & Soft) -->
+          <div class="welcome-banner" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(14, 165, 233, 0.08)); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
             <div class="welcome-info">
-              <h1>Welcome back, <span class="text-gradient" id="dash-welcome-name">Student</span> 👋</h1>
-              <p id="dash-welcome-sub">
+              <div class="flex items-center gap-2 mb-1" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                <span class="badge badge-primary badge-xs"><i class="fa-solid fa-graduation-cap mr-1"></i> Student Portal</span>
+                <span class="badge badge-success badge-xs"><i class="fa-solid fa-circle-check mr-1"></i> Verified Profile</span>
+              </div>
+              <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0 0 0.35rem 0;">Welcome back, <span class="text-gradient" id="dash-welcome-name">Student</span> 👋</h1>
+              <p id="dash-welcome-sub" class="text-sm text-muted" style="margin: 0;">
                 Academic Profile
               </p>
             </div>
-            <div class="flex gap-2" style="display: flex; gap: 0.75rem;">
-              <a href="#prediction" class="btn btn-primary" onclick="switchView('prediction')">
+            <div class="flex gap-2" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <a href="#prediction" class="btn btn-primary btn-sm btn-action-start" onclick="switchView('prediction')">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> Recalculate Placement %
+              </a>
+              <a href="#profile" class="btn btn-secondary btn-sm btn-action-view" onclick="switchView('profile')">
+                <i class="fa-solid fa-user"></i> View Profile
               </a>
             </div>
           </div>
 
-          <!-- 4 KPI Cards -->
-          <div class="kpi-grid">
+          <!-- 4 KPI Cards with Clear Progress Indicators -->
+          <div class="kpi-grid" style="margin-bottom: 1.25rem;">
             <div class="kpi-card">
-              <div class="kpi-icon-box" style="background: rgba(79, 70, 229, 0.12); color: var(--primary);">
+              <div class="kpi-icon-box" style="background: rgba(99, 102, 241, 0.12); color: var(--primary);">
                 <i class="fa-solid fa-chart-line"></i>
               </div>
-              <div>
+              <div style="flex: 1; min-width: 0;">
                 <div class="kpi-value text-gradient" id="dash-kpi-prob">86%</div>
                 <div class="kpi-title">Placement Probability</div>
                 <div class="text-xs text-muted" id="dash-kpi-prob-sub">Tier 1 Ready (14-32 LPA)</div>
+                <div class="progress-track mt-1" style="width: 100%; height: 5px; margin-top: 0.35rem; border-radius: 9999px; background: rgba(0,0,0,0.08);">
+                  <div class="progress-fill" id="dash-kpi-prob-bar" style="width: 86%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #6366f1, #10b981);"></div>
+                </div>
               </div>
             </div>
 
             <div class="kpi-card">
-              <div class="kpi-icon-box" style="background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan);">
+              <div class="kpi-icon-box" style="background: rgba(14, 165, 233, 0.12); color: var(--accent-cyan);">
                 <i class="fa-solid fa-bullseye"></i>
               </div>
-              <div>
+              <div style="flex: 1; min-width: 0;">
                 <div class="kpi-value" id="dash-kpi-career" style="font-size: 1.25rem;">SDE</div>
                 <div class="kpi-title">Target Career Role</div>
-                <div class="text-xs text-muted" id="dash-kpi-career-sub">82% Skill Match (6/8 skills)</div>
+                <div class="text-xs text-muted" id="dash-kpi-career-sub">82% Skill Match</div>
+                <div class="progress-track mt-1" style="width: 100%; height: 5px; margin-top: 0.35rem; border-radius: 9999px; background: rgba(0,0,0,0.08);">
+                  <div class="progress-fill" id="dash-kpi-career-bar" style="width: 82%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #0ea5e9, #6366f1);"></div>
+                </div>
               </div>
             </div>
 
@@ -217,10 +224,13 @@
               <div class="kpi-icon-box" style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald);">
                 <i class="fa-solid fa-list-check"></i>
               </div>
-              <div>
+              <div style="flex: 1; min-width: 0;">
                 <div class="kpi-value" id="dash-kpi-milestones">4 / 9</div>
                 <div class="kpi-title">Roadmap Milestones</div>
-                <div class="text-xs text-muted" id="dash-kpi-milestones-sub">44% of Roadmap Done</div>
+                <div class="text-xs text-muted" id="dash-kpi-milestones-sub">44% Completed</div>
+                <div class="progress-track mt-1" style="width: 100%; height: 5px; margin-top: 0.35rem; border-radius: 9999px; background: rgba(0,0,0,0.08);">
+                  <div class="progress-fill" id="dash-kpi-milestones-bar" style="width: 44%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                </div>
               </div>
             </div>
 
@@ -228,10 +238,81 @@
               <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.12); color: var(--accent-amber);">
                 <i class="fa-solid fa-user-check"></i>
               </div>
-              <div>
+              <div style="flex: 1; min-width: 0;">
                 <div class="kpi-value" id="dash-kpi-interview">8 / 10</div>
-                <div class="kpi-title">Interview Aptitude Score</div>
-                <div class="text-xs text-muted" id="dash-kpi-interview-sub">1 Mock Simulation Logged</div>
+                <div class="kpi-title">Interview Aptitude</div>
+                <div class="text-xs text-muted" id="dash-kpi-interview-sub">80% Test Score</div>
+                <div class="progress-track mt-1" style="width: 100%; height: 5px; margin-top: 0.35rem; border-radius: 9999px; background: rgba(0,0,0,0.08);">
+                  <div class="progress-fill" id="dash-kpi-interview-bar" style="width: 80%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #f59e0b, #eab308);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Target Role & Skill Gap Analysis Overview (Simple, Clean & Organized) -->
+          <div class="card mb-4" id="dash-skillgap-card" style="border: 1px solid rgba(99, 102, 241, 0.25); background: var(--bg-card); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem;">
+            <div class="card-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding: 1rem 1.25rem;">
+              <div>
+                <div class="flex items-center gap-2 mb-1" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <span class="badge badge-primary badge-xs"><i class="fa-solid fa-crosshairs mr-1"></i> Target Role Fit</span>
+                  <span class="text-xs text-muted" id="dash-skillgap-count-pill" style="font-weight: 600;">6 of 8 Skills Acquired</span>
+                </div>
+                <h3 class="card-title text-lg font-bold" id="dash-skillgap-role-title" style="margin: 0; font-size: 1.2rem;">Software Development Engineer</h3>
+                <p class="card-subtitle text-xs text-muted" style="margin: 0.15rem 0 0 0;">Skill match readiness benchmarked against campus recruitment criteria</p>
+              </div>
+              <div class="flex items-center gap-2" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="#skillgap" class="btn btn-action-view btn-sm" onclick="switchView('skillgap')">
+                  <i class="fa-solid fa-layer-group"></i> View Full Analysis
+                </a>
+                <a href="#profile" class="btn btn-action-add btn-sm" onclick="switchView('profile')">
+                  <i class="fa-solid fa-plus"></i> Add Skills
+                </a>
+                <a href="#roadmap" class="btn btn-action-start btn-sm" onclick="switchView('roadmap')">
+                  <i class="fa-solid fa-play"></i> Start Roadmap
+                </a>
+              </div>
+            </div>
+
+            <!-- Overall Role Match Progress Bar -->
+            <div style="padding: 0.85rem 1.25rem; border-top: 1px solid var(--border-color); background: rgba(99, 102, 241, 0.02);">
+              <div class="flex justify-between items-center mb-1" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <div class="flex items-center gap-2" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="text-xs font-bold" style="color: var(--text-main);">Overall Role Match Progress</span>
+                  <span class="badge badge-success badge-xs font-bold" id="dash-skillgap-status-badge">Strong Match</span>
+                </div>
+                <span class="text-sm font-extrabold text-primary" id="dash-skillgap-percent">82%</span>
+              </div>
+              <div class="progress-track" style="height: 10px; border-radius: 9999px; overflow: hidden; background: rgba(0, 0, 0, 0.08);">
+                <div class="progress-fill" id="dash-skillgap-progress-bar" style="width: 82%; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #6366f1, #0ea5e9, #10b981); transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Matched Skills vs Missing Skills Side-by-Side (Clean & Organized) -->
+            <div style="padding: 1rem 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px solid var(--border-color);" id="dash-skills-grid">
+              <!-- Matched Skills Column -->
+              <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: var(--radius-md); padding: 0.85rem;">
+                <div class="flex items-center justify-between mb-2" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span class="text-xs font-bold text-emerald flex items-center gap-1" style="display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-circle-check"></i> Matched Skills (Acquired)
+                  </span>
+                  <span class="badge badge-success badge-xs font-bold" id="dash-matched-count">6 Skills</span>
+                </div>
+                <div class="flex flex-wrap gap-1" id="dash-matched-skills-list" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                  <!-- Dynamic matched skill chips -->
+                </div>
+              </div>
+
+              <!-- Missing Skills Column -->
+              <div style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: var(--radius-md); padding: 0.85rem;">
+                <div class="flex items-center justify-between mb-2" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span class="text-xs font-bold text-amber flex items-center gap-1" style="display: flex; align-items: center; gap: 0.35rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Missing Skills (To Learn)
+                  </span>
+                  <span class="badge badge-warning badge-xs font-bold" id="dash-missing-count">2 Gaps</span>
+                </div>
+                <div class="flex flex-wrap gap-1" id="dash-missing-skills-list" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                  <!-- Dynamic missing skill chips with quick action -->
+                </div>
               </div>
             </div>
           </div>

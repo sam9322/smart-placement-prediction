@@ -30,6 +30,8 @@ function renderDashboard() {
   if (probSubElem) {
     probSubElem.innerText = prediction.tier === 'High' ? 'Tier 1 Ready (14-32 LPA)' : prediction.tier === 'Medium' ? 'Tier 2 Ready (6-12 LPA)' : 'Needs Improvement (<6 LPA)';
   }
+  const probBarElem = document.getElementById('dash-kpi-prob-bar');
+  if (probBarElem) probBarElem.style.width = `${prediction.probability || 0}%`;
 
   // KPI 2: Target Career & Match
   const targetCareer = CAREERS_CATALOG.find(c => c.id === profile.targetCareerId) || CAREERS_CATALOG[0];
@@ -37,13 +39,26 @@ function renderDashboard() {
   if (careerTitleElem) careerTitleElem.innerText = targetCareer.title;
 
   const studentSkills = (profile.skills || []).map(s => s.toLowerCase().trim());
-  const matchedSkillsCount = targetCareer.requiredSkills.filter(req => 
-    studentSkills.some(s => s === req.toLowerCase().trim() || s.includes(req.toLowerCase().trim()) || req.toLowerCase().trim().includes(s))
-  ).length;
-  const matchPct = Math.round((matchedSkillsCount / targetCareer.requiredSkills.length) * 100);
+  const matchedSkills = [];
+  const missingSkills = [];
+  (targetCareer.requiredSkills || []).forEach(req => {
+    const reqLower = req.toLowerCase().trim();
+    if (studentSkills.some(s => s === reqLower || s.includes(reqLower) || reqLower.includes(s))) {
+      matchedSkills.push(req);
+    } else {
+      missingSkills.push(req);
+    }
+  });
+
+  const matchedSkillsCount = matchedSkills.length;
+  const totalRequired = (targetCareer.requiredSkills || []).length || 1;
+  const matchPct = Math.round((matchedSkillsCount / totalRequired) * 100);
 
   const careerSubElem = document.getElementById('dash-kpi-career-sub');
-  if (careerSubElem) careerSubElem.innerText = `${matchPct}% Skill Fit (${matchedSkillsCount}/${targetCareer.requiredSkills.length} acquired)`;
+  if (careerSubElem) careerSubElem.innerText = `${matchPct}% Skill Fit (${matchedSkillsCount}/${totalRequired} acquired)`;
+
+  const careerBarElem = document.getElementById('dash-kpi-career-bar');
+  if (careerBarElem) careerBarElem.style.width = `${matchPct}%`;
 
   // KPI 3: Milestones Completed
   let totalMilestones = 0;
@@ -64,6 +79,9 @@ function renderDashboard() {
   const milestoneSubElem = document.getElementById('dash-kpi-milestones-sub');
   if (milestoneSubElem) milestoneSubElem.innerText = `${roadmapPct}% of Roadmap Completed`;
 
+  const milestoneBarElem = document.getElementById('dash-kpi-milestones-bar');
+  if (milestoneBarElem) milestoneBarElem.style.width = `${roadmapPct}%`;
+
   // KPI 4: Interview Readiness
   const interviewValElem = document.getElementById('dash-kpi-interview');
   if (interviewValElem) {
@@ -74,6 +92,72 @@ function renderDashboard() {
   if (interviewSubElem) {
     const mockCount = (interviewHistory.mockAttempts || []).length;
     interviewSubElem.innerText = `${mockCount} Mock Simulation${mockCount === 1 ? '' : 's'} Logged`;
+  }
+
+  const interviewBarElem = document.getElementById('dash-kpi-interview-bar');
+  if (interviewBarElem) {
+    const interviewPct = Math.min(100, Math.round(((interviewHistory.aptitudeScore || 0) / (interviewHistory.aptitudeTotal || 10)) * 100));
+    interviewBarElem.style.width = `${interviewPct}%`;
+  }
+
+  // 2b. Update Target Role & Skill Gap Overview Card
+  const roleTitleElem = document.getElementById('dash-skillgap-role-title');
+  if (roleTitleElem) roleTitleElem.innerText = targetCareer.title;
+
+  const countPillElem = document.getElementById('dash-skillgap-count-pill');
+  if (countPillElem) countPillElem.innerText = `${matchedSkills.length} of ${targetCareer.requiredSkills.length} Skills Acquired`;
+
+  const percentElem = document.getElementById('dash-skillgap-percent');
+  if (percentElem) percentElem.innerText = `${matchPct}%`;
+
+  const progressBarElem = document.getElementById('dash-skillgap-progress-bar');
+  if (progressBarElem) progressBarElem.style.width = `${matchPct}%`;
+
+  const statusBadgeElem = document.getElementById('dash-skillgap-status-badge');
+  if (statusBadgeElem) {
+    if (matchPct >= 75) {
+      statusBadgeElem.className = 'badge badge-success badge-xs font-bold';
+      statusBadgeElem.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Strong Match';
+    } else if (matchPct >= 50) {
+      statusBadgeElem.className = 'badge badge-warning badge-xs font-bold';
+      statusBadgeElem.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Moderate Fit';
+    } else {
+      statusBadgeElem.className = 'badge badge-danger badge-xs font-bold';
+      statusBadgeElem.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Preparation Needed';
+    }
+  }
+
+  const matchedCountElem = document.getElementById('dash-matched-count');
+  if (matchedCountElem) matchedCountElem.innerText = `${matchedSkills.length} Acquired`;
+
+  const matchedListElem = document.getElementById('dash-matched-skills-list');
+  if (matchedListElem) {
+    if (matchedSkills.length === 0) {
+      matchedListElem.innerHTML = '<span class="text-xs text-muted" style="font-style: italic;">No matching skills logged yet. Add your skills in Profile.</span>';
+    } else {
+      matchedListElem.innerHTML = matchedSkills.map(s => `
+        <span class="skill-tag skill-tag-matched">
+          <i class="fa-solid fa-check" style="font-size: 0.65rem;"></i> ${s}
+        </span>
+      `).join('');
+    }
+  }
+
+  const missingCountElem = document.getElementById('dash-missing-count');
+  if (missingCountElem) missingCountElem.innerText = `${missingSkills.length} ${missingSkills.length === 1 ? 'Gap' : 'Gaps'}`;
+
+  const missingListElem = document.getElementById('dash-missing-skills-list');
+  if (missingListElem) {
+    if (missingSkills.length === 0) {
+      missingListElem.innerHTML = '<span class="text-xs text-emerald" style="font-weight: 600;"><i class="fa-solid fa-star mr-1"></i> All core target skills acquired! Outstanding readiness.</span>';
+    } else {
+      missingListElem.innerHTML = missingSkills.map(s => `
+        <span class="skill-tag skill-tag-missing">
+          <i class="fa-solid fa-plus" style="font-size: 0.65rem;"></i> ${s}
+          <a href="#youtube" onclick="switchView('youtube')" title="Find video lectures for ${s}" class="skill-learn-link">Learn &nearr;</a>
+        </span>
+      `).join('');
+    }
   }
 
   // 3. Render Upcoming Drives Table

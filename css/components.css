@@ -749,3 +749,162 @@ textarea.form-control {
   }
 }
 
+/* ==========================================================================
+   SIMPLIFIED DASHBOARD UI/UX & EASY ACTION BUTTONS
+   Consistent Soft Purple (#6366f1), Light Blue (#0ea5e9), Clean White (#ffffff)
+   Smooth subtle transitions, readable contrast, fully responsive
+   ========================================================================== */
+
+/* Action Buttons: View, Add, Start */
+.btn-action-view {
+  background: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-action-view:hover {
+  background: #6366f1;
+  color: #ffffff !important;
+  border-color: #6366f1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+[data-theme="dark"] .btn-action-view {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+  border-color: rgba(165, 180, 252, 0.3);
+}
+[data-theme="dark"] .btn-action-view:hover {
+  background: #6366f1;
+  color: #ffffff !important;
+}
+
+.btn-action-add {
+  background: rgba(14, 165, 233, 0.08);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-action-add:hover {
+  background: #0ea5e9;
+  color: #ffffff !important;
+  border-color: #0ea5e9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+[data-theme="dark"] .btn-action-add {
+  background: rgba(14, 165, 233, 0.18);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+[data-theme="dark"] .btn-action-add:hover {
+  background: #0ea5e9;
+  color: #ffffff !important;
+}
+
+.btn-action-start {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #ffffff !important;
+  border: 1px solid transparent;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 1.05rem;
+  font-size: 0.8125rem;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-action-start:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+/* Skill Tags for Skill Gap Overview */
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.785rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  line-height: 1.2;
+  transition: all 0.2s ease;
+}
+
+.skill-tag-matched {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+}
+[data-theme="dark"] .skill-tag-matched {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.skill-tag-missing {
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+}
+[data-theme="dark"] .skill-tag-missing {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.skill-learn-link {
+  font-size: 0.6875rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.18);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 0.25rem;
+  transition: all 0.15s ease;
+}
+.skill-learn-link:hover {
+  background: #f59e0b;
+  color: #ffffff !important;
+}
+
+/* Responsive Grid and Adjustments for Dashboard Skill Gap Card */
+@media (max-width: 768px) {
+  #dash-skills-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+    padding: 0.85rem !important;
+  }
+  #dash-skillgap-card .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
