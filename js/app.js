@@ -61,7 +61,7 @@ function switchView(viewName) {
     profile: { title: 'Student Academic & Skills Profile', desc: 'Manage your portfolio, CGPA, certifications, and technical proficiencies' },
     resume: { title: 'Resume Upload & ATS Analyzer', desc: 'Extract skills, evaluate ATS placement score, and measure job role alignment' },
     prediction: { title: 'Placement Probability Predictor', desc: 'Algorithmic multi-factor assessment engine for campus readiness' },
-    coach: { title: 'AI Career Coach & Matcher', desc: 'Explore tech roles, take the career quiz, and discover target pathways' },
+    coach: { title: 'AI Career Coach & Pathway Advisor', desc: 'Personalized career recommendations evaluated directly from your profile, skills, and resume data' },
     skillgap: { title: 'Skill Gap Analysis & Roadmap', desc: 'Compare your skills against target role requirements and bridge deficiencies' },
     roadmap: { title: 'Interactive Placement Roadmap', desc: '6-month structured timeline with verified real YouTube lectures, practice problems, & milestone checklists' },
     interview: { title: 'Interview Preparation Hub', desc: 'Timed aptitude drill, core CS technical cards, HR STAR guide, & mock simulator' },
@@ -82,8 +82,7 @@ function switchView(viewName) {
   if (viewName === 'resume') { if (window.resumeAnalyzer) resumeAnalyzer.init(); }
   if (viewName === 'prediction') syncPredictionFormWithProfile();
   if (viewName === 'coach') {
-    careerCoach.renderQuizContainer('coach-quiz-root');
-    careerCoach.renderCareersCatalog('coach-careers-root');
+    if (window.careerCoach) careerCoach.renderCoachView('coach-root');
   }
   if (viewName === 'skillgap') renderSkillGapAnalysis();
   if (viewName === 'roadmap') renderRoadmapView();
@@ -585,8 +584,7 @@ function renderAllAppViews() {
   if (typeof renderSkillGapAnalysis === 'function') renderSkillGapAnalysis();
   if (typeof renderRoadmapView === 'function') renderRoadmapView();
   if (window.careerCoach) {
-    if (document.getElementById('coach-quiz-root')) careerCoach.renderQuizContainer('coach-quiz-root');
-    if (document.getElementById('coach-careers-root')) careerCoach.renderCareersCatalog('coach-careers-root');
+    careerCoach.renderCoachView('coach-root');
   }
   if (window.interviewManager && typeof interviewManager.init === 'function') {
     interviewManager.init();

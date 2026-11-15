@@ -1192,20 +1192,14 @@
              4. CAREER COACH VIEW
              ==================================================================== -->
         <section id="view-coach" class="app-view">
-          <!-- Career Affinity Quiz Root -->
-          <div id="coach-quiz-root"></div>
-
-          <!-- All In-Demand Careers Catalog -->
-          <div class="card-header" style="margin-top: 2rem; margin-bottom: 1.5rem;">
-            <div>
-              <h3 class="text-2xl font-bold">Tech Career Tracks Catalog</h3>
-              <p class="text-muted">Select your target engineering specialization to synchronize your skill gap analysis and roadmap.</p>
-            </div>
+          <!-- Main AI Career Coach Root Container -->
+          <div id="coach-root">
+            <!-- Dynamic Injection of Clean Direct Career Coach Experience -->
           </div>
 
-          <div class="career-grid-portal" id="coach-careers-root">
-            <!-- Dynamic catalog cards -->
-          </div>
+          <!-- Compatibility containers for existing callers -->
+          <div id="coach-quiz-root" style="display: none;"></div>
+          <div id="coach-careers-root" style="display: none;"></div>
         </section>
 
         <!-- ====================================================================
@@ -1641,7 +1635,7 @@
             <i class="fa-solid fa-calculator"></i> Placement Probability Predictor
           </a>
           <a href="#coach" class="btn btn-secondary justify-start w-full" onclick="switchView('coach'); closeModal('search-modal')">
-            <i class="fa-solid fa-compass"></i> AI Career Coach Quiz
+            <i class="fa-solid fa-compass"></i> AI Career Coach & Pathway Advisor
           </a>
           <a href="#skillgap" class="btn btn-secondary justify-start w-full" onclick="switchView('skillgap'); closeModal('search-modal')">
             <i class="fa-solid fa-layer-group"></i> Skill Gap Analysis
