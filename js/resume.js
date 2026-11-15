@@ -200,7 +200,7 @@ class ResumeAnalyzerManager {
 
     return `
 ${(profile.fullName || 'Student').toUpperCase()}
-Email: ${profile.email || 'student@engg.edu'} | Phone: ${profile.phone || '+91 98765 00000'}
+Email: ${profile.email || 'student@engg.edu'}${profile.phone ? ` | Phone: ${profile.phone}` : ''}
 ${profile.degree} in ${profile.branch} | ${profile.college} | CGPA: ${profile.cgpa}/10
 
 TECHNICAL SKILLS:
@@ -421,7 +421,13 @@ ${certsStr || '• AWS Certified Cloud Practitioner (2025)\n• Problem Solving 
 
     const candPhoneElem = document.getElementById('resume-candidate-phone');
     if (candPhoneElem) {
-      candPhoneElem.innerHTML = `<i class="fa-solid fa-phone text-emerald mr-1"></i> ${data.phone || '+91 98765 00000'}`;
+      if (data.phone) {
+        candPhoneElem.innerHTML = `<i class="fa-solid fa-phone text-emerald mr-1"></i> ${data.phone}`;
+        candPhoneElem.style.display = 'inline-flex';
+      } else {
+        candPhoneElem.innerHTML = '';
+        candPhoneElem.style.display = 'none';
+      }
     }
 
     // 2. File & Score Banner

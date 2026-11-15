@@ -11,7 +11,7 @@ const DEFAULT_STUDENT_DATA = {
   profile: {
     fullName: 'Samiksha Walbe',
     email: 'samiksha@engg.edu',
-    phone: '+91 98765 11052',
+    phone: '',
     college: 'National Institute of Engineering & Technology',
     degree: 'B.Tech',
     branch: 'Computer Science & Engineering',

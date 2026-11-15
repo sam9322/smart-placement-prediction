@@ -145,7 +145,8 @@ function renderProfileView() {
   // Fill input fields
   setVal('profile-fullname', profile.fullName);
   setVal('profile-email', profile.email);
-  setVal('profile-phone', profile.phone);
+  const displayPhone = (profile.phone && !profile.phone.includes('98765 00000') && !profile.phone.includes('98765 11052') && !profile.phone.includes('98765 22038')) ? profile.phone : '';
+  setVal('profile-phone', displayPhone);
   setVal('profile-college', profile.college);
   setVal('profile-degree', profile.degree);
   setVal('profile-branch', profile.branch);
@@ -176,7 +177,7 @@ function renderProfileView() {
   if (summaryRoll) summaryRoll.innerText = `${profile.rollNumber} • ${profile.degree} ${profile.branch}`;
 
   const summaryPhone = document.getElementById('profile-summary-phone');
-  if (summaryPhone) summaryPhone.innerText = profile.phone || '--';
+  if (summaryPhone) summaryPhone.innerText = displayPhone || '--';
 
   const summaryCgpa = document.getElementById('profile-summary-cgpa');
   if (summaryCgpa) summaryCgpa.innerText = profile.cgpa;
@@ -399,25 +400,27 @@ async function handleSaveProfileForm(e) {
     return;
   }
 
-  // 10-digit Indian Mobile Validation
+  // 10-digit Indian Mobile Validation (only when student enters a number)
   const rawPhone = (document.getElementById('profile-phone')?.value || '').trim();
-  const digits = rawPhone.replace(/\D/g, '');
-  let cleanDigits = digits;
-  if (cleanDigits.length === 12 && cleanDigits.startsWith('91')) cleanDigits = cleanDigits.slice(2);
-  else if (cleanDigits.length === 11 && cleanDigits.startsWith('0')) cleanDigits = cleanDigits.slice(1);
+  let formattedPhone = '';
+  if (rawPhone) {
+    const digits = rawPhone.replace(/\D/g, '');
+    let cleanDigits = digits;
+    if (cleanDigits.length === 12 && cleanDigits.startsWith('91')) cleanDigits = cleanDigits.slice(2);
+    else if (cleanDigits.length === 11 && cleanDigits.startsWith('0')) cleanDigits = cleanDigits.slice(1);
 
-  if (!cleanDigits || cleanDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanDigits)) {
-    showToast('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9).', 'danger');
-    const phoneInput = document.getElementById('profile-phone');
-    if (phoneInput) {
-      phoneInput.focus();
-      phoneInput.classList.add('border-danger');
-      setTimeout(() => phoneInput.classList.remove('border-danger'), 3000);
+    if (!cleanDigits || cleanDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanDigits)) {
+      showToast('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9).', 'danger');
+      const phoneInput = document.getElementById('profile-phone');
+      if (phoneInput) {
+        phoneInput.focus();
+        phoneInput.classList.add('border-danger');
+        setTimeout(() => phoneInput.classList.remove('border-danger'), 3000);
+      }
+      return;
     }
-    return;
+    formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
   }
-
-  const formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
 
   const saveBtn = document.querySelector('#view-profile form button[type="submit"]');
   const originalBtnHtml = saveBtn ? saveBtn.innerHTML : '';
@@ -461,7 +464,11 @@ async function handleSaveProfileForm(e) {
       }
     }
     renderProfileView();
-    showToast(`Profile & Mobile Number (${formattedPhone}) saved to SQLite database! ✨`, 'success');
+    if (formattedPhone) {
+      showToast(`Profile & Mobile Number (${formattedPhone}) saved to SQLite database! ✨`, 'success');
+    } else {
+      showToast('Profile saved to SQLite database! ✨', 'success');
+    }
     if (window.renderDashboard) renderDashboard();
   } catch (err) {
     console.error('Error saving profile:', err);

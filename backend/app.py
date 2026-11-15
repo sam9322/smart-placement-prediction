@@ -453,7 +453,7 @@ def init_db():
 
     # Add missing columns if upgrading database
     for col in [
-        ('phone', "TEXT DEFAULT '+91 98765 00000'"),
+        ('phone', "TEXT DEFAULT ''"),
         ('roadmap_state', "TEXT DEFAULT '{}'"),
         ('interview_history', "TEXT DEFAULT '{}'"),
         ('programming_language', "TEXT DEFAULT ''"),
@@ -490,7 +490,7 @@ def init_db():
     cursor.execute("""
         UPDATE users SET
             fullname = 'Samiksha Walbe',
-            phone = '+91 98765 11052',
+            phone = CASE WHEN phone LIKE '%98765%' THEN '' ELSE COALESCE(phone, '') END,
             degree = 'B.Tech',
             branch = 'Computer Science & Engineering',
             roll_number = 'CS22B1052',
@@ -533,7 +533,7 @@ def init_db():
     cursor.execute("""
         UPDATE users SET
             fullname = 'Jyoti Kore',
-            phone = '+91 98765 22038',
+            phone = CASE WHEN phone LIKE '%98765%' THEN '' ELSE COALESCE(phone, '') END,
             degree = 'B.Tech',
             branch = 'Information Technology',
             roll_number = 'IT22B1038',
@@ -948,22 +948,20 @@ def user_profile():
     phone_raw = data.get('phone') if 'phone' in data else (data.get('mobileNumber') if 'mobileNumber' in data else (data.get('mobile_number') if 'mobile_number' in data else None))
     phone_to_save = None
     if phone_raw is not None:
-        if str(phone_raw).strip() == '':
-            conn.close()
-            return jsonify({
-                'success': False,
-                'message': 'Mobile number cannot be empty. Please enter a valid 10-digit Indian mobile number.'
-            }), 400
-        clean_digits = re.sub(r'[\s\-\(\)\+]', '', str(phone_raw).strip())
-        if clean_digits.startswith('91') and len(clean_digits) == 12:
-            clean_digits = clean_digits[2:]
-        if not re.match(r'^[6-9]\d{9}$', clean_digits):
-            conn.close()
-            return jsonify({
-                'success': False,
-                'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
-            }), 400
-        phone_to_save = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
+        trimmed_phone = str(phone_raw).strip()
+        if trimmed_phone == '':
+            phone_to_save = ''
+        else:
+            clean_digits = re.sub(r'[\s\-\(\)\+]', '', trimmed_phone)
+            if clean_digits.startswith('91') and len(clean_digits) == 12:
+                clean_digits = clean_digits[2:]
+            if not re.match(r'^[6-9]\d{9}$', clean_digits):
+                conn.close()
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+                }), 400
+            phone_to_save = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
 
     cursor.execute('''
         UPDATE users SET
@@ -1049,17 +1047,21 @@ def update_user_phone():
 
     data = request.get_json() or {}
     phone_raw = data.get('phone') if 'phone' in data else (data.get('mobileNumber') if 'mobileNumber' in data else data.get('mobile_number', ''))
-    clean_digits = re.sub(r'[\s\-\(\)\+]', '', str(phone_raw).strip())
-    if clean_digits.startswith('91') and len(clean_digits) == 12:
-        clean_digits = clean_digits[2:]
+    trimmed = str(phone_raw).strip()
+    if not trimmed:
+        formatted_phone = ''
+    else:
+        clean_digits = re.sub(r'[\s\-\(\)\+]', '', trimmed)
+        if clean_digits.startswith('91') and len(clean_digits) == 12:
+            clean_digits = clean_digits[2:]
 
-    if not re.match(r'^[6-9]\d{9}$', clean_digits):
-        return jsonify({
-            'success': False,
-            'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
-        }), 400
+        if not re.match(r'^[6-9]\d{9}$', clean_digits):
+            return jsonify({
+                'success': False,
+                'message': 'Invalid mobile number. Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.'
+            }), 400
 
-    formatted_phone = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
+        formatted_phone = f"+91 {clean_digits[:5]} {clean_digits[5:]}"
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('UPDATE users SET phone = ? WHERE id = ?', (formatted_phone, user['id']))
