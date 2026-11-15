@@ -466,11 +466,19 @@ app.post('/api/resume/analyze', (req, res) => {
     headers: { ...req.headers, host: '127.0.0.1:5000' }
   }, (proxyRes) => {
     res.status(proxyRes.statusCode);
-    Object.keys(proxyRes.headers).forEach(h => res.setHeader(h, proxyRes.headers[h]));
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    Object.keys(proxyRes.headers).forEach(h => {
+      if (h.toLowerCase() !== 'access-control-allow-origin') {
+        res.setHeader(h, proxyRes.headers[h]);
+      }
+    });
     proxyRes.pipe(res);
   });
 
   proxyReq.on('error', (err) => {
+    console.warn('Flask proxy warning, utilizing fallback:', err.message);
     handleNodeResumeAnalyze(req, res, targetRole);
   });
 

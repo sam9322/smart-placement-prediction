@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Skillora AI - Learn Skills. Build Careers. Get Placed. | Smart Placement Prediction & Career Coach</title>
-  <meta name="description" content="Skillora AI - Learn Skills. Build Careers. Get Placed. AI-driven engineering placement probability predictor, automated skill gap analysis, and personalized career roadmaps for students.">
-  
+  <meta name="description"
+    content="Skillora AI - Learn Skills. Build Careers. Get Placed. AI-driven engineering placement probability predictor, automated skill gap analysis, and personalized career roadmaps for students.">
+
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
-  
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <!-- Custom Stylesheets -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/landing.css">
 </head>
+
 <body>
 
   <!-- ==========================================================================
@@ -41,7 +45,8 @@
 
       <div class="nav-actions">
         <!-- Theme Toggle Button -->
-        <button class="btn btn-secondary btn-icon" id="landing-theme-toggle" onclick="handleLandingThemeToggle()" title="Toggle Dark/Light Mode">
+        <button class="btn btn-secondary btn-icon" id="landing-theme-toggle" onclick="handleLandingThemeToggle()"
+          title="Toggle Dark/Light Mode">
           <i class="fa-solid fa-moon" id="landing-theme-icon"></i>
         </button>
 
@@ -93,10 +98,14 @@
     <div class="mobile-drawer-body">
       <ul class="mobile-nav-links">
         <li><a href="#features" class="mobile-nav-link"><i class="fa-solid fa-cube text-primary"></i> Features</a></li>
-        <li><a href="#careers" class="mobile-nav-link"><i class="fa-solid fa-compass" style="color: var(--secondary);"></i> Career Paths</a></li>
-        <li><a href="#how-it-works" class="mobile-nav-link"><i class="fa-solid fa-circle-nodes" style="color: var(--accent-cyan);"></i> How It Works</a></li>
-        <li><a href="#testimonials" class="mobile-nav-link"><i class="fa-solid fa-user-graduate" style="color: var(--accent-emerald);"></i> Alumni Stories</a></li>
-        <li><a href="#academic" class="mobile-nav-link"><i class="fa-solid fa-book-open" style="color: var(--accent-amber);"></i> Academic Info</a></li>
+        <li><a href="#careers" class="mobile-nav-link"><i class="fa-solid fa-compass"
+              style="color: var(--secondary);"></i> Career Paths</a></li>
+        <li><a href="#how-it-works" class="mobile-nav-link"><i class="fa-solid fa-circle-nodes"
+              style="color: var(--accent-cyan);"></i> How It Works</a></li>
+        <li><a href="#testimonials" class="mobile-nav-link"><i class="fa-solid fa-user-graduate"
+              style="color: var(--accent-emerald);"></i> Alumni Stories</a></li>
+        <li><a href="#academic" class="mobile-nav-link"><i class="fa-solid fa-book-open"
+              style="color: var(--accent-amber);"></i> Academic Info</a></li>
       </ul>
 
       <div class="mobile-drawer-divider"></div>
@@ -117,8 +126,10 @@
           <div class="mobile-user-card">
             <div class="user-avatar-circle" id="mobile-user-avatar">--</div>
             <div style="flex: 1; min-width: 0;">
-              <div class="font-bold text-sm" id="mobile-user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Student</div>
-              <div class="text-xs text-muted" id="mobile-user-email" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">email@engg.edu</div>
+              <div class="font-bold text-sm" id="mobile-user-name"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Student</div>
+              <div class="text-xs text-muted" id="mobile-user-email"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">email@engg.edu</div>
             </div>
           </div>
           <a href="app.html#dashboard" class="btn btn-primary w-full" onclick="closeLandingMobileMenu()">
@@ -127,14 +138,16 @@
           <button class="btn btn-secondary w-full" onclick="closeLandingMobileMenu(); openAuthModal('login');">
             <i class="fa-solid fa-users"></i> Switch Account
           </button>
-          <button class="btn btn-ghost w-full" onclick="closeLandingMobileMenu(); authManager.logout();" style="color: var(--accent-rose);">
+          <button class="btn btn-ghost w-full" onclick="closeLandingMobileMenu(); authManager.logout();"
+            style="color: var(--accent-rose);">
             <i class="fa-solid fa-right-from-bracket"></i> Sign Out
           </button>
         </div>
 
         <div class="mobile-theme-row">
           <span>Dark / Light Mode</span>
-          <button class="btn btn-secondary btn-icon" onclick="handleLandingThemeToggle()" title="Toggle Dark/Light Mode">
+          <button class="btn btn-secondary btn-icon" onclick="handleLandingThemeToggle()"
+            title="Toggle Dark/Light Mode">
             <i class="fa-solid fa-moon mobile-theme-icon"></i>
           </button>
         </div>
@@ -161,7 +174,9 @@
           </h1>
 
           <p class="hero-description animate-fade-in">
-            Smart Placement Prediction & Autonomous AI Career Coach. Leverage algorithmic data modeling to evaluate your campus placement probability, bridge critical skill gaps, and follow structured roadmaps to land your dream offer.
+            Smart Placement Prediction & Autonomous AI Career Coach. Leverage algorithmic data modeling to evaluate your
+            campus placement probability, bridge critical skill gaps, and follow structured roadmaps to land your dream
+            offer.
           </p>
 
           <div class="hero-cta-group animate-fade-in">
@@ -189,7 +204,8 @@
         <!-- Right: Interactive Hero Live Teaser Widget -->
         <div>
           <div class="hero-widget-card animate-float">
-            <div class="flex items-center justify-between mb-3" style="display: flex; justify-content: space-between; margin-bottom: 1.25rem;">
+            <div class="flex items-center justify-between mb-3"
+              style="display: flex; justify-content: space-between; margin-bottom: 1.25rem;">
               <div>
                 <h3 style="font-size: 1.15rem; font-weight: 700;">Live Placement Estimator</h3>
                 <p style="font-size: 0.8rem; color: var(--text-muted);">Interactive instant forecast simulation</p>
@@ -201,37 +217,45 @@
             <div style="position: relative; width: 140px; height: 140px; margin: 0 auto 1.5rem auto;">
               <svg style="width: 100%; height: 100%; transform: rotate(-90deg);" viewBox="0 0 120 120">
                 <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border-color)" stroke-width="10"></circle>
-                <circle id="hero-gauge-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--accent-emerald)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314.15" stroke-dashoffset="50" style="transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;"></circle>
+                <circle id="hero-gauge-circle" cx="60" cy="60" r="50" fill="none" stroke="var(--accent-emerald)"
+                  stroke-width="10" stroke-linecap="round" stroke-dasharray="314.15" stroke-dashoffset="50"
+                  style="transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;"></circle>
               </svg>
-              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <span id="hero-gauge-pct" style="font-size: 1.85rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">84%</span>
+              <div
+                style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span id="hero-gauge-pct"
+                  style="font-size: 1.85rem; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">84%</span>
                 <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Probability</span>
               </div>
             </div>
 
             <!-- Interactive Sliders -->
             <div class="form-group" style="margin-bottom: 1rem;">
-              <div class="flex justify-between text-xs font-semibold mb-1" style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+              <div class="flex justify-between text-xs font-semibold mb-1"
+                style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
                 <span>Academic CGPA:</span>
                 <span class="range-value" id="hero-cgpa-val">8.4</span>
               </div>
-              <input type="range" id="hero-cgpa-slider" min="5.0" max="10.0" step="0.1" value="8.4" class="range-slider">
+              <input type="range" id="hero-cgpa-slider" min="5.0" max="10.0" step="0.1" value="8.4"
+                class="range-slider">
             </div>
 
             <div class="grid-responsive-2 gap-2" style="margin-bottom: 1.25rem;">
               <div>
-                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Internship Status:</label>
+                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Internship
+                  Status:</label>
                 <select id="hero-intern-select" class="form-control text-xs" style="padding: 0.45rem;">
                   <option value="yes">Completed (1+)</option>
                   <option value="no">None Yet</option>
                 </select>
               </div>
               <div>
-                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Coding Rating:</label>
+                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Coding
+                  Rating:</label>
                 <select id="hero-dsa-select" class="form-control text-xs" style="padding: 0.45rem;">
                   <option value="1700">1600+ (LeetCode Med)</option>
                   <option value="1450" selected>1400 - 1600 (Good)</option>
-                  <option value="1250">Beginner (<1400)</option>
+                  <option value="1250">Beginner (<1400)< /option>
                 </select>
               </div>
             </div>
@@ -284,7 +308,8 @@
         <span class="section-tag">Key Innovations</span>
         <h2 class="section-title">Everything You Need for Campus Placement Success</h2>
         <p class="section-description">
-          A comprehensive engineering career suite combining predictive modeling, AI advising, and realistic interview simulations.
+          A comprehensive engineering career suite combining predictive modeling, AI advising, and realistic interview
+          simulations.
         </p>
       </div>
 
@@ -296,7 +321,8 @@
           </div>
           <h3 class="feature-title">Multi-Factor Placement Predictor</h3>
           <p class="feature-text">
-            Weighted algorithmic scoring factoring in CGPA, coding difficulty ratings, internship exposure, project depth, aptitude tests, and backlogs.
+            Weighted algorithmic scoring factoring in CGPA, coding difficulty ratings, internship exposure, project
+            depth, aptitude tests, and backlogs.
           </p>
           <a href="app.html#prediction" class="feature-link">Try Predictor <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -308,7 +334,8 @@
           </div>
           <h3 class="feature-title">AI Career Coach & Matcher</h3>
           <p class="feature-text">
-            AI-driven pathway recommendations matched directly to your academic credentials, verified skills, and placement goals.
+            AI-driven pathway recommendations matched directly to your academic credentials, verified skills, and
+            placement goals.
           </p>
           <a href="app.html#coach" class="feature-link">Meet Career Coach <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -320,9 +347,11 @@
           </div>
           <h3 class="feature-title">Automated Skill Gap Analysis</h3>
           <p class="feature-text">
-            Compare your existing technical skills against market requirements for SDE, AI/ML, Cloud, or Cyber roles with instant gap detection.
+            Compare your existing technical skills against market requirements for SDE, AI/ML, Cloud, or Cyber roles
+            with instant gap detection.
           </p>
-          <a href="app.html#skillgap" class="feature-link">Analyze Skill Gaps <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="app.html#skillgap" class="feature-link">Analyze Skill Gaps <i
+              class="fa-solid fa-arrow-right"></i></a>
         </div>
 
         <!-- Feature 4 -->
@@ -332,7 +361,8 @@
           </div>
           <h3 class="feature-title">6-Month Career Roadmap</h3>
           <p class="feature-text">
-            Structured month-by-month roadmap with rated real YouTube lectures for every skill, LeetCode practice problems, capstone projects, and persistent milestone checklist tracking.
+            Structured month-by-month roadmap with rated real YouTube lectures for every skill, LeetCode practice
+            problems, capstone projects, and persistent milestone checklist tracking.
           </p>
           <a href="app.html#roadmap" class="feature-link">View Roadmap <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -344,9 +374,11 @@
           </div>
           <h3 class="feature-title">Interview Simulator & Question Bank</h3>
           <p class="feature-text">
-            Timed aptitude drill, core CS flashcards (OS, DBMS, CN, DSA), HR STAR method playbook, and an interactive AI mock interview simulator.
+            Timed aptitude drill, core CS flashcards (OS, DBMS, CN, DSA), HR STAR method playbook, and an interactive AI
+            mock interview simulator.
           </p>
-          <a href="app.html#interview" class="feature-link">Practice Interviews <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="app.html#interview" class="feature-link">Practice Interviews <i
+              class="fa-solid fa-arrow-right"></i></a>
         </div>
 
         <!-- Feature 6 -->
@@ -356,7 +388,8 @@
           </div>
           <h3 class="feature-title">Centralized SaaS Dashboard</h3>
           <p class="feature-text">
-            Holistic student command center featuring live Chart.js competency radars, upcoming campus drive trackers, and personalized action recommendations.
+            Holistic student command center featuring live Chart.js competency radars, upcoming campus drive trackers,
+            and personalized action recommendations.
           </p>
           <a href="app.html#dashboard" class="feature-link">Open Dashboard <i class="fa-solid fa-arrow-right"></i></a>
         </div>
@@ -373,7 +406,8 @@
         <span class="section-tag">Career Pathways</span>
         <h2 class="section-title">Explore High-Paying Tech Specializations</h2>
         <p class="section-description">
-          Detailed salary packages, core competencies, and hiring giants for the most sought-after campus placement roles.
+          Detailed salary packages, core competencies, and hiring giants for the most sought-after campus placement
+          roles.
         </p>
       </div>
 
@@ -385,7 +419,8 @@
             <span class="career-package-pill">₹8 - 28 LPA</span>
           </div>
           <h3 class="career-cat-title">Software Development Engineer (SDE)</h3>
-          <p class="career-cat-desc">Architect resilient backend services, high-throughput microservices, and optimal DSA algorithms.</p>
+          <p class="career-cat-desc">Architect resilient backend services, high-throughput microservices, and optimal
+            DSA algorithms.</p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">DSA</span>
             <span class="career-skill-chip">Java/C++</span>
@@ -403,7 +438,8 @@
             <span class="career-package-pill">₹6 - 20 LPA</span>
           </div>
           <h3 class="career-cat-title">Full Stack Web Developer</h3>
-          <p class="career-cat-desc">Build modern single-page applications, responsive user interfaces, and secure RESTful backend APIs.</p>
+          <p class="career-cat-desc">Build modern single-page applications, responsive user interfaces, and secure
+            RESTful backend APIs.</p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">React.js</span>
             <span class="career-skill-chip">Node.js</span>
@@ -421,7 +457,8 @@
             <span class="career-package-pill">₹10 - 32 LPA</span>
           </div>
           <h3 class="career-cat-title">AI / Machine Learning Engineer</h3>
-          <p class="career-cat-desc">Train deep neural networks, computer vision pipelines, and fine-tune large language models.</p>
+          <p class="career-cat-desc">Train deep neural networks, computer vision pipelines, and fine-tune large language
+            models.</p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">Python</span>
             <span class="career-skill-chip">PyTorch</span>
@@ -439,7 +476,8 @@
             <span class="career-package-pill">₹6 - 16 LPA</span>
           </div>
           <h3 class="career-cat-title">Data Analyst & BI Specialist</h3>
-          <p class="career-cat-desc">Unearth business trends, structure ETL pipelines, and craft executive dashboards.</p>
+          <p class="career-cat-desc">Unearth business trends, structure ETL pipelines, and craft executive dashboards.
+          </p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">SQL</span>
             <span class="career-skill-chip">Power BI</span>
@@ -457,7 +495,8 @@
             <span class="career-package-pill">₹7 - 22 LPA</span>
           </div>
           <h3 class="career-cat-title">Cloud & DevOps Engineer</h3>
-          <p class="career-cat-desc">Automate zero-downtime CI/CD deployment pipelines and container orchestrations on AWS and Azure.</p>
+          <p class="career-cat-desc">Automate zero-downtime CI/CD deployment pipelines and container orchestrations on
+            AWS and Azure.</p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">Docker</span>
             <span class="career-skill-chip">Kubernetes</span>
@@ -475,7 +514,8 @@
             <span class="career-package-pill">₹7 - 24 LPA</span>
           </div>
           <h3 class="career-cat-title">Cybersecurity Analyst</h3>
-          <p class="career-cat-desc">Audit networks, perform penetration tests, identify vulnerabilities, and enforce threat defenses.</p>
+          <p class="career-cat-desc">Audit networks, perform penetration tests, identify vulnerabilities, and enforce
+            threat defenses.</p>
           <div class="career-skill-chips">
             <span class="career-skill-chip">Network Security</span>
             <span class="career-skill-chip">Ethical Hacking</span>
@@ -507,28 +547,32 @@
           <div class="step-number">1</div>
           <div class="step-icon"><i class="fa-solid fa-id-card"></i></div>
           <h3 class="step-title">Build Student Profile</h3>
-          <p class="step-text">Input CGPA, academic scores, technical skills, projects, and previous internship credentials.</p>
+          <p class="step-text">Input CGPA, academic scores, technical skills, projects, and previous internship
+            credentials.</p>
         </div>
 
         <div class="step-card">
           <div class="step-number">2</div>
           <div class="step-icon"><i class="fa-solid fa-calculator"></i></div>
           <h3 class="step-title">Run Predictive Engine</h3>
-          <p class="step-text">Our weighted algorithm calculates your placement probability and assigns you to a readiness tier.</p>
+          <p class="step-text">Our weighted algorithm calculates your placement probability and assigns you to a
+            readiness tier.</p>
         </div>
 
         <div class="step-card">
           <div class="step-number">3</div>
           <div class="step-icon"><i class="fa-solid fa-crosshairs"></i></div>
           <h3 class="step-title">Bridge Skill Gaps</h3>
-          <p class="step-text">Compare yourself against role benchmarks to identify missing technical skills and obtain tailored advice.</p>
+          <p class="step-text">Compare yourself against role benchmarks to identify missing technical skills and obtain
+            tailored advice.</p>
         </div>
 
         <div class="step-card">
           <div class="step-number">4</div>
           <div class="step-icon"><i class="fa-solid fa-trophy"></i></div>
           <h3 class="step-title">Ace Mock Interviews</h3>
-          <p class="step-text">Practice timed aptitude tests, technical flashcards, and simulate interactive AI behavioral rounds.</p>
+          <p class="step-text">Practice timed aptitude tests, technical flashcards, and simulate interactive AI
+            behavioral rounds.</p>
         </div>
       </div>
     </div>
@@ -543,14 +587,17 @@
         <span class="section-tag">Success Stories</span>
         <h2 class="section-title">Placed Alumni Who Trusted The Framework</h2>
         <p class="section-description">
-          Hear how our engineering peers leveraged data-driven placement preparation to secure offers at dream tech firms.
+          Hear how our engineering peers leveraged data-driven placement preparation to secure offers at dream tech
+          firms.
         </p>
       </div>
 
       <div class="testimonials-grid">
         <div class="testimonial-card">
           <p class="testimonial-quote">
-            "My initial CGPA was 7.4 and I was anxious about product company cutoffs. The Placement Predictor accurately highlighted that boosting LeetCode problem solving and adding a microservices capstone project would offset it. I secured a 24 LPA SDE offer at Amazon!"
+            "My initial CGPA was 7.4 and I was anxious about product company cutoffs. The Placement Predictor accurately
+            highlighted that boosting LeetCode problem solving and adding a microservices capstone project would offset
+            it. I secured a 24 LPA SDE offer at Amazon!"
           </p>
           <div class="testimonial-author">
             <div class="author-avatar">RP</div>
@@ -563,7 +610,8 @@
 
         <div class="testimonial-card">
           <p class="testimonial-quote">
-            "The Skill Gap Analysis was an eye-opener. It pinpointed Docker and SQL indexing as my missing gaps for Cloud Engineering. Following the 3-stage roadmap saved me months of aimless tutorial watching."
+            "The Skill Gap Analysis was an eye-opener. It pinpointed Docker and SQL indexing as my missing gaps for
+            Cloud Engineering. Following the 3-stage roadmap saved me months of aimless tutorial watching."
           </p>
           <div class="testimonial-author">
             <div class="author-avatar" style="background: var(--grad-accent);">SN</div>
@@ -576,7 +624,8 @@
 
         <div class="testimonial-card">
           <p class="testimonial-quote">
-            "The interactive Mock Interview Simulator with the STAR technique guide transformed my HR answers. I avoided nervous ramblings and spoke with clarity during the final director round at TCS Digital Prime."
+            "The interactive Mock Interview Simulator with the STAR technique guide transformed my HR answers. I avoided
+            nervous ramblings and spoke with clarity during the final director round at TCS Digital Prime."
           </p>
           <div class="testimonial-author">
             <div class="author-avatar" style="background: var(--grad-success);">VK</div>
@@ -599,7 +648,8 @@
         <span class="academic-badge">Academic Project Information</span>
         <h2 class="text-2xl mb-2" style="margin-bottom: 0.5rem;">B.Tech 7th Semester Mini Project / Capstone</h2>
         <p class="text-muted" style="max-width: 600px; margin: 0 auto;">
-          Submitted in partial fulfillment of the academic requirements for the Bachelor of Technology degree in Computer Science and Engineering.
+          Submitted in partial fulfillment of the academic requirements for the Bachelor of Technology degree in
+          Computer Science and Engineering.
         </p>
 
         <div class="academic-details-grid">
@@ -627,7 +677,8 @@
     <div class="cta-banner">
       <h2>Ready to Discover Your Placement Probability?</h2>
       <p>
-        Step into the student dashboard, input your profile credentials, and calculate your personalized career readiness score today.
+        Step into the student dashboard, input your profile credentials, and calculate your personalized career
+        readiness score today.
       </p>
       <div class="cta-btn-group">
         <a href="app.html#prediction" class="btn btn-secondary btn-lg" style="color: var(--primary); font-weight: 700;">
@@ -654,7 +705,9 @@
             <span>Skillora<span style="color: var(--primary);"> AI</span></span>
           </div>
           <p style="font-size: 0.875rem; margin-bottom: 1.25rem;">
-            <strong>Skillora AI</strong> — Learn Skills. Build Careers. Get Placed. A modern engineering platform designed to assist students and placement cells with intelligent career roadmapping, ATS resume analysis, and predictive placement modeling.
+            <strong>Skillora AI</strong> — Learn Skills. Build Careers. Get Placed. A modern engineering platform
+            designed to assist students and placement cells with intelligent career roadmapping, ATS resume analysis,
+            and predictive placement modeling.
           </p>
           <div class="flex gap-2" style="display: flex; gap: 0.5rem;">
             <span class="badge badge-primary">HTML5</span>
@@ -721,7 +774,7 @@
       </div>
 
       <div class="modal-body" style="padding: 1.25rem 1.5rem;">
-        
+
         <!-- View 1: Sign In View -->
         <div id="auth-login-view">
           <form id="form-login" onsubmit="handleAuthLogin(event)">
@@ -729,7 +782,8 @@
               <label class="form-label">College Email Address <span class="required">*</span></label>
               <div class="input-group">
                 <i class="fa-regular fa-envelope input-icon-left"></i>
-                <input type="email" id="login-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+                <input type="email" id="login-email" class="form-control input-with-icon-left"
+                  placeholder="student@engg.edu" required autocomplete="email">
               </div>
             </div>
 
@@ -737,7 +791,8 @@
               <label class="form-label">Password <span class="required">*</span></label>
               <div class="input-group">
                 <i class="fa-solid fa-lock input-icon-left"></i>
-                <input type="password" id="login-password" class="form-control input-with-icon-left" placeholder="Enter password" required autocomplete="current-password">
+                <input type="password" id="login-password" class="form-control input-with-icon-left"
+                  placeholder="Enter password" required autocomplete="current-password">
               </div>
             </div>
 
@@ -766,7 +821,8 @@
             <!-- Registration Link Below Sign In Button -->
             <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text-secondary);">
               <span>Don't have an account? </span>
-              <a href="javascript:void(0)" onclick="switchAuthMode('register')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Register here</a>
+              <a href="javascript:void(0)" onclick="switchAuthMode('register')"
+                style="color: var(--primary); font-weight: 600; text-decoration: underline;">Register here</a>
             </div>
           </form>
         </div>
@@ -775,13 +831,14 @@
         <div id="auth-register-view" style="display: none;">
           <form id="form-register" onsubmit="handleAuthRegister(event)">
             <div class="grid-responsive-2" style="margin-bottom: 0.5rem;">
-              
+
               <!-- 1. Full Name -->
               <div class="form-group" style="margin-bottom: 1rem;">
                 <label class="form-label">Full Name <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-regular fa-user input-icon-left"></i>
-                  <input type="text" id="reg-fullname" class="form-control input-with-icon-left" placeholder="e.g. Aditi Sharma" required autocomplete="name">
+                  <input type="text" id="reg-fullname" class="form-control input-with-icon-left"
+                    placeholder="e.g. Aditi Sharma" required autocomplete="name">
                 </div>
               </div>
 
@@ -790,7 +847,8 @@
                 <label class="form-label">College Email Address <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-regular fa-envelope input-icon-left"></i>
-                  <input type="email" id="reg-email" class="form-control input-with-icon-left" placeholder="student@engg.edu" required autocomplete="email">
+                  <input type="email" id="reg-email" class="form-control input-with-icon-left"
+                    placeholder="student@engg.edu" required autocomplete="email">
                 </div>
               </div>
 
@@ -799,7 +857,8 @@
                 <label class="form-label">Mobile Number <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-solid fa-phone input-icon-left"></i>
-                  <input type="tel" id="reg-phone" class="form-control input-with-icon-left" placeholder="9876543210 (10 digits)" required maxlength="10" autocomplete="tel">
+                  <input type="tel" id="reg-phone" class="form-control input-with-icon-left"
+                    placeholder="9876543210 (10 digits)" required maxlength="10" autocomplete="tel">
                 </div>
               </div>
 
@@ -808,7 +867,8 @@
                 <label class="form-label">College Name <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-solid fa-building-columns input-icon-left"></i>
-                  <input type="text" id="reg-college" class="form-control input-with-icon-left" placeholder="e.g. National Institute of Tech" required>
+                  <input type="text" id="reg-college" class="form-control input-with-icon-left"
+                    placeholder="e.g. National Institute of Tech" required>
                 </div>
               </div>
 
@@ -850,7 +910,8 @@
                 <label class="form-label">Password <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-solid fa-lock input-icon-left"></i>
-                  <input type="password" id="reg-password" class="form-control input-with-icon-left" placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password">
+                  <input type="password" id="reg-password" class="form-control input-with-icon-left"
+                    placeholder="Min. 8 characters" required minlength="8" autocomplete="new-password">
                 </div>
               </div>
 
@@ -859,20 +920,23 @@
                 <label class="form-label">Confirm Password <span class="required">*</span></label>
                 <div class="input-group">
                   <i class="fa-solid fa-shield-halved input-icon-left"></i>
-                  <input type="password" id="reg-confirm-password" class="form-control input-with-icon-left" placeholder="Re-enter password" required minlength="8" autocomplete="new-password">
+                  <input type="password" id="reg-confirm-password" class="form-control input-with-icon-left"
+                    placeholder="Re-enter password" required minlength="8" autocomplete="new-password">
                 </div>
               </div>
 
             </div>
 
-            <button type="submit" class="btn btn-primary w-full btn-lg" id="register-submit-btn" style="margin-top: 0.25rem;">
+            <button type="submit" class="btn btn-primary w-full btn-lg" id="register-submit-btn"
+              style="margin-top: 0.25rem;">
               <i class="fa-solid fa-user-plus"></i> Register Account
             </button>
 
             <!-- Back to Login Option -->
             <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text-secondary);">
               <span>Already have an account? </span>
-              <a href="javascript:void(0)" onclick="switchAuthMode('login')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Back to Login</a>
+              <a href="javascript:void(0)" onclick="switchAuthMode('login')"
+                style="color: var(--primary); font-weight: 600; text-decoration: underline;">Back to Login</a>
             </div>
           </form>
         </div>
@@ -1142,4 +1206,5 @@
     window.showToast = showToast;
   </script>
 </body>
+
 </html>
