@@ -139,14 +139,25 @@ const SEEDED_STUDENTS = {
 
 class AuthManager {
   constructor() {
-    this.token = localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || null;
+    this.token = (typeof localStorage !== 'undefined' ? (localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY)) : null);
     this.currentUser = null;
+    const savedUserJson = (typeof localStorage !== 'undefined' ? localStorage.getItem(SESSION_KEY) : null) || 
+                          (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(SESSION_KEY) : null);
+    if (savedUserJson) {
+      try {
+        this.currentUser = this.normalizeUser(JSON.parse(savedUserJson));
+      } catch (e) {
+        this.currentUser = null;
+      }
+    }
     this.isBackendOnline = false;
     this.apiBaseUrl = API_BASE_URL;
   }
 
   isAuthenticated() {
-    return !!(this.currentUser && (this.token || localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY)));
+    const hasToken = !!(this.token || (typeof localStorage !== 'undefined' && localStorage.getItem(TOKEN_KEY)) || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(TOKEN_KEY)));
+    const hasSession = !!(this.currentUser || (typeof localStorage !== 'undefined' && localStorage.getItem(SESSION_KEY)) || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(SESSION_KEY)));
+    return hasToken && hasSession;
   }
 
   async checkBackendHealth() {
@@ -227,11 +238,24 @@ class AuthManager {
     if (this.token && this.isBackendOnline) {
       const user = await this.fetchCurrentUser();
       if (!user && isAppPage) {
-        // Fallback to seeded demo user instead of kicking to landing
-        const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
-        this.currentUser = norm;
-        const state = getAppState();
-        if (state) state.initUser(norm);
+        if (savedUserJson) {
+          try {
+            const norm = this.normalizeUser(JSON.parse(savedUserJson));
+            this.currentUser = norm;
+            const state = getAppState();
+            if (state) state.initUser(norm);
+          } catch (e) {
+            const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
+            this.currentUser = norm;
+            const state = getAppState();
+            if (state) state.initUser(norm);
+          }
+        } else {
+          const norm = this.normalizeUser(SEEDED_STUDENTS.samiksha);
+          this.currentUser = norm;
+          const state = getAppState();
+          if (state) state.initUser(norm);
+        }
       }
     } else if (savedUserJson) {
       try {

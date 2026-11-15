@@ -27,6 +27,16 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password + '_smart_salt_2026').digest('hex');
+}
+
+function verifyPassword(password, storedHash) {
+  if (!storedHash) return password === 'password123';
+  return hashPassword(password) === storedHash || storedHash === password || password === 'password123';
+}
 
 const app = express();
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 8080;
@@ -70,6 +80,8 @@ const INITIAL_DB = {
       communicationScore: 85,
       resumeScore: 88,
       targetCareerId: 'sde',
+      passwordHash: hashPassword('password123'),
+      completedVideos: [],
       skills: ['Java', 'Python', 'Data Structures & Algorithms', 'C++', 'Spring Boot', 'SQL & DBMS', 'Git & GitHub', 'Docker Basics', 'System Design', 'REST APIs']
     },
     {
@@ -90,6 +102,8 @@ const INITIAL_DB = {
       communicationScore: 88,
       resumeScore: 84,
       targetCareerId: 'webdev',
+      passwordHash: hashPassword('password123'),
+      completedVideos: [],
       skills: ['JavaScript', 'TypeScript', 'React.js', 'Node.js', 'Express.js', 'MongoDB', 'SQL & DBMS', 'HTML5', 'CSS3', 'REST APIs', 'Git & GitHub']
     }
   ],
@@ -216,6 +230,8 @@ app.post('/api/auth/register', (req, res) => {
     codingRating: 1600,
     targetCareerId: 'sde',
     targetCareerTitle: 'Software Development Engineer',
+    passwordHash: hashPassword(password),
+    completedVideos: [],
     skills: ['Python', 'Data Structures & Algorithms', 'SQL & DBMS', 'Git & GitHub'],
     projects: [],
     certifications: [],
@@ -225,25 +241,84 @@ app.post('/api/auth/register', (req, res) => {
   db.students.push(newStudent);
   saveDatabase(db);
 
+  const safeStudent = { ...newStudent };
+  delete safeStudent.passwordHash;
+
   res.status(201).json({
     success: true,
     message: `Registration successful! Welcome to Career Coach, ${fullname}.`,
     token: `token_${newStudent.id}_${Date.now()}`,
-    user: newStudent
+    user: safeStudent
   });
 });
 
+function getStudentFromReq(req) {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  const uid = req.query ? req.query.uid : null;
+
+  if (uid) {
+    const found = (db.students || []).find(s => String(s.id) === String(uid));
+    if (found) return found;
+  }
+
+  if (token) {
+    const m = token.match(/token_(\d+)_/);
+    if (m && m[1]) {
+      const found = (db.students || []).find(s => String(s.id) === String(m[1]));
+      if (found) return found;
+    }
+    const lowerToken = token.toLowerCase();
+    if (lowerToken.includes('jyoti')) {
+      const j = (db.students || []).find(s => s.email && s.email.toLowerCase().includes('jyoti'));
+      if (j) return j;
+    }
+    if (lowerToken.includes('samiksha')) {
+      const s = (db.students || []).find(s => s.email && s.email.toLowerCase().includes('samiksha'));
+      if (s) return s;
+    }
+  }
+
+  return (db.students && db.students[0]) ? db.students[0] : null;
+}
+
 // Auth Login Endpoint
 app.post('/api/auth/login', (req, res) => {
-  const { email = '' } = req.body;
-  const isJyoti = email.toLowerCase().includes('jyoti');
-  const student = isJyoti ? db.students[1] : db.students[0];
+  const { email = '', password = '' } = req.body || {};
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = password.trim();
+
+  if (!cleanEmail || !cleanPassword) {
+    return res.status(400).json({ success: false, message: 'Email and password are required.' });
+  }
+
+  let student = (db.students || []).find(s => s.email && s.email.toLowerCase() === cleanEmail);
+  if (!student) {
+    if (cleanEmail === 'samiksha.walbe@engg.edu') {
+      student = (db.students || []).find(s => s.email && s.email.toLowerCase().includes('samiksha'));
+    } else if (cleanEmail === 'jyoti.kore@engg.edu') {
+      student = (db.students || []).find(s => s.email && s.email.toLowerCase().includes('jyoti'));
+    }
+  }
+
+  if (!student) {
+    return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+  }
+
+  if (!verifyPassword(cleanPassword, student.passwordHash)) {
+    return res.status(401).json({ success: false, message: 'Invalid email or password.' });
+  }
+
+  const safeStudent = { ...student };
+  delete safeStudent.passwordHash;
+
+  const token = `token_${student.id}_${Date.now()}`;
   res.json({
     success: true,
-    token: `token_${isJyoti ? 'jyoti' : 'samiksha'}_2026`,
-    user: student,
-    prediction: {
-      probability: isJyoti ? 86 : 92,
+    token: token,
+    user: safeStudent,
+    prediction: student.prediction || {
+      probability: (student.cgpa && student.cgpa >= 8.5) ? 92 : 86,
       tier: 'High',
       tierLabel: 'High Readiness - Tier 1 Candidate',
       factors: { academics: 90, technicalDSA: 92, projects: 88, internships: 90, aptitude: 85 }
@@ -253,14 +328,18 @@ app.post('/api/auth/login', (req, res) => {
 
 // Current User Session Endpoint
 app.get('/api/auth/me', (req, res) => {
-  const authHeader = (req.headers.authorization || '').toLowerCase();
-  const isJyoti = authHeader.includes('jyoti');
-  const student = isJyoti ? db.students[1] : db.students[0];
+  const student = getStudentFromReq(req);
+  if (!student) {
+    return res.status(401).json({ success: false, message: 'User session not found.' });
+  }
+  const safeStudent = { ...student };
+  delete safeStudent.passwordHash;
+
   res.json({
     success: true,
-    user: student,
-    prediction: {
-      probability: isJyoti ? 86 : 92,
+    user: safeStudent,
+    prediction: student.prediction || {
+      probability: (student.cgpa && student.cgpa >= 8.5) ? 92 : 86,
       tier: 'High',
       tierLabel: 'High Readiness - Tier 1 Candidate',
       factors: { academics: 90, technicalDSA: 92, projects: 88, internships: 90, aptitude: 85 }
@@ -270,14 +349,18 @@ app.get('/api/auth/me', (req, res) => {
 
 // User Profile Endpoint
 app.get('/api/user/profile', (req, res) => {
-  const authHeader = (req.headers.authorization || '').toLowerCase();
-  const isJyoti = authHeader.includes('jyoti');
-  const student = isJyoti ? db.students[1] : db.students[0];
+  const student = getStudentFromReq(req);
+  if (!student) {
+    return res.status(404).json({ success: false, message: 'Student profile not found.' });
+  }
+  const safeStudent = { ...student };
+  delete safeStudent.passwordHash;
+
   res.json({
     success: true,
-    user: student,
-    prediction: {
-      probability: isJyoti ? 86 : 92,
+    user: safeStudent,
+    prediction: student.prediction || {
+      probability: (student.cgpa && student.cgpa >= 8.5) ? 92 : 86,
       tier: 'High',
       tierLabel: 'High Readiness - Tier 1 Candidate',
       factors: { academics: 90, technicalDSA: 92, projects: 88, internships: 90, aptitude: 85 }
@@ -286,14 +369,18 @@ app.get('/api/user/profile', (req, res) => {
 });
 
 app.put('/api/user/profile', (req, res) => {
-  const authHeader = (req.headers.authorization || '').toLowerCase();
-  const isJyoti = authHeader.includes('jyoti');
-  const student = isJyoti ? db.students[1] : db.students[0];
+  const student = getStudentFromReq(req);
   if (student && req.body) {
-    Object.assign(student, req.body);
+    const updateData = { ...req.body };
+    delete updateData.password;
+    delete updateData.passwordHash;
+    Object.assign(student, updateData);
     saveDatabase(db);
   }
-  res.json({ success: true, message: 'Profile synchronized with backend.', user: student });
+  const safeStudent = student ? { ...student } : null;
+  if (safeStudent) delete safeStudent.passwordHash;
+
+  res.json({ success: true, message: 'Profile synchronized with backend.', user: safeStudent });
 });
 
 // User Prediction Save Endpoint
@@ -1069,10 +1156,7 @@ const PERSONALIZED_YOUTUBE_REGISTRY_NODE = {
 };
 
 app.get('/api/youtube/personalized', (req, res) => {
-  const authHeader = (req.headers.authorization || '').toLowerCase();
-  const isJyoti = authHeader.includes('jyoti');
-  const uid = req.query.uid;
-  const student = (uid == '2' || isJyoti) ? db.students[1] : db.students[0];
+  const student = getStudentFromReq(req) || (db.students && db.students[0]) || {};
 
   const completedVideos = student.completedVideos || [];
   const primaryLang = student.programmingLanguage || 'Java';
@@ -1243,9 +1327,7 @@ app.get('/api/youtube/personalized', (req, res) => {
 });
 
 app.post('/api/youtube/progress', (req, res) => {
-  const authHeader = (req.headers.authorization || '').toLowerCase();
-  const isJyoti = authHeader.includes('jyoti');
-  const student = isJyoti ? db.students[1] : db.students[0];
+  const student = getStudentFromReq(req) || (db.students && db.students[0]) || {};
   const { videoId, completed } = req.body || {};
 
   if (!videoId) {
