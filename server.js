@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – Smart Placement Predictor & AI Career Coach
+ * Skillora AI – Smart Placement Predictor & AI Career Coach
  * Node.js + Express Backend Server & API
  * 
  * Features:
@@ -20,7 +20,7 @@
  *   11. RoadmapStep
  *   12. PlacementPrediction
  *   13. InterviewQuestion
- * - Static file serving for the CareerPulse.AI web application
+ * - Static file serving for the Skillora AI web application
  */
 
 const express = require('express');
@@ -157,7 +157,7 @@ let db = loadDatabase();
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
-    platform: 'CareerPulse.AI',
+    platform: 'Skillora AI',
     runtime: 'Node.js ' + process.version,
     database: 'SQLite / JSON Multi-Entity Store',
     modules: ['Dashboard', 'Profile', 'Resume Analyzer', 'Placement Predictor', 'Career Coach', 'Skill Gap', 'Roadmap', 'Interview Hub']
@@ -1616,7 +1616,7 @@ function startServer(port, maxAttempts = 10) {
   const server = app.listen(port, () => {
     const actualPort = server.address().port;
     console.log(`=======================================================`);
-    console.log(`🎓 CareerPulse.AI Server running at http://localhost:${actualPort}`);
+    console.log(`🎓 Skillora AI Server running at http://localhost:${actualPort}`);
     console.log(`   Interactive Student Portal: http://localhost:${actualPort}/app.html`);
     console.log(`   Skill Gap Analysis:         http://localhost:${actualPort}/app.html#skillgap`);
     console.log(`   Landing Showcase:           http://localhost:${actualPort}/index.html`);

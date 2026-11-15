@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – AI Career Coach & Pathway Advisor
+ * Skillora AI – AI Career Coach & Pathway Advisor
  * 
  * Direct Multi-Factor Profile Evaluation Engine:
  * - Completely evaluates career tracks directly from student profile, skills, education, and resume data

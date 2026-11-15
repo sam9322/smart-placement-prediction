@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – Smart YouTube Recommendation Engine & Service
+ * Skillora AI – Smart YouTube Recommendation Engine & Service
  * 
  * Provides 100% verified educational YouTube video recommendations for college students
  * preparing for campus placements and technical careers.
@@ -728,13 +728,13 @@ const YOUTUBE_LECTURES_DATABASE = [
 
 class YouTubeRecommendationService {
   constructor() {
-    this.apiKey = localStorage.getItem('careerpulse_yt_api_key') || '';
+    this.apiKey = localStorage.getItem('skillora_yt_api_key') || localStorage.getItem('careerpulse_yt_api_key') || '';
     this.feedbackState = this.loadFeedbackState();
   }
 
   loadFeedbackState() {
     try {
-      const saved = localStorage.getItem('careerpulse_yt_feedback');
+      const saved = localStorage.getItem('skillora_yt_feedback') || localStorage.getItem('careerpulse_yt_feedback');
       return saved ? JSON.parse(saved) : {};
     } catch (e) {
       return {};
@@ -743,7 +743,7 @@ class YouTubeRecommendationService {
 
   saveFeedbackState() {
     try {
-      localStorage.setItem('careerpulse_yt_feedback', JSON.stringify(this.feedbackState));
+      localStorage.setItem('skillora_yt_feedback', JSON.stringify(this.feedbackState));
     } catch (e) {
       console.warn('Could not save YouTube feedback:', e);
     }
@@ -752,8 +752,9 @@ class YouTubeRecommendationService {
   setApiKey(key) {
     this.apiKey = key ? key.trim() : '';
     if (this.apiKey) {
-      localStorage.setItem('careerpulse_yt_api_key', this.apiKey);
+      localStorage.setItem('skillora_yt_api_key', this.apiKey);
     } else {
+      localStorage.removeItem('skillora_yt_api_key');
       localStorage.removeItem('careerpulse_yt_api_key');
     }
   }
@@ -805,7 +806,7 @@ class YouTubeRecommendationService {
 
     // Check bad videos blacklist if flagged
     try {
-      const badCache = JSON.parse(localStorage.getItem('careerpulse_bad_vids') || '[]');
+      const badCache = JSON.parse(localStorage.getItem('skillora_bad_vids') || localStorage.getItem('careerpulse_bad_vids') || '[]');
       if (badCache.includes(vId)) return false;
     } catch (e) {}
 

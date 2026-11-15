@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – Personalized Career Roadmap Module
+ * Skillora AI – Personalized Career Roadmap Module
  * 
  * Generates an end-to-end, dynamic 6-Month Structured Timeline based on:
  * - Student Profile & Target Role (SDE, Web Dev, Data, AI/ML, DevOps, Cyber)
@@ -33,7 +33,7 @@ function escapeHtml(str) {
 }
 
 // ============================================================================
-// CareerPulse.AI Verified YouTube Resource Engine & Validator
+// Skillora AI Verified YouTube Resource Engine & Validator
 // ============================================================================
 
 /**
@@ -2984,7 +2984,7 @@ const SIX_MONTH_ROADMAP_MASTER = [
       },
       {
         "id": "m5_3",
-        "title": "Score 80+ on CareerPulse.AI ATS Resume Analyzer"
+        "title": "Score 80+ on Skillora AI ATS Resume Analyzer"
       }
     ]
   },
@@ -3099,7 +3099,7 @@ const SIX_MONTH_ROADMAP_MASTER = [
         "id": "p_m6_2",
         "name": "Aptitude Drill: Time, Work & Speed",
         "link": "#interview",
-        "platform": "CareerPulse Hub",
+        "platform": "Skillora Hub",
         "difficulty": "Medium",
         "estimatedTime": "20 min"
       },
@@ -3107,7 +3107,7 @@ const SIX_MONTH_ROADMAP_MASTER = [
         "id": "p_m6_3",
         "name": "Technical Flashcards: OS & DBMS Viva",
         "link": "#interview",
-        "platform": "CareerPulse Hub",
+        "platform": "Skillora Hub",
         "difficulty": "Medium",
         "estimatedTime": "25 min"
       }

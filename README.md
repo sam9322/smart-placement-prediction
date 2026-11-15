@@ -1,11 +1,12 @@
-# 🎓 Smart Placement Prediction & Career Coach
+# 🎓 Skillora AI: Smart Placement Prediction & Career Coach
+> **Tagline:** Learn Skills. Build Careers. Get Placed.  
 > **Final Year Engineering Project (Academic Year 2026–2027)**  
 > **Department of Computer Science & Engineering**
 
 ---
 
 ## 📌 Project Overview
-**Smart Placement Prediction & Career Coach** is a modern, data-driven web application designed to help engineering students evaluate their campus placement readiness, uncover technical skill gaps, and follow structured roadmaps toward dream tech offers.
+**Skillora AI (Smart Placement Prediction & Career Coach)** is a modern, data-driven web application designed to help engineering students evaluate their campus placement readiness, uncover technical skill gaps, and follow structured roadmaps toward dream tech offers.
 
 The project operates entirely client-side using **pure HTML5, CSS3, and modern JavaScript**, eliminating the need for backend servers or third-party databases while persisting all user data, test attempts, and progress using the browser's **LocalStorage API**.
 
@@ -211,7 +212,8 @@ This repository is pre-configured with `vercel.json` and `api/index.py` for **ze
 ---
 
 ## 🎓 Academic Submission Metadata
-- **Project Name**: Smart Placement Prediction & Career Coach
+- **Platform Name**: Skillora AI (Smart Placement Prediction & Career Coach)
+- **Tagline**: Learn Skills. Build Careers. Get Placed.
 - **Academic Degree**: Bachelor of Technology (B.Tech)
 - **Department**: Computer Science & Engineering
 - **Semester**: 7th Semester (Mini Project / Capstone)

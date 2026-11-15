@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – Skill Gap Analysis Module
+ * Skillora AI – Skill Gap Analysis Module
  * 
  * Compares Student Skills vs Target Career Skills
  * Features:

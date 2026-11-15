@@ -1,5 +1,5 @@
 /**
- * CareerPulse.AI – Smart Placement Predictor Engine
+ * Skillora AI – Smart Placement Predictor Engine
  * 
  * Multi-factor algorithmic calculation evaluated across:
  * - Academics (CGPA, Backlogs, Degree, Branch)
@@ -851,7 +851,7 @@ function handleRunPrediction(e, silent = false) {
     oppRoot.innerHTML = `
       <div class="opportunity-spotlight-box">
         <div class="flex items-center gap-2 mb-2">
-          <span class="badge badge-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Career Pulse Insight</span>
+          <span class="badge badge-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Skillora AI Insight</span>
           <span class="text-xs text-muted font-bold">Top Matched Role Opportunity</span>
         </div>
         <h3 class="opportunity-title">
