@@ -1195,6 +1195,12 @@ TECH_KEYWORDS = [
     'Cybersecurity', 'Ethical Hacking', 'Penetration Testing', 'Wireshark', 'Cryptography', 'Network Security'
 ]
 
+SOFT_SKILLS_KEYWORDS = [
+    'Problem Solving', 'Communication', 'Teamwork', 'Leadership', 'Critical Thinking',
+    'Time Management', 'Adaptability', 'Collaboration', 'Analytical Thinking', 'Agile Methodologies',
+    'Creativity', 'Attention to Detail', 'Decision Making', 'Interpersonal Skills'
+]
+
 ACTION_VERBS = [
     'developed', 'built', 'designed', 'implemented', 'optimized', 'engineered', 
     'created', 'deployed', 'architected', 'spearheaded', 'automated', 'reduced', 'improved',
@@ -1327,6 +1333,23 @@ def parse_resume_content(raw_text, target_role_id='sde'):
             detected_skills.append(skill)
     # Deduplicate while preserving order
     unique_skills = list(dict.fromkeys(detected_skills))
+
+    # 2b. Extract Soft Skills
+    detected_soft_skills = []
+    for soft in SOFT_SKILLS_KEYWORDS:
+        pattern = r'\b' + re.escape(soft.lower()) + r'\b'
+        if re.search(pattern, lower_text):
+            detected_soft_skills.append(soft)
+    unique_soft_skills = list(dict.fromkeys(detected_soft_skills))
+    if not unique_soft_skills:
+        if 'team' in lower_text or 'collaborat' in lower_text:
+            unique_soft_skills.append('Teamwork & Collaboration')
+        if 'lead' in lower_text or 'manage' in lower_text:
+            unique_soft_skills.append('Leadership')
+        if 'solve' in lower_text or 'problem' in lower_text or 'debug' in lower_text:
+            unique_soft_skills.append('Problem Solving')
+        if not unique_soft_skills:
+            unique_soft_skills = ['Problem Solving', 'Analytical Thinking', 'Team Collaboration']
 
     # 3. Extract Education & CGPA
     education_info = []
@@ -1533,6 +1556,8 @@ def parse_resume_content(raw_text, target_role_id='sde'):
         'atsScore': ats_score,
         'scoreGrade': grade,
         'skills': unique_skills,
+        'technicalSkills': unique_skills,
+        'softSkills': unique_soft_skills,
         'education': education_info,
         'projects': formatted_projects,
         'internships': formatted_internships,
@@ -1582,6 +1607,8 @@ def analyze_resume():
         'atsScore': analysis['atsScore'],
         'scoreGrade': analysis['scoreGrade'],
         'skills': analysis['skills'],
+        'technicalSkills': analysis.get('technicalSkills', analysis['skills']),
+        'softSkills': analysis.get('softSkills', []),
         'projects': analysis['projects'],
         'certifications': analysis['certifications'],
         'internships': analysis['internships'],

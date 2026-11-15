@@ -1,6 +1,7 @@
 /**
- * SMART PLACEMENT PREDICTION & CAREER COACH
- * Resume Upload & Analyzer Module
+ * SMART PLACEMENT PREDICTION & CAREER COACH - SKILLORA AI
+ * Resume Upload & Competency Analyzer Module
+ * Genuine Python NLP + PyPDF2 / docx Text Extraction & ATS Analysis
  */
 
 function getResumeApiCandidates() {
@@ -12,13 +13,21 @@ function getResumeApiCandidates() {
 async function requestResumeAnalysis(endpoint, options = {}) {
   const candidates = getResumeApiCandidates();
   let lastError = null;
+
   for (const base of candidates) {
     try {
       const url = `${base}${endpoint}`;
       const res = await fetch(url, options);
       if (res.ok) {
         const json = await res.json();
-        if (json && json.success) return json;
+        if (json && (json.success || json.atsScore !== undefined)) return json;
+      } else {
+        try {
+          const errJson = await res.json();
+          if (errJson && errJson.message) {
+            lastError = new Error(errJson.message);
+          }
+        } catch (_) {}
       }
     } catch (err) {
       lastError = err;
@@ -27,70 +36,20 @@ async function requestResumeAnalysis(endpoint, options = {}) {
   throw lastError || new Error('Backend resume analysis service unreachable');
 }
 
-const SAMPLE_SDE_RESUME_TEXT = `
-SAMIKSHA WALBE
-Email: samiksha.walbe@engg.edu | Phone: +91 98765 11052 | GitHub: github.com/samiksha | LinkedIn: linkedin.com/in/samiksha
-B.Tech in Computer Science & Engineering | National Institute of Engineering & Technology | CGPA: 8.85/10
-
-TECHNICAL SKILLS:
-Programming Languages: Java, Python, C++, JavaScript, TypeScript
-Web & Backend Technologies: React.js, Node.js, Express.js, REST APIs, HTML5, CSS3
-Databases & Cloud: SQL, MySQL, MongoDB, Redis, AWS Cloud, Docker Basics
-Core Computer Science: Data Structures & Algorithms, Operating Systems, DBMS, Computer Networks, OOP, System Design
-Tools & Version Control: Git & GitHub, Linux, Postman, VS Code, CI/CD
-
-WORK EXPERIENCE / INTERNSHIPS:
-Software Engineering Intern - NexTech Systems (May 2025 – July 2025)
-• Designed and developed high-throughput REST APIs in Node.js and Express serving 15,000+ daily requests.
-• Optimized complex MySQL database queries and indexing strategies, reducing query response times by 32%.
-• Collaborated with senior engineers using Git branching workflows, CI/CD automated builds, and Docker containers.
-
-KEY PROJECTS:
-Placement Management Portal (React.js, Node.js, MongoDB, REST APIs)
-• Architected a full-stack campus recruitment platform automated for 800+ engineering students.
-• Engineered dynamic eligibility filtering and real-time application tracking with JWT authentication.
-• Deployed microservices architecture reducing server memory consumption by 24%.
-
-AI Resume Keyword Extractor (Python, Flask, SpaCy NLP, Scikit-Learn)
-• Built an intelligent natural language parsing tool extracting technical competencies from PDF resumes.
-• Achieved 89% precision matching student keywords against competitive job specifications.
-
-CERTIFICATIONS:
-• AWS Certified Cloud Practitioner - Amazon Web Services (2025)
-• Problem Solving (Intermediate) - HackerRank (2024)
-• Meta Front-End Developer Professional Certificate - Coursera (2024)
-`;
-
-const SAMPLE_AIML_RESUME_TEXT = `
-PRIYA SHARMA
-Email: priya.sharma@engg.edu | Phone: +91 91234 56789 | GitHub: github.com/priya-ml
-B.Tech in Artificial Intelligence & Data Science | CGPA: 9.10/10
-
-TECHNICAL SKILLS:
-Programming & Frameworks: Python, C++, PyTorch, TensorFlow, Scikit-Learn, Pandas & NumPy
-Core AI / Data: Machine Learning, Deep Learning, NLP, Computer Vision, Data Structures & Algorithms
-Databases & Tools: SQL & DBMS, Power BI, Git & GitHub, Linux, Jupyter, FastAPI, Docker Basics
-
-PROJECTS:
-Deep Learning Medical Image Classifier (Python, PyTorch, OpenCV)
-• Trained Convolutional Neural Network (CNN) on 25,000+ MRI scans achieving 94.6% diagnostic accuracy.
-• Implemented data augmentation techniques reducing model overfitting by 18%.
-
-Autonomous Traffic Flow Predictor (Python, Pandas & NumPy, Scikit-Learn)
-• Engineered predictive time-series regression models forecasting congestion with 88% precision.
-`;
-
 class ResumeAnalyzerManager {
   constructor() {
     this.latestAnalysis = null;
     this.selectedRole = 'sde';
+    this.selectedFile = null;
+    this.isAnalyzing = false;
   }
 
   init() {
     this.setupDropZone();
     const roleSelect = document.getElementById('resume-target-role');
     if (roleSelect) {
-      roleSelect.value = appState.getProfile().targetCareerId || 'sde';
+      const profile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
+      roleSelect.value = profile.targetCareerId || 'sde';
       this.selectedRole = roleSelect.value;
     }
   }
@@ -117,17 +76,97 @@ class ResumeAnalyzerManager {
     });
 
     dropZone.addEventListener('drop', (e) => {
+      e.stopPropagation();
       const files = e.dataTransfer.files;
       if (files && files.length > 0) {
-        this.processFile(files[0]);
+        this.handleFileSelection(files[0]);
       }
     });
 
     fileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files.length > 0) {
-        this.processFile(e.target.files[0]);
+        this.handleFileSelection(e.target.files[0]);
       }
     });
+  }
+
+  handleFileSelection(file) {
+    if (!file) return false;
+
+    const validExtensions = ['.pdf', '.docx', '.doc', '.txt'];
+    const fileName = file.name;
+    const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+    // 1. Validate File Format
+    if (!validExtensions.includes(ext)) {
+      this.showUploadError(`Invalid file format "${ext}". Please upload a PDF, DOCX, DOC, or TXT resume.`);
+      showToast('Please upload a PDF, DOCX, DOC, or TXT resume file.', 'warning');
+      this.clearSelectedFile();
+      return false;
+    }
+
+    // 2. Validate Maximum File Size (10 MB)
+    const maxSizeBytes = 10 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      this.showUploadError(`File exceeds 10 MB limit (${sizeMb} MB). Please upload a smaller resume.`);
+      showToast('File size exceeds 10MB limit. Please upload a smaller resume.', 'warning');
+      this.clearSelectedFile();
+      return false;
+    }
+
+    // 3. Clear errors and show selected file preview
+    this.hideUploadError();
+    this.selectedFile = file;
+
+    const fileCard = document.getElementById('resume-file-selected-card');
+    const nameElem = document.getElementById('resume-file-name');
+    const sizeElem = document.getElementById('resume-file-size');
+    const iconElem = document.getElementById('resume-file-icon');
+
+    if (nameElem) nameElem.innerText = fileName;
+    if (sizeElem) {
+      if (file.size < 1024 * 1024) {
+        sizeElem.innerText = `${(file.size / 1024).toFixed(1)} KB`;
+      } else {
+        sizeElem.innerText = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+      }
+    }
+    if (iconElem) {
+      if (ext === '.pdf') {
+        iconElem.className = 'fa-solid fa-file-pdf text-rose';
+      } else if (ext === '.docx' || ext === '.doc') {
+        iconElem.className = 'fa-solid fa-file-word text-primary';
+      } else {
+        iconElem.className = 'fa-solid fa-file-lines text-muted';
+      }
+    }
+    if (fileCard) fileCard.style.display = 'block';
+
+    showToast(`Loaded ${fileName}. Click "Analyze Resume" to proceed.`, 'info');
+    return true;
+  }
+
+  clearSelectedFile() {
+    this.selectedFile = null;
+    const fileCard = document.getElementById('resume-file-selected-card');
+    if (fileCard) fileCard.style.display = 'none';
+    const fileInput = document.getElementById('resume-file-input');
+    if (fileInput) fileInput.value = '';
+  }
+
+  showUploadError(msg) {
+    const errBox = document.getElementById('resume-upload-error');
+    const errText = document.getElementById('resume-upload-error-text');
+    if (errBox && errText) {
+      errText.innerText = msg;
+      errBox.style.display = 'block';
+    }
+  }
+
+  hideUploadError() {
+    const errBox = document.getElementById('resume-upload-error');
+    if (errBox) errBox.style.display = 'none';
   }
 
   generateCurrentStudentResume() {
@@ -143,92 +182,157 @@ Email: ${profile.email || 'student@engg.edu'} | Phone: ${profile.phone || '+91 9
 ${profile.degree} in ${profile.branch} | ${profile.college} | CGPA: ${profile.cgpa}/10
 
 TECHNICAL SKILLS:
-${skillsStr}
+${skillsStr || 'Java, Python, Data Structures & Algorithms, React.js, Node.js, SQL & DBMS, Git & GitHub, REST APIs'}
 
 WORK EXPERIENCE / INTERNSHIPS:
-${internsStr || 'Software Engineering Intern\n• Developed and deployed backend REST APIs and optimized system queries.'}
+${internsStr || 'Software Engineering Intern - NexTech Systems\n• Developed and deployed backend REST APIs and optimized database queries.'}
 
 KEY PROJECTS:
-${projsStr || 'Full-Stack Application\n• Engineered scalable services and real-time frontend components.'}
+${projsStr || 'Placement Management Platform (React.js, Node.js, MongoDB)\n• Architected automated student eligibility screening for 800+ engineering candidates.'}
 
 CERTIFICATIONS:
-${certsStr || '• Professional Certification in Software Engineering (2025)'}
+${certsStr || '• AWS Certified Cloud Practitioner (2025)\n• Problem Solving (Intermediate) - HackerRank (2024)'}
 `;
   }
 
-  loadSampleResume(type = 'current') {
-    const roleSelect = document.getElementById('resume-target-role');
-    if (type === 'aiml') {
-      if (roleSelect) roleSelect.value = 'aiml';
-      this.selectedRole = 'aiml';
-      this.analyzeResumeText(SAMPLE_AIML_RESUME_TEXT, 'Priya_Sharma_AIML_Resume.pdf', 'aiml');
-    } else {
-      const currentProfile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
-      const targetRole = currentProfile.targetCareerId || 'sde';
-      if (roleSelect) roleSelect.value = targetRole;
-      this.selectedRole = targetRole;
-      const text = this.generateCurrentStudentResume();
-      const cleanName = (currentProfile.fullName || 'Student').replace(/\s+/g, '_');
-      this.analyzeResumeText(text, `${cleanName}_Profile_Resume.pdf`, targetRole);
-    }
-  }
-
-  async processFile(file) {
-    if (!file) return;
-    const validExtensions = ['.pdf', '.docx', '.doc', '.txt'];
-    const fileName = file.name;
-    const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
-
-    if (!validExtensions.includes(ext)) {
-      showToast('Please upload a PDF, DOCX, DOC, or TXT resume file.', 'warning');
+  async analyzeUploadedFile() {
+    if (!this.selectedFile) {
+      // If user clicks analyze without having selected a file, open file dialog
+      const fileInput = document.getElementById('resume-file-input');
+      if (fileInput) fileInput.click();
+      showToast('Please select your resume file (PDF, DOCX, DOC, or TXT) to analyze.', 'info');
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      showToast('File size exceeds 10MB limit. Please upload a smaller resume.', 'warning');
-      return;
-    }
+    if (this.isAnalyzing) return;
+    this.isAnalyzing = true;
 
-    this.showLoading(true, `Uploading & analyzing ${fileName} with Python Flask NLP Engine...`);
+    const analyzeBtn = document.getElementById('resume-analyze-btn');
+    const profileBtn = document.getElementById('resume-profile-analyze-btn');
+    if (analyzeBtn) {
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Analyzing Resume...';
+    }
+    if (profileBtn) profileBtn.disabled = true;
 
     const roleSelect = document.getElementById('resume-target-role');
     const targetRole = roleSelect ? roleSelect.value : (this.selectedRole || 'sde');
+    const fileName = this.selectedFile.name;
 
-    // FormData upload for backend PyPDF2 / pdfminer / python-docx parsing
+    this.showLoading(true, `Extracting information & analyzing ${fileName} with NLP Engine...`);
+    this.hideUploadError();
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', this.selectedFile);
 
     try {
-      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${targetRole}`, {
+      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${encodeURIComponent(targetRole)}`, {
         method: 'POST',
         body: formData
       });
 
-      if (result && result.success && (result.data || result.atsScore !== undefined)) {
+      if (result && (result.success || result.atsScore !== undefined)) {
         const data = result.data || result;
         data.fileName = fileName;
-        this.showLoading(false);
         this.renderAnalysisResult(data);
         showToast(`Resume Analyzed! ATS Score: ${data.atsScore}/100 (${data.scoreGrade})`, 'success');
-        return;
+      } else {
+        const msg = (result && result.message) || 'Failed to extract information from resume file.';
+        this.showUploadError(msg);
+        showToast(msg, 'danger');
       }
     } catch (err) {
-      console.warn('Backend multipart parsing failed or backend offline, checking fallback:', err);
+      console.warn('Backend file extraction error:', err);
+      // If file is plain text, attempt direct text read fallback
+      const ext = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+      if (ext === '.txt') {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.analyzeResumeText(e.target.result, fileName, targetRole);
+        };
+        reader.readAsText(this.selectedFile);
+        return;
+      }
+      const errMsg = err.message || 'Unable to analyze resume with Python Flask backend. Please verify your connection.';
+      this.showUploadError(errMsg);
+      showToast(errMsg, 'danger');
+    } finally {
+      this.showLoading(false);
+      this.isAnalyzing = false;
+      if (analyzeBtn) {
+        analyzeBtn.disabled = false;
+        analyzeBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Analyze Resume';
+      }
+      if (profileBtn) profileBtn.disabled = false;
     }
+  }
 
-    // Client-side fallback if plain text
-    if (ext === '.txt') {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target.result;
-        this.analyzeResumeText(text, fileName, targetRole);
-      };
-      reader.readAsText(file);
-      return;
+  async loadSampleResume(type = 'current') {
+    if (this.isAnalyzing) return;
+    this.isAnalyzing = true;
+
+    const profileBtn = document.getElementById('resume-profile-analyze-btn');
+    const analyzeBtn = document.getElementById('resume-analyze-btn');
+    if (profileBtn) {
+      profileBtn.disabled = true;
+      profileBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Analyzing Profile...';
     }
+    if (analyzeBtn) analyzeBtn.disabled = true;
 
-    this.showLoading(false);
-    showToast('Failed to analyze resume with backend service. Please check your backend connection.', 'danger');
+    const currentProfile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
+    const targetRole = currentProfile.targetCareerId || 'sde';
+    const roleSelect = document.getElementById('resume-target-role');
+    if (roleSelect) roleSelect.value = targetRole;
+    this.selectedRole = targetRole;
+
+    const text = this.generateCurrentStudentResume();
+    const cleanName = (currentProfile.fullName || 'Student').replace(/\s+/g, '_');
+    const fileName = `${cleanName}_Profile_Resume.pdf`;
+
+    // Update selected file card preview
+    const fileCard = document.getElementById('resume-file-selected-card');
+    const nameElem = document.getElementById('resume-file-name');
+    const sizeElem = document.getElementById('resume-file-size');
+    const iconElem = document.getElementById('resume-file-icon');
+    if (nameElem) nameElem.innerText = fileName;
+    if (sizeElem) sizeElem.innerText = 'Profile Generated • 4.8 KB';
+    if (iconElem) iconElem.className = 'fa-solid fa-file-invoice text-primary';
+    if (fileCard) fileCard.style.display = 'block';
+
+    this.showLoading(true, `Analyzing your verified student profile credentials against ${targetRole.toUpperCase()} criteria...`);
+    this.hideUploadError();
+
+    try {
+      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${encodeURIComponent(targetRole)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, fileName, targetRole })
+      });
+
+      if (result && (result.success || result.atsScore !== undefined)) {
+        const data = result.data || result;
+        data.fileName = fileName;
+        this.renderAnalysisResult(data);
+        showToast(`Student Profile Resume Analyzed! ATS Score: ${data.atsScore}/100 (${data.scoreGrade})`, 'success');
+      } else {
+        const msg = (result && result.message) || 'Failed to analyze profile resume.';
+        this.showUploadError(msg);
+        showToast(msg, 'danger');
+      }
+    } catch (err) {
+      console.warn('Profile resume analysis error:', err);
+      const errMsg = err.message || 'Unable to connect to resume analysis backend.';
+      this.showUploadError(errMsg);
+      showToast(errMsg, 'danger');
+    } finally {
+      this.showLoading(false);
+      this.isAnalyzing = false;
+      if (profileBtn) {
+        profileBtn.disabled = false;
+        profileBtn.innerHTML = '<i class="fa-solid fa-file-invoice text-primary mr-1"></i> Analyze My Student Profile Resume';
+      }
+      if (analyzeBtn) analyzeBtn.disabled = false;
+    }
   }
 
   async analyzeResumeText(rawText, fileName = 'Resume Document', roleOverride = null) {
@@ -238,13 +342,13 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     this.showLoading(true, `Analyzing ${fileName} against ${targetRole.toUpperCase()} benchmarks...`);
 
     try {
-      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${targetRole}`, {
+      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${encodeURIComponent(targetRole)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: rawText, fileName, targetRole })
       });
 
-      if (result && result.success && (result.data || result.atsScore !== undefined)) {
+      if (result && (result.success || result.atsScore !== undefined)) {
         const data = result.data || result;
         data.fileName = fileName;
         this.showLoading(false);
@@ -253,55 +357,11 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
         return;
       }
     } catch (e) {
-      console.warn('Backend resume analysis failed:', e);
-    }
-
-    // Offline heuristic fallback parser
-    setTimeout(() => {
-      const fallbackResult = this.clientSideHeuristicParser(rawText, fileName, targetRole);
+      console.warn('Text resume analysis failed:', e);
       this.showLoading(false);
-      this.renderAnalysisResult(fallbackResult);
-      showToast(`Resume Analyzed! ATS Score: ${fallbackResult.atsScore}/100 (${fallbackResult.scoreGrade})`, 'info');
-    }, 400);
-  }
-
-  clientSideHeuristicParser(text, fileName, targetRole) {
-    const lower = text.toLowerCase();
-    const skillsList = [
-      'Java', 'Python', 'C++', 'JavaScript', 'TypeScript', 'React.js', 'Node.js', 
-      'Express.js', 'SQL & DBMS', 'MongoDB', 'REST APIs', 'AWS', 'Docker Basics', 
-      'Data Structures & Algorithms', 'Operating Systems', 'Computer Networks', 
-      'Git & GitHub', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow', 
-      'Pandas & NumPy', 'Power BI'
-    ];
-    const detected = skillsList.filter(s => lower.includes(s.toLowerCase().replace('&', '')));
-
-    return {
-      fileName,
-      candidateName: 'Candidate (Extracted)',
-      atsScore: Math.min(95, Math.max(50, 40 + detected.length * 5)),
-      scoreGrade: 'Good (Competitive)',
-      skills: detected,
-      education: ['Bachelor of Technology • 8.4+ CGPA'],
-      projects: [
-        { title: 'Full-Stack Web / Software Platform', desc: 'Engineered REST API backend with secure user sessions and database queries.' },
-        { title: 'Machine Learning / Algorithmic Pipeline', desc: 'Implemented data processing pipelines with measurable accuracy metrics.' }
-      ],
-      internships: [
-        { company: 'Software Solutions Intern', role: 'Software Engineering Intern', desc: 'Collaborated on production codebase, wrote unit tests, and resolved bugs.' }
-      ],
-      certifications: ['AWS Cloud Practitioner', 'HackerRank Problem Solving'],
-      targetRoleMatch: {
-        targetRole: targetRole.toUpperCase(),
-        matchPercentage: Math.min(95, Math.round((detected.length / 8) * 100)),
-        matchedSkills: detected.slice(0, 5),
-        missingSkills: ['System Design', 'Microservices', 'Kubernetes']
-      },
-      suggestions: [
-        'Add quantitative metrics to your project achievements (e.g. latency reduced by 30%).',
-        'Begin each bullet point with strong action verbs: Architected, Optimized, Engineered.'
-      ]
-    };
+      this.showUploadError(e.message || 'Resume analysis error. Please try again.');
+      showToast(e.message || 'Resume analysis error.', 'danger');
+    }
   }
 
   showLoading(isLoading, msg = 'Analyzing Resume...') {
@@ -325,7 +385,21 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     resultsContainer.style.display = 'block';
     resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // 1. File & Score Banner
+    // 1. Candidate Details Header
+    const candNameElem = document.getElementById('resume-candidate-name');
+    if (candNameElem) candNameElem.innerText = data.candidateName || 'Student Candidate';
+
+    const candEmailElem = document.getElementById('resume-candidate-email');
+    if (candEmailElem) {
+      candEmailElem.innerHTML = `<i class="fa-solid fa-envelope text-primary mr-1"></i> ${data.email || 'student@engg.edu'}`;
+    }
+
+    const candPhoneElem = document.getElementById('resume-candidate-phone');
+    if (candPhoneElem) {
+      candPhoneElem.innerHTML = `<i class="fa-solid fa-phone text-emerald mr-1"></i> ${data.phone || '+91 98765 00000'}`;
+    }
+
+    // 2. File & Score Banner
     const fileElem = document.getElementById('resume-result-filename');
     if (fileElem) fileElem.innerText = data.fileName || 'Uploaded Resume';
 
@@ -335,7 +409,7 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     const gradeElem = document.getElementById('resume-score-grade');
     if (gradeElem) {
       gradeElem.innerText = data.scoreGrade || 'ATS Ready';
-      gradeElem.className = data.atsScore >= 80 ? 'badge badge-success' : data.atsScore >= 60 ? 'badge badge-warning' : 'badge badge-danger';
+      gradeElem.className = data.atsScore >= 80 ? 'badge badge-success mb-3' : data.atsScore >= 65 ? 'badge badge-warning mb-3' : 'badge badge-danger mb-3';
     }
 
     // Circular gauge animation
@@ -344,17 +418,18 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       const circ = 376.99; // 2 * PI * 60
       const offset = circ - (data.atsScore / 100) * circ;
       circle.style.strokeDashoffset = offset;
-      circle.style.stroke = data.atsScore >= 80 ? 'var(--accent-emerald)' : data.atsScore >= 60 ? 'var(--accent-amber)' : 'var(--accent-rose)';
+      circle.style.stroke = data.atsScore >= 80 ? 'var(--accent-emerald)' : data.atsScore >= 65 ? 'var(--accent-amber)' : 'var(--accent-rose)';
     }
 
-    // 2. Role Match Progress Bar
+    // 3. Role Match Progress Bar
     const roleMatch = data.targetRoleMatch || {};
     const matchBar = document.getElementById('resume-role-match-bar');
     const matchText = document.getElementById('resume-role-match-pct');
-    if (matchBar) matchBar.style.width = `${roleMatch.matchPercentage || 75}%`;
-    if (matchText) matchText.innerText = `${roleMatch.matchPercentage || 75}% Fit`;
+    const matchPct = roleMatch.matchPercentage !== undefined ? roleMatch.matchPercentage : 78;
+    if (matchBar) matchBar.style.width = `${matchPct}%`;
+    if (matchText) matchText.innerText = `${matchPct}% Fit`;
 
-    // 2b. Matched & Missing Skills for Target Role
+    // 4. Matched & Missing Skills for Target Role
     const matchedSkills = roleMatch.matchedSkills || [];
     const missingSkills = roleMatch.missingSkills || [];
 
@@ -363,8 +438,8 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     if (matchedCount) matchedCount.innerText = matchedSkills.length;
     if (matchedRoot) {
       matchedRoot.innerHTML = matchedSkills.length > 0
-        ? matchedSkills.map(s => `<span class="tag-item" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-check mr-1"></i> ${s}</span>`).join('')
-        : '<span class="text-xs text-muted">No target role competencies matched yet.</span>';
+        ? matchedSkills.map(s => `<span class="tag-item skill-tag-matched"><i class="fa-solid fa-check mr-1"></i> ${s}</span>`).join('')
+        : '<span class="text-xs text-muted" style="font-style: italic;">No required role competencies matched yet.</span>';
     }
 
     const missingRoot = document.getElementById('resume-role-missing-skills');
@@ -372,82 +447,95 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     if (missingCount) missingCount.innerText = missingSkills.length;
     if (missingRoot) {
       missingRoot.innerHTML = missingSkills.length > 0
-        ? missingSkills.map(s => `<span class="tag-item" style="background: rgba(244, 63, 94, 0.12); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${s}</span>`).join('')
-        : '<span class="text-xs text-success" style="color: var(--accent-emerald);"><i class="fa-solid fa-circle-check mr-1"></i> All core role competencies satisfied!</span>';
+        ? missingSkills.map(s => `<span class="tag-item skill-tag-missing"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${s}</span>`).join('')
+        : '<span class="text-xs text-success" style="color: var(--accent-emerald); font-weight: 600;"><i class="fa-solid fa-circle-check mr-1"></i> All core role competencies satisfied!</span>';
     }
 
-    // 3. Render Extracted Skills
-    const skillsRoot = document.getElementById('resume-skills-extracted');
-    if (skillsRoot) {
-      const skills = data.skills || [];
-      skillsRoot.innerHTML = skills.length > 0 
-        ? skills.map(s => `<span class="tag-item skill-tag-matched"><i class="fa-solid fa-code text-primary"></i> ${s}</span>`).join('')
-        : '<p class="text-sm text-muted">No explicit technical skills identified.</p>';
+    // 5. Render Extracted Technical Skills
+    const techRoot = document.getElementById('resume-skills-extracted');
+    if (techRoot) {
+      const skills = data.technicalSkills || data.skills || [];
+      techRoot.innerHTML = skills.length > 0 
+        ? skills.map(s => `<span class="tag-item skill-tag-matched"><i class="fa-solid fa-code text-primary mr-1"></i> ${s}</span>`).join('')
+        : '<p class="text-xs text-muted">No explicit technical skills identified.</p>';
     }
 
-    // 4. Render Detected Projects
+    // 6. Render Extracted Soft Skills
+    const softRoot = document.getElementById('resume-soft-skills-extracted');
+    if (softRoot) {
+      const softs = data.softSkills || [];
+      softRoot.innerHTML = softs.length > 0
+        ? softs.map(s => `<span class="tag-item" style="background: rgba(99, 102, 241, 0.1); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25); font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-user-check mr-1"></i> ${s}</span>`).join('')
+        : '<span class="text-xs text-muted">Core Professional Competency Evaluated</span>';
+    }
+
+    // 7. Render Detected Projects
     const projectsRoot = document.getElementById('resume-projects-extracted');
     if (projectsRoot) {
       const projects = data.projects || [];
       projectsRoot.innerHTML = projects.length > 0
         ? projects.map(p => `
           <div class="card p-3 mb-2" style="background: var(--bg-card-subtle); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 0.5rem;">
-            <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">${p.title}</h5>
-            <p style="font-size: 0.825rem; color: var(--text-muted);">${p.desc}</p>
+            <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">
+              <i class="fa-solid fa-folder-open text-primary mr-1"></i> ${p.title}
+            </h5>
+            <p style="font-size: 0.825rem; color: var(--text-muted); margin: 0;">${p.desc}</p>
           </div>
         `).join('')
         : '<p class="text-sm text-muted">No distinct project titles detected.</p>';
     }
 
-    // 5. Render Internships & Work Experience
+    // 8. Render Internships & Work Experience
     const expRoot = document.getElementById('resume-exp-extracted');
     if (expRoot) {
       const exps = data.internships || [];
       expRoot.innerHTML = exps.length > 0
         ? exps.map(e => `
           <div class="card p-3 mb-2" style="background: var(--bg-card-subtle); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 0.5rem;">
-            <div class="flex justify-between items-center" style="display: flex; justify-content: space-between;">
-              <strong style="font-size: 0.9rem;">${e.role}</strong>
+            <div class="flex justify-between items-center" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+              <strong style="font-size: 0.9rem; color: var(--text-main);">${e.role}</strong>
               <span class="badge badge-primary text-xs">${e.company}</span>
             </div>
-            <p style="font-size: 0.825rem; color: var(--text-muted); margin-top: 0.25rem;">${e.desc}</p>
+            <p style="font-size: 0.825rem; color: var(--text-muted); margin: 0;">${e.desc}</p>
           </div>
         `).join('')
         : '<p class="text-sm text-muted">No internship or work experience section found.</p>';
     }
 
-    // 6. Render Certifications & Education
+    // 9. Render Certifications & Education
     const certsRoot = document.getElementById('resume-certs-extracted');
     if (certsRoot) {
       const certs = data.certifications || [];
       certsRoot.innerHTML = certs.length > 0
-        ? certs.map(c => `<span class="tag-item"><i class="fa-solid fa-certificate text-amber"></i> ${c}</span>`).join('')
-        : '<span class="text-sm text-muted">None detected</span>';
+        ? certs.map(c => `<span class="tag-item" style="font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-certificate text-amber mr-1"></i> ${c}</span>`).join('')
+        : '<span class="text-xs text-muted">None detected</span>';
     }
 
     const eduRoot = document.getElementById('resume-edu-extracted');
     if (eduRoot) {
       const edus = data.education || [];
       eduRoot.innerHTML = edus.length > 0
-        ? edus.map(ed => `<div style="font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-graduation-cap text-primary"></i> ${ed}</div>`).join('')
+        ? edus.map(ed => `<div style="font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-graduation-cap text-primary mr-1"></i> ${ed}</div>`).join('')
         : '<span class="text-sm text-muted">B.Tech Engineering Candidate</span>';
     }
 
-    // 7. Render ATS Improvement Suggestions
+    // 10. Render ATS Improvement Suggestions
     const suggRoot = document.getElementById('resume-suggestions-extracted');
     if (suggRoot) {
       const suggs = data.suggestions || [];
-      suggRoot.innerHTML = suggs.map(s => `
-        <div class="flex items-start gap-2 p-2 mb-2" style="background: var(--bg-card-subtle); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 0.5rem; display: flex; gap: 0.6rem;">
-          <i class="fa-solid fa-lightbulb text-amber" style="margin-top: 0.2rem;"></i>
-          <span style="font-size: 0.85rem;">${s}</span>
-        </div>
-      `).join('');
+      suggRoot.innerHTML = suggs.length > 0
+        ? suggs.map(s => `
+          <div class="flex items-start gap-2 p-2 mb-2" style="background: var(--bg-card-subtle); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 0.5rem; display: flex; gap: 0.6rem;">
+            <i class="fa-solid fa-lightbulb text-amber" style="margin-top: 0.2rem; flex-shrink: 0;"></i>
+            <span style="font-size: 0.85rem; line-height: 1.4;">${s}</span>
+          </div>
+        `).join('')
+        : '<p class="text-xs text-success"><i class="fa-solid fa-circle-check mr-1"></i> Resume adheres to ATS formatting best practices!</p>';
     }
 
     // Automatically synchronize ATS score & extracted metadata into student profile
     try {
-      const profile = appState.getProfile();
+      const profile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : null;
       if (profile && data.atsScore !== undefined) {
         profile.resumeScore = data.atsScore;
         profile.resumeDetails = {
@@ -491,7 +579,6 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       }
     });
 
-    // If projects extracted, merge
     if (this.latestAnalysis.projects && this.latestAnalysis.projects.length > 0) {
       this.latestAnalysis.projects.forEach(p => {
         if (!profile.projects.some(ex => ex.title.toLowerCase() === p.title.toLowerCase())) {
@@ -505,7 +592,6 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       });
     }
 
-    // Import resume score and metadata into profile
     if (this.latestAnalysis.atsScore !== undefined) {
       profile.resumeScore = this.latestAnalysis.atsScore;
       profile.resumeDetails = {
@@ -516,15 +602,13 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       };
     }
 
-    // Save and sync with backend SQLite
     appState.updateProfile(profile);
-    if (window.authManager) {
+    if (window.authManager && typeof authManager.syncProfileToBackend === 'function') {
       authManager.syncProfileToBackend(profile);
     }
 
     showToast(`Successfully imported ${addedCount} new skills, resume ATS score (${profile.resumeScore}%), and portfolio projects into your profile! 🎉`, 'success');
 
-    // Re-render other views
     if (window.renderProfileView) renderProfileView();
     if (window.renderDashboard) renderDashboard();
     if (window.renderSkillGapAnalysis) renderSkillGapAnalysis();
@@ -533,3 +617,6 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
 }
 
 const resumeAnalyzer = new ResumeAnalyzerManager();
+if (typeof window !== 'undefined') {
+  window.resumeAnalyzer = resumeAnalyzer;
+}

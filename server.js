@@ -24,6 +24,7 @@
  */
 
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
@@ -453,9 +454,37 @@ app.all('/api/user/interview', (req, res) => {
   res.json({ success: true, interviewHistory: {} });
 });
 
-// Resume ATS Analysis Endpoint
+// Resume ATS Analysis Endpoint (Proxies to Flask NLP backend on port 5000 with Node fallback)
 app.post('/api/resume/analyze', (req, res) => {
   const targetRole = (req.query.targetRole || (req.body && req.body.targetRole) || 'sde').toLowerCase();
+
+  const proxyReq = http.request({
+    hostname: '127.0.0.1',
+    port: 5000,
+    path: `/api/resume/analyze?targetRole=${encodeURIComponent(targetRole)}`,
+    method: 'POST',
+    headers: { ...req.headers, host: '127.0.0.1:5000' }
+  }, (proxyRes) => {
+    res.status(proxyRes.statusCode);
+    Object.keys(proxyRes.headers).forEach(h => res.setHeader(h, proxyRes.headers[h]));
+    proxyRes.pipe(res);
+  });
+
+  proxyReq.on('error', (err) => {
+    handleNodeResumeAnalyze(req, res, targetRole);
+  });
+
+  if (req.is('json') && req.body && Object.keys(req.body).length > 0) {
+    const payload = JSON.stringify(req.body);
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(payload));
+    proxyReq.end(payload);
+  } else {
+    req.pipe(proxyReq);
+  }
+});
+
+function handleNodeResumeAnalyze(req, res, targetRole) {
   const rawText = (req.body && req.body.text) || '';
   const fileName = (req.body && req.body.fileName) || 'Uploaded Resume';
   const lower = rawText.toLowerCase();
@@ -666,7 +695,7 @@ app.post('/api/resume/analyze', (req, res) => {
     },
     suggestions
   });
-});
+}
 
 // Get Master Careers Catalog
 app.get('/api/careers', (req, res) => {
