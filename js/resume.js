@@ -22,15 +22,22 @@ async function requestResumeAnalysis(endpoint, options = {}) {
         const json = await res.json();
         if (json && (json.success || json.atsScore !== undefined)) return json;
       } else {
+        let errMsg = `Request failed with status ${res.status}`;
         try {
           const errJson = await res.json();
           if (errJson && errJson.message) {
-            lastError = new Error(errJson.message);
+            errMsg = errJson.message;
           }
         } catch (_) {}
+        // Real server error / extraction failure - throw immediately so actual error displays
+        throw new Error(errMsg);
       }
     } catch (err) {
       lastError = err;
+      // If error came from the server responding with a message, do not swallow it by retrying other hosts
+      if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('ECONNREFUSED')) {
+        throw err;
+      }
     }
   }
   throw lastError || new Error('Backend resume analysis service unreachable');
@@ -143,7 +150,19 @@ class ResumeAnalyzerManager {
     }
     if (fileCard) fileCard.style.display = 'block';
 
-    showToast(`Loaded ${fileName}. Click "Analyze Resume" to proceed.`, 'info');
+    // Requirement 8 & 9: Remove the unnecessary "Analyze My Student Profile Resume" button if the student has already uploaded a resume. Keep only one clear "Analyze Resume" button.
+    const profileBtn = document.getElementById('resume-profile-analyze-btn');
+    if (profileBtn) {
+      profileBtn.style.display = 'none';
+    }
+
+    showToast(`Loaded ${fileName}. Automatically analyzing resume...`, 'info');
+
+    // Requirement 7: After successful file selection, automatically continue to extraction, ATS score calculation and resume analysis.
+    setTimeout(() => {
+      this.analyzeUploadedFile();
+    }, 150);
+
     return true;
   }
 
@@ -153,6 +172,9 @@ class ResumeAnalyzerManager {
     if (fileCard) fileCard.style.display = 'none';
     const fileInput = document.getElementById('resume-file-input');
     if (fileInput) fileInput.value = '';
+    const profileBtn = document.getElementById('resume-profile-analyze-btn');
+    if (profileBtn) profileBtn.style.display = 'inline-flex';
+    this.hideUploadError();
   }
 
   showUploadError(msg) {
@@ -299,6 +321,9 @@ ${certsStr || '• AWS Certified Cloud Practitioner (2025)\n• Problem Solving 
     if (iconElem) iconElem.className = 'fa-solid fa-file-invoice text-primary';
     if (fileCard) fileCard.style.display = 'block';
 
+    // Requirement 8: Hide profile resume button once analyzed, keeping only one clear "Analyze Resume" button
+    if (profileBtn) profileBtn.style.display = 'none';
+
     this.showLoading(true, `Analyzing your verified student profile credentials against ${targetRole.toUpperCase()} criteria...`);
     this.hideUploadError();
 
@@ -327,7 +352,7 @@ ${certsStr || '• AWS Certified Cloud Practitioner (2025)\n• Problem Solving 
     } finally {
       this.showLoading(false);
       this.isAnalyzing = false;
-      if (profileBtn) {
+      if (profileBtn && profileBtn.style.display !== 'none') {
         profileBtn.disabled = false;
         profileBtn.innerHTML = '<i class="fa-solid fa-file-invoice text-primary mr-1"></i> Analyze My Student Profile Resume';
       }

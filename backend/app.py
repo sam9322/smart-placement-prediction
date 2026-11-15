@@ -1216,30 +1216,149 @@ ROLE_REQUIREMENTS = {
     'cybersecurity': ['Computer Networks', 'Linux', 'Ethical Hacking', 'Operating Systems', 'Python']
 }
 
+def run_ocr_on_images(images_list):
+    """Run OCR on a list of PIL Images using Windows native OCR (winocr) or pytesseract"""
+    extracted_text = []
+    
+    # 1. Try Windows native OCR (built into Windows 10/11)
+    try:
+        import winocr
+        import asyncio
+        for img in images_list:
+            if img.width < 50 or img.height < 50:
+                continue
+            try:
+                img_rgba = img.convert('RGBA') if img.mode != 'RGBA' else img
+                async def _ocr():
+                    return await winocr.recognize_pil(img_rgba, 'en')
+                res = asyncio.run(_ocr())
+                if res and hasattr(res, 'text') and res.text:
+                    extracted_text.append(res.text.strip())
+            except Exception as ocr_err:
+                print(f"winocr page error: {ocr_err}")
+        if extracted_text:
+            return '\n'.join(extracted_text).strip()
+    except Exception as e:
+        print(f"winocr notice: {e}")
+
+    # 2. Try pytesseract if available
+    try:
+        import pytesseract
+        import shutil
+        tess_cmd = shutil.which('tesseract')
+        if not tess_cmd:
+            for candidate in [
+                r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+                r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
+            ]:
+                if os.path.exists(candidate):
+                    tess_cmd = candidate
+                    pytesseract.pytesseract.tesseract_cmd = candidate
+                    break
+        if tess_cmd:
+            for img in images_list:
+                try:
+                    text = pytesseract.image_to_string(img)
+                    if text and text.strip():
+                        extracted_text.append(text.strip())
+                except Exception as t_err:
+                    print(f"pytesseract error: {t_err}")
+            if extracted_text:
+                return '\n'.join(extracted_text).strip()
+    except Exception as e:
+        print(f"pytesseract notice: {e}")
+
+    return '\n'.join(extracted_text).strip()
+
 def extract_file_text(file_bytes, file_name):
     lower_name = (file_name or '').lower()
     raw_text = ''
-    
-    if lower_name.endswith('.pdf'):
-        # 1. Try PyPDF2
+    extraction_errors = []
+
+    if not file_bytes or len(file_bytes) == 0:
+        return '', 'Uploaded file is empty (0 bytes received).'
+
+    # PDF Processing (Digital Text + Scanned OCR)
+    if lower_name.endswith('.pdf') or file_bytes.startswith(b'%PDF'):
+        # 1. Modern pypdf extraction
         try:
             import io
-            from PyPDF2 import PdfReader
-            pdf_reader = PdfReader(io.BytesIO(file_bytes))
-            pages = [p.extract_text() or '' for p in pdf_reader.pages]
+            import pypdf
+            reader = pypdf.PdfReader(io.BytesIO(file_bytes), strict=False)
+            pages = [p.extract_text() or '' for p in reader.pages]
             raw_text = '\n'.join(pages).strip()
         except Exception as e:
-            print(f"PyPDF2 extraction notice: {e}")
-            
-        # 2. Fallback to pdfminer if PyPDF2 failed or extracted very little text
+            extraction_errors.append(f"pypdf: {str(e)}")
+
+        # 2. PyPDF2 fallback
+        if len(raw_text) < 40:
+            try:
+                import io
+                from PyPDF2 import PdfReader
+                reader2 = PdfReader(io.BytesIO(file_bytes), strict=False)
+                pages2 = [p.extract_text() or '' for p in reader2.pages]
+                t2 = '\n'.join(pages2).strip()
+                if len(t2) > len(raw_text):
+                    raw_text = t2
+            except Exception as e:
+                extraction_errors.append(f"PyPDF2: {str(e)}")
+
+        # 3. pdfminer.six layout engine
         if len(raw_text) < 40:
             try:
                 import io
                 from pdfminer.high_level import extract_text as pdfminer_extract
-                raw_text = pdfminer_extract(io.BytesIO(file_bytes)).strip()
+                t3 = pdfminer_extract(io.BytesIO(file_bytes)).strip()
+                if len(t3) > len(raw_text):
+                    raw_text = t3
             except Exception as e:
-                print(f"pdfminer fallback notice: {e}")
-                
+                extraction_errors.append(f"pdfminer: {str(e)}")
+
+        # 4. OCR for Scanned / Image-based PDFs
+        if len(raw_text) < 40:
+            try:
+                import io
+                import pypdf
+                from PIL import Image
+                reader = pypdf.PdfReader(io.BytesIO(file_bytes), strict=False)
+                images = []
+                for p in reader.pages:
+                    for img_obj in p.images:
+                        try:
+                            img = Image.open(io.BytesIO(img_obj.data))
+                            images.append(img)
+                        except Exception:
+                            pass
+                if images:
+                    ocr_res = run_ocr_on_images(images)
+                    if len(ocr_res) > len(raw_text):
+                        raw_text = ocr_res
+            except Exception as e:
+                extraction_errors.append(f"OCR: {str(e)}")
+
+        # 5. Raw stream decompression fallback
+        if len(raw_text) < 40:
+            try:
+                import zlib
+                decompressed_chunks = []
+                for m in re.finditer(rb'stream[\r\n]+(.*?)[\r\n]+endstream', file_bytes, re.DOTALL):
+                    chunk = m.group(1)
+                    try:
+                        decomp = zlib.decompress(chunk)
+                        matches = re.findall(rb'\((.*?)\)\s*Tj', decomp)
+                        if matches:
+                            decompressed_chunks.extend([b.decode('latin-1', errors='ignore') for b in matches])
+                        else:
+                            text_blocks = re.findall(rb'[A-Za-z0-9\s.,;:\-@/()]{4,}', decomp)
+                            decompressed_chunks.extend([b.decode('latin-1', errors='ignore') for b in text_blocks])
+                    except Exception:
+                        pass
+                if decompressed_chunks:
+                    raw_text = ' '.join(decompressed_chunks).strip()
+            except Exception as e:
+                extraction_errors.append(f"Stream decompress: {str(e)}")
+
+    # DOCX Processing
     elif lower_name.endswith('.docx'):
         try:
             import io
@@ -1254,10 +1373,30 @@ def extract_file_text(file_bytes, file_name):
                         t_text.append(' | '.join(cells))
             raw_text = '\n'.join(p_text + t_text).strip()
         except Exception as e:
-            print(f"docx extraction notice: {e}")
-            
+            extraction_errors.append(f"docx: {str(e)}")
+
+        if len(raw_text) < 30:
+            try:
+                import io
+                import docx2txt
+                t = docx2txt.process(io.BytesIO(file_bytes)).strip()
+                if len(t) > len(raw_text):
+                    raw_text = t
+            except Exception as e:
+                extraction_errors.append(f"docx2txt: {str(e)}")
+
+        if len(raw_text) < 30:
+            try:
+                import io, zipfile
+                with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:
+                    xml_content = z.read('word/document.xml').decode('utf-8', errors='ignore')
+                    texts = re.findall(r'<w:t[^>]*>([^<]+)</w:t>', xml_content)
+                    raw_text = ' '.join(texts).strip()
+            except Exception as e:
+                extraction_errors.append(f"docx-xml: {str(e)}")
+
+    # DOC Binary Word Processing
     elif lower_name.endswith('.doc'):
-        # Binary Word 97-2003 stream extraction for ASCII and UTF-16LE text blocks
         lines = []
         for m in re.findall(rb'[\x20-\x7E\t\r\n]{4,}', file_bytes):
             try:
@@ -1274,17 +1413,19 @@ def extract_file_text(file_bytes, file_name):
             except Exception:
                 pass
         raw_text = '\n'.join(lines).strip()
-        
-    else: # Plain text or fallback
-        for enc in ['utf-8', 'latin-1', 'cp1252', 'utf-16']:
+
+    # TXT / Plain Text Processing
+    else:
+        for enc in ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252', 'utf-16', 'utf-16-le']:
             try:
                 raw_text = file_bytes.decode(enc).strip()
                 if raw_text:
                     break
             except Exception:
                 pass
-                
-    return raw_text
+
+    err_details = '; '.join(extraction_errors) if extraction_errors else ''
+    return raw_text, err_details
 
 def check_skill_match(req, user_skills):
     req_l = req.lower().replace('/', ' ').replace('&', ' ')
@@ -1576,13 +1717,14 @@ def analyze_resume():
     target_role = request.args.get('targetRole', 'sde')
     raw_text = ''
     file_name = 'Uploaded Resume'
+    extraction_err = ''
 
     # Check if a file was uploaded in multipart/form-data
     if 'file' in request.files:
         uploaded_file = request.files['file']
         file_name = uploaded_file.filename or 'resume.pdf'
         file_bytes = uploaded_file.read()
-        raw_text = extract_file_text(file_bytes, file_name)
+        raw_text, extraction_err = extract_file_text(file_bytes, file_name)
 
     # Or check if text was sent in JSON payload
     elif request.is_json:
@@ -1591,10 +1733,14 @@ def analyze_resume():
         file_name = data.get('fileName', 'Student_Profile_Resume.pdf')
         target_role = data.get('targetRole', target_role)
 
-    if not raw_text or len(raw_text.strip()) < 15:
+    if not raw_text or len(str(raw_text).strip()) < 15:
+        if extraction_err:
+            msg = f"Unable to extract text from '{file_name}'. Details: {extraction_err}"
+        else:
+            msg = f"Unable to extract readable text from '{file_name}'. The file appears empty, scanned without recognizable text, or unsupported. Please upload a clear PDF, DOCX, DOC, or TXT file."
         return jsonify({
             'success': False,
-            'message': 'Unable to extract text from resume. Please upload a clear PDF, DOCX, DOC, or TXT file.'
+            'message': msg
         }), 400
 
     analysis = parse_resume_content(raw_text, target_role)
@@ -1604,6 +1750,10 @@ def analyze_resume():
         'success': True,
         'message': f'Resume successfully analyzed! ATS Score: {analysis["atsScore"]}/100',
         'data': analysis,
+        'candidateName': analysis.get('candidateName', 'Student Candidate'),
+        'email': analysis.get('email', ''),
+        'phone': analysis.get('phone', ''),
+        'education': analysis.get('education', []),
         'atsScore': analysis['atsScore'],
         'scoreGrade': analysis['scoreGrade'],
         'skills': analysis['skills'],
