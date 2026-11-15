@@ -659,6 +659,28 @@
                   </div>
                 </div>
 
+                <!-- Matched & Missing Skills Comparison -->
+                <div class="grid-responsive-2 gap-2 mb-3" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+                  <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--radius-md); padding: 0.75rem;">
+                    <h5 style="font-size: 0.825rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-circle-check mr-1"></i> Matched Role Skills</span>
+                      <span class="badge badge-success text-xs" id="resume-matched-count">0</span>
+                    </h5>
+                    <div id="resume-role-matched-skills" class="flex flex-wrap gap-1" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                      <!-- Matched pills -->
+                    </div>
+                  </div>
+                  <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: var(--radius-md); padding: 0.75rem;">
+                    <h5 style="font-size: 0.825rem; font-weight: 700; color: var(--accent-rose); margin-bottom: 0.4rem; display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-triangle-exclamation mr-1"></i> Missing Required Skills</span>
+                      <span class="badge badge-danger text-xs" id="resume-missing-count">0</span>
+                    </h5>
+                    <div id="resume-role-missing-skills" class="flex flex-wrap gap-1" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                      <!-- Missing pills -->
+                    </div>
+                  </div>
+                </div>
+
                 <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-wand-magic-sparkles text-amber"></i> Actionable ATS Improvement Tips</h4>
                 <div id="resume-suggestions-extracted">
                   <!-- Suggestions injected here -->

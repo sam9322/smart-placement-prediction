@@ -1128,20 +1128,21 @@ def get_prediction_history():
 # ==============================================================================
 TECH_KEYWORDS = [
     'Python', 'Java', 'C++', 'C', 'C#', 'JavaScript', 'TypeScript', 'Ruby', 'PHP', 'Go', 'Golang', 'Rust', 'Kotlin', 'Swift',
-    'HTML', 'HTML5', 'CSS', 'CSS3', 'Tailwind', 'Bootstrap', 'React', 'React.js', 'Next.js', 'Angular', 'Vue.js', 'Redux',
-    'Node.js', 'Express', 'Express.js', 'Django', 'Flask', 'FastAPI', 'Spring', 'Spring Boot', 'REST APIs', 'GraphQL',
-    'SQL', 'MySQL', 'PostgreSQL', 'SQLite', 'MongoDB', 'Redis', 'Cassandra', 'DBMS',
+    'HTML', 'HTML5', 'CSS', 'CSS3', 'Tailwind', 'Tailwind CSS', 'Bootstrap', 'React', 'React.js', 'Next.js', 'Angular', 'Vue.js', 'Redux',
+    'Node.js', 'Express', 'Express.js', 'Django', 'Flask', 'FastAPI', 'Spring', 'Spring Boot', 'REST APIs', 'RESTful APIs', 'GraphQL', 'Microservices',
+    'SQL', 'MySQL', 'PostgreSQL', 'SQLite', 'MongoDB', 'Redis', 'Cassandra', 'DBMS', 'NoSQL',
     'Data Structures & Algorithms', 'DSA', 'System Design', 'OOP', 'Object Oriented Programming',
     'Operating Systems', 'Computer Networks', 'Git & GitHub', 'Git', 'GitHub', 'Linux', 'Bash', 'Shell Scripting',
-    'AWS', 'Amazon Web Services', 'Azure', 'Google Cloud', 'Docker', 'Docker Basics', 'Kubernetes', 'CI/CD', 'Jenkins',
-    'Machine Learning', 'Deep Learning', 'Artificial Intelligence', 'AI', 'NLP', 'Computer Vision',
+    'AWS', 'Amazon Web Services', 'Azure', 'Google Cloud', 'GCP', 'Docker', 'Docker Basics', 'Kubernetes', 'CI/CD', 'Jenkins',
+    'Machine Learning', 'Deep Learning', 'Artificial Intelligence', 'AI', 'NLP', 'Computer Vision', 'OpenCV',
     'PyTorch', 'TensorFlow', 'Scikit-Learn', 'Pandas & NumPy', 'Pandas', 'NumPy', 'Power BI', 'Tableau', 'Excel',
-    'Cybersecurity', 'Ethical Hacking', 'Penetration Testing', 'Wireshark'
+    'Cybersecurity', 'Ethical Hacking', 'Penetration Testing', 'Wireshark', 'Cryptography', 'Network Security'
 ]
 
 ACTION_VERBS = [
     'developed', 'built', 'designed', 'implemented', 'optimized', 'engineered', 
-    'created', 'deployed', 'architected', 'spearheaded', 'automated', 'reduced', 'improved'
+    'created', 'deployed', 'architected', 'spearheaded', 'automated', 'reduced', 'improved',
+    'trained', 'formulated', 'collaborated', 'scaled', 'integrated'
 ]
 
 ROLE_REQUIREMENTS = {
@@ -1153,6 +1154,88 @@ ROLE_REQUIREMENTS = {
     'cybersecurity': ['Computer Networks', 'Linux', 'Ethical Hacking', 'Operating Systems', 'Python']
 }
 
+def extract_file_text(file_bytes, file_name):
+    lower_name = (file_name or '').lower()
+    raw_text = ''
+    
+    if lower_name.endswith('.pdf'):
+        # 1. Try PyPDF2
+        try:
+            import io
+            from PyPDF2 import PdfReader
+            pdf_reader = PdfReader(io.BytesIO(file_bytes))
+            pages = [p.extract_text() or '' for p in pdf_reader.pages]
+            raw_text = '\n'.join(pages).strip()
+        except Exception as e:
+            print(f"PyPDF2 extraction notice: {e}")
+            
+        # 2. Fallback to pdfminer if PyPDF2 failed or extracted very little text
+        if len(raw_text) < 40:
+            try:
+                import io
+                from pdfminer.high_level import extract_text as pdfminer_extract
+                raw_text = pdfminer_extract(io.BytesIO(file_bytes)).strip()
+            except Exception as e:
+                print(f"pdfminer fallback notice: {e}")
+                
+    elif lower_name.endswith('.docx'):
+        try:
+            import io
+            import docx
+            doc = docx.Document(io.BytesIO(file_bytes))
+            p_text = [p.text for p in doc.paragraphs if p.text.strip()]
+            t_text = []
+            for t in doc.tables:
+                for row in t.rows:
+                    cells = [c.text.strip() for c in row.cells if c.text.strip()]
+                    if cells:
+                        t_text.append(' | '.join(cells))
+            raw_text = '\n'.join(p_text + t_text).strip()
+        except Exception as e:
+            print(f"docx extraction notice: {e}")
+            
+    elif lower_name.endswith('.doc'):
+        # Binary Word 97-2003 stream extraction for ASCII and UTF-16LE text blocks
+        lines = []
+        for m in re.findall(rb'[\x20-\x7E\t\r\n]{4,}', file_bytes):
+            try:
+                s = m.decode('ascii', errors='ignore').strip()
+                if len(s) >= 4 and not re.match(r'^(?:WordDocument|SummaryInformation|CompObj|ObjectPool)', s):
+                    lines.append(s)
+            except Exception:
+                pass
+        for m in re.findall(rb'(?:[\x20-\x7E][\x00]){4,}', file_bytes):
+            try:
+                s = m.decode('utf-16le', errors='ignore').strip()
+                if len(s) >= 4 and not re.match(r'^(?:WordDocument|SummaryInformation|CompObj|ObjectPool)', s):
+                    lines.append(s)
+            except Exception:
+                pass
+        raw_text = '\n'.join(lines).strip()
+        
+    else: # Plain text or fallback
+        for enc in ['utf-8', 'latin-1', 'cp1252', 'utf-16']:
+            try:
+                raw_text = file_bytes.decode(enc).strip()
+                if raw_text:
+                    break
+            except Exception:
+                pass
+                
+    return raw_text
+
+def check_skill_match(req, user_skills):
+    req_l = req.lower().replace('/', ' ').replace('&', ' ')
+    req_parts = [p.strip() for p in req_l.split() if len(p.strip()) > 1]
+    for u in user_skills:
+        u_l = u.lower().replace('/', ' ').replace('&', ' ')
+        if req_l in u_l or u_l in req_l:
+            return True
+        for part in req_parts:
+            if part in u_l:
+                return True
+    return False
+
 def parse_resume_content(raw_text, target_role_id='sde'):
     text = raw_text or ''
     lower_text = text.lower()
@@ -1161,20 +1244,29 @@ def parse_resume_content(raw_text, target_role_id='sde'):
     email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
     email = email_match.group(0) if email_match else ''
 
-    phone_match = re.search(r'(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}', text)
-    phone = phone_match.group(0) if phone_match else ''
+    # Support Indian 10-digit, 5-5 with country code (+91 98765 11052), and international phone numbers
+    phone_match = re.search(r'(?:\+?91[\s\-]?)?[6-9]\d{4}[\s\-]?\d{5}|\+?\d{1,3}[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\b[6-9]\d{9}\b', text)
+    phone = phone_match.group(0).strip() if phone_match else ''
 
-    # Extract Name (Heuristic: first non-empty line or first uppercase line)
+    # Extract Name (Heuristic: first non-empty line skipping headers)
     lines = [line.strip() for line in text.split('\n') if line.strip()]
-    candidate_name = lines[0] if lines else 'Student Candidate'
-    if len(candidate_name) > 40 or '@' in candidate_name:
-        candidate_name = 'Student Candidate'
+    candidate_name = 'Student Candidate'
+    for line in lines[:5]:
+        low = line.lower()
+        if any(h in low for h in ['resume', 'curriculum', 'vitae', 'email', 'phone', 'github', 'linkedin', 'http', '@']):
+            continue
+        if len(line) >= 3 and len(line) <= 40 and not line.isdigit():
+            candidate_name = line
+            break
 
     # 2. Extract Skills
     detected_skills = []
     for skill in TECH_KEYWORDS:
-        # Match as whole word / token boundary
-        pattern = r'\b' + re.escape(skill.lower()) + r'\b'
+        # Match as whole word / token boundary (escape special characters like C++, C#)
+        if skill in ['C++', 'C#', '.NET']:
+            pattern = re.escape(skill)
+        else:
+            pattern = r'\b' + re.escape(skill.lower()) + r'\b'
         if re.search(pattern, lower_text):
             detected_skills.append(skill)
     # Deduplicate while preserving order
@@ -1191,58 +1283,132 @@ def parse_resume_content(raw_text, target_role_id='sde'):
     else:
         education_info.append(f"Bachelor of Technology • {cgpa_str}")
 
-    # 4. Extract Projects
+    # 4. Extract Projects (Section-Aware + Heuristic)
     projects = []
-    # Identify Project sections or keywords
-    proj_patterns = [
-        r'(?:project|developed|built|created)\s*[:\-–]\s*([^\n\r]+)',
-        r'•\s*([A-Z][A-Za-z0-9\s\-]+(?:Portal|System|App|Platform|Tracker|Classifier|Dashboard))'
-    ]
-    for pat in proj_patterns:
-        for m in re.finditer(pat, text):
-            proj_title = m.group(1).strip()
-            if len(proj_title) > 5 and len(proj_title) < 60 and proj_title not in [p['title'] for p in projects]:
-                projects.append({
-                    'title': proj_title,
-                    'desc': 'Implemented end-to-end functionality with modern software architectures and reliable testing.'
-                })
-    if not projects:
-        # Fallback realistic project based on detected skills
-        top_skill = unique_skills[0] if unique_skills else 'Web Architecture'
-        projects.append({
+    proj_sec = re.search(r'(?:KEY\s+|ACADEMIC\s+)?PROJECTS?(?:\s*&?\s*(?:PORTFOLIO|ACADEMIC))?\s*[:\n](.+?)(?=\n[A-Z\s]{4,}[:\n]|\Z)', text, re.DOTALL | re.IGNORECASE)
+    if proj_sec:
+        sec_content = proj_sec.group(1).strip()
+        sec_lines = [l.strip() for l in sec_content.split('\n') if l.strip()]
+        current_proj = None
+        for line in sec_lines:
+            if line.startswith(('•', '-', '*', '–')):
+                if current_proj:
+                    current_proj['desc_bullets'].append(line.lstrip('•-*– ').strip())
+            else:
+                clean_title = re.sub(r'\s*\([^)]*\)', '', line).strip()
+                clean_title = re.sub(r'\s*\|.*$', '', clean_title).strip()
+                if len(clean_title) >= 3 and len(clean_title) <= 65 and not clean_title.lower().startswith(('github', 'http', 'tech', 'stack', 'technologies:')):
+                    if current_proj:
+                        projects.append(current_proj)
+                    current_proj = {'title': clean_title, 'desc_bullets': []}
+        if current_proj:
+            projects.append(current_proj)
+
+    # Format projects
+    formatted_projects = []
+    for p in projects:
+        desc = ' • '.join(p['desc_bullets']) if p['desc_bullets'] else 'Engineered reliable software modules and integrated tested API endpoints.'
+        formatted_projects.append({'title': p['title'], 'desc': desc})
+
+    if not formatted_projects:
+        # Fallback to regex scanner if no explicit section header found
+        proj_patterns = [
+            r'(?:project|developed|built|created)\s*[:\-–]\s*([^\n\r]+)',
+            r'•\s*([A-Z][A-Za-z0-9\s\-]+(?:Portal|System|App|Platform|Tracker|Classifier|Dashboard))'
+        ]
+        for pat in proj_patterns:
+            for m in re.finditer(pat, text):
+                proj_title = m.group(1).strip()
+                if len(proj_title) > 5 and len(proj_title) < 60 and proj_title not in [p['title'] for p in formatted_projects]:
+                    formatted_projects.append({
+                        'title': proj_title,
+                        'desc': 'Implemented end-to-end functionality with modern software architectures and reliable testing.'
+                    })
+
+    if not formatted_projects:
+        top_skill = unique_skills[0] if unique_skills else 'Software Architecture'
+        formatted_projects.append({
             'title': f'{top_skill} Enterprise Portal',
             'desc': 'Architected full-stack modules with database integration and RESTful API communications.'
         })
 
-    # 5. Extract Internships & Work Experience
+    # 5. Extract Internships & Work Experience (Section-Aware)
     internships = []
-    if 'intern' in lower_text or 'experience' in lower_text or 'trainee' in lower_text:
+    exp_sec = re.search(r'(?:WORK\s+EXPERIENCE|INTERNSHIPS?|PROFESSIONAL\s+EXPERIENCE|EXPERIENCE)\s*[:\n](.+?)(?=\n[A-Z\s]{4,}[:\n]|\Z)', text, re.DOTALL | re.IGNORECASE)
+    if exp_sec:
+        sec_content = exp_sec.group(1).strip()
+        sec_lines = [l.strip() for l in sec_content.split('\n') if l.strip()]
+        current_exp = None
+        for line in sec_lines:
+            if line.startswith(('•', '-', '*', '–')):
+                if current_exp:
+                    current_exp['desc_bullets'].append(line.lstrip('•-*– ').strip())
+            else:
+                role = 'Software Engineering Intern'
+                company = 'Technology Solutions'
+                m1 = re.search(r'([A-Za-z\s]+(?:Intern|Developer|Engineer|Lead|Analyst|Consultant))\s*[-–|@]\s*([A-Za-z0-9\s]+?)(?:\s*\(|\s*$)', line)
+                if m1:
+                    role = m1.group(1).strip()
+                    company = m1.group(2).strip()
+                else:
+                    m2 = re.search(r'([A-Za-z0-9\s]+?)\s*[-–|@]\s*([A-Za-z\s]+(?:Intern|Developer|Engineer|Lead|Analyst|Consultant))', line)
+                    if m2:
+                        company = m2.group(1).strip()
+                        role = m2.group(2).strip()
+                    else:
+                        m3 = re.search(r'([A-Za-z\s]+(?:Intern|Developer|Engineer|Lead|Analyst|Consultant))', line)
+                        if m3:
+                            role = m3.group(1).strip()
+                            company = line.replace(role, '').strip(' -–|@()') or 'Technology Organization'
+                if current_exp:
+                    internships.append(current_exp)
+                current_exp = {'role': role, 'company': company, 'desc_bullets': []}
+        if current_exp:
+            internships.append(current_exp)
+
+    formatted_internships = []
+    for e in internships:
+        desc = ' • '.join(e['desc_bullets']) if e['desc_bullets'] else 'Collaborated with engineering team on production code, REST APIs, and automated testing.'
+        formatted_internships.append({'role': e['role'], 'company': e['company'], 'desc': desc})
+
+    if not formatted_internships and ('intern' in lower_text or 'experience' in lower_text or 'trainee' in lower_text):
         intern_match = re.search(r'(?:intern(?:ship)?|software engineer|developer)\s*(?:at|@|-)\s*([A-Za-z0-9\s]+)', text, re.IGNORECASE)
-        company = intern_match.group(1).strip()[:30] if intern_match else 'Software Solutions Inc.'
-        internships.append({
+        company = intern_match.group(1).strip()[:30] if intern_match else 'Technology Solutions'
+        formatted_internships.append({
             'company': company,
             'role': 'Software Engineering Intern',
             'desc': 'Contributed to production codebases, automated database queries, and implemented unit test coverage.'
         })
 
-    # 6. Extract Certifications
+    # 6. Extract Certifications (Section-Aware)
     certifications = []
-    cert_matches = re.findall(r'(aws\s+[A-Za-z\s]+|hackerrank\s+[A-Za-z\s]+|coursera\s+[A-Za-z\s]+|google\s+[A-Za-z\s]+|certified\s+[A-Za-z\s]+)', text, re.IGNORECASE)
-    for c in cert_matches[:3]:
-        clean_c = c.strip()[:40]
-        if len(clean_c) > 6 and clean_c not in certifications:
-            certifications.append(clean_c)
+    cert_sec = re.search(r'(?:CERTIFICATIONS?|LICENSES?|ACHIEVEMENTS?)\s*[:\n](.+?)(?=\n[A-Z\s]{4,}[:\n]|\Z)', text, re.DOTALL | re.IGNORECASE)
+    if cert_sec:
+        sec_content = cert_sec.group(1).strip()
+        for line in sec_content.split('\n'):
+            c = line.lstrip('•-*– 0123456789.').strip()
+            if len(c) > 4 and len(c) < 80 and c not in certifications:
+                certifications.append(c)
+
+    if not certifications:
+        cert_matches = re.findall(r'(aws\s+[A-Za-z\s]+|hackerrank\s+[A-Za-z\s]+|coursera\s+[A-Za-z\s]+|google\s+[A-Za-z\s]+|certified\s+[A-Za-z\s]+)', text, re.IGNORECASE)
+        for c in cert_matches[:3]:
+            clean_c = c.strip()[:40]
+            if len(clean_c) > 6 and clean_c not in certifications:
+                certifications.append(clean_c)
 
     # 7. Compute ATS Score (0 - 100)
     score = 0
     suggestions = []
 
     # Contact Info (+15)
-    if email and phone:
+    has_email = bool(email)
+    has_phone = bool(phone)
+    if has_email and has_phone:
         score += 15
-    elif email or phone:
+    elif has_email or has_phone:
         score += 10
-        suggestions.append("Add both a professional email and phone number at the top of your resume header.")
+        suggestions.append("Add both a professional college email and mobile number at the top of your resume header.")
     else:
         suggestions.append("Missing primary contact details (email or phone). Ensure headers are ATS-parseable.")
 
@@ -1250,28 +1416,31 @@ def parse_resume_content(raw_text, target_role_id='sde'):
     if education_info:
         score += 15
 
-    # Skills (+25)
-    if len(unique_skills) >= 8:
+    # Skills Density (+25)
+    if len(unique_skills) >= 10:
         score += 25
+    elif len(unique_skills) >= 7:
+        score += 20
+        suggestions.append("Broaden your skills section with 3+ complementary libraries, cloud platforms, or databases.")
     elif len(unique_skills) >= 4:
-        score += 18
+        score += 15
         suggestions.append("Expand your Technical Skills matrix to include 8+ in-demand industry tools.")
     else:
-        score += 10
-        suggestions.append("Low keyword density: Incorporate more explicit programming languages and developer frameworks.")
+        score += 8
+        suggestions.append("Low keyword density: Incorporate more explicit programming languages, databases, and developer frameworks.")
 
     # Projects (+20)
-    if len(projects) >= 2:
+    if len(formatted_projects) >= 2:
         score += 20
-    elif len(projects) >= 1:
-        score += 15
+    elif len(formatted_projects) >= 1:
+        score += 14
         suggestions.append("Include at least 2 distinct capstone projects with live demo links and tech stack labels.")
     else:
         score += 5
-        suggestions.append("No prominent Project section detected. Hiring managers heavily prioritize portfolio projects.")
+        suggestions.append("No prominent Project section detected. Campus hiring managers heavily prioritize portfolio projects.")
 
     # Experience / Internships (+15)
-    if internships:
+    if formatted_internships:
         score += 15
     else:
         score += 5
@@ -1279,10 +1448,10 @@ def parse_resume_content(raw_text, target_role_id='sde'):
 
     # Action Verbs & Metrics (+10)
     verb_count = sum(1 for verb in ACTION_VERBS if verb in lower_text)
-    has_metrics = bool(re.search(r'\b\d+%\b|\b\d+x\b|\b\d+\+?\s*(?:users|queries|ms|sec)\b', lower_text))
+    has_metrics = bool(re.search(r'\b\d+%\b|\b\d+x\b|\b\d+\+?\s*(?:users|queries|ms|sec|requests)\b', lower_text))
     if verb_count >= 3 and has_metrics:
         score += 10
-    elif verb_count >= 1:
+    elif verb_count >= 1 or has_metrics:
         score += 6
         suggestions.append("Quantify your impact using measurable metrics (e.g. 'reduced latency by 35%', 'served 500+ users').")
     else:
@@ -1293,9 +1462,9 @@ def parse_resume_content(raw_text, target_role_id='sde'):
 
     # 8. Compute Target Role Fit
     req_skills = ROLE_REQUIREMENTS.get(target_role_id, ROLE_REQUIREMENTS['sde'])
-    matched_role_skills = [s for s in req_skills if any(s.lower() in u.lower() or u.lower() in s.lower() for u in unique_skills)]
+    matched_role_skills = [s for s in req_skills if check_skill_match(s, unique_skills)]
     missing_role_skills = [s for s in req_skills if s not in matched_role_skills]
-    role_match_pct = round((len(matched_role_skills) / len(req_skills)) * 100)
+    role_match_pct = round((len(matched_role_skills) / len(req_skills)) * 100) if req_skills else 75
 
     grade = 'Needs Refinement'
     if ats_score >= 80: grade = 'Excellent (ATS Ready)'
@@ -1309,8 +1478,8 @@ def parse_resume_content(raw_text, target_role_id='sde'):
         'scoreGrade': grade,
         'skills': unique_skills,
         'education': education_info,
-        'projects': projects,
-        'internships': internships,
+        'projects': formatted_projects,
+        'internships': formatted_internships,
         'certifications': certifications,
         'targetRoleMatch': {
             'targetRole': target_role_id.upper(),
@@ -1327,51 +1496,24 @@ def analyze_resume():
     raw_text = ''
     file_name = 'Uploaded Resume'
 
-    # Check if a file was uploaded in multipart
+    # Check if a file was uploaded in multipart/form-data
     if 'file' in request.files:
         uploaded_file = request.files['file']
         file_name = uploaded_file.filename or 'resume.pdf'
         file_bytes = uploaded_file.read()
-        lower_name = file_name.lower()
-
-        # PDF Parsing
-        if lower_name.endswith('.pdf'):
-            try:
-                import io
-                from PyPDF2 import PdfReader
-                pdf_reader = PdfReader(io.BytesIO(file_bytes))
-                pages_text = [page.extract_text() or '' for page in pdf_reader.pages]
-                raw_text = '\n'.join(pages_text)
-            except Exception as e:
-                print(f"Error parsing PDF with PyPDF2: {e}")
-                raw_text = file_bytes.decode('utf-8', errors='ignore')
-
-        # DOCX Parsing
-        elif lower_name.endswith('.docx') or lower_name.endswith('.doc'):
-            try:
-                import io
-                import docx
-                doc = docx.Document(io.BytesIO(file_bytes))
-                raw_text = '\n'.join([p.text for p in doc.paragraphs])
-            except Exception as e:
-                print(f"Error parsing DOCX: {e}")
-                raw_text = file_bytes.decode('utf-8', errors='ignore')
-
-        # Plain text
-        else:
-            raw_text = file_bytes.decode('utf-8', errors='ignore')
+        raw_text = extract_file_text(file_bytes, file_name)
 
     # Or check if text was sent in JSON payload
     elif request.is_json:
         data = request.get_json() or {}
         raw_text = data.get('text', '')
-        file_name = data.get('fileName', 'Pasted Resume Text')
+        file_name = data.get('fileName', 'Student_Profile_Resume.pdf')
         target_role = data.get('targetRole', target_role)
 
-    if not raw_text or len(raw_text.strip()) < 20:
+    if not raw_text or len(raw_text.strip()) < 15:
         return jsonify({
             'success': False,
-            'message': 'Unable to extract text from resume. Please upload a clear PDF, DOCX, or text file.'
+            'message': 'Unable to extract text from resume. Please upload a clear PDF, DOCX, DOC, or TXT file.'
         }), 400
 
     analysis = parse_resume_content(raw_text, target_role)

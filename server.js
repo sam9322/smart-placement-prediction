@@ -406,61 +406,216 @@ app.all('/api/user/interview', (req, res) => {
 
 // Resume ATS Analysis Endpoint
 app.post('/api/resume/analyze', (req, res) => {
-  const targetRole = (req.query.targetRole || req.body.targetRole || 'sde').toLowerCase();
-  const rawText = req.body.text || '';
-  const fileName = req.body.fileName || 'Uploaded Resume';
+  const targetRole = (req.query.targetRole || (req.body && req.body.targetRole) || 'sde').toLowerCase();
+  const rawText = (req.body && req.body.text) || '';
+  const fileName = (req.body && req.body.fileName) || 'Uploaded Resume';
   const lower = rawText.toLowerCase();
 
   const skillsList = [
-    'Java', 'Python', 'C++', 'JavaScript', 'TypeScript', 'React.js', 'Node.js',
-    'Express.js', 'SQL & DBMS', 'MongoDB', 'Docker', 'AWS', 'System Design',
-    'Git & GitHub', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow',
-    'Pandas & NumPy', 'Power BI'
+    'Python', 'Java', 'C++', 'C', 'C#', 'JavaScript', 'TypeScript', 'Ruby', 'PHP', 'Go', 'Golang', 'Rust', 'Kotlin', 'Swift',
+    'HTML', 'HTML5', 'CSS', 'CSS3', 'Tailwind', 'Bootstrap', 'React', 'React.js', 'Next.js', 'Angular', 'Vue.js', 'Redux',
+    'Node.js', 'Express', 'Express.js', 'Django', 'Flask', 'FastAPI', 'Spring', 'Spring Boot', 'REST APIs', 'GraphQL', 'Microservices',
+    'SQL', 'MySQL', 'PostgreSQL', 'SQLite', 'MongoDB', 'Redis', 'Cassandra', 'DBMS', 'NoSQL',
+    'Data Structures & Algorithms', 'DSA', 'System Design', 'OOP', 'Object Oriented Programming',
+    'Operating Systems', 'Computer Networks', 'Git & GitHub', 'Git', 'GitHub', 'Linux', 'Bash', 'Shell Scripting',
+    'AWS', 'Amazon Web Services', 'Azure', 'Google Cloud', 'Docker', 'Docker Basics', 'Kubernetes', 'CI/CD', 'Jenkins',
+    'Machine Learning', 'Deep Learning', 'Artificial Intelligence', 'AI', 'NLP', 'Computer Vision', 'OpenCV',
+    'PyTorch', 'TensorFlow', 'Scikit-Learn', 'Pandas & NumPy', 'Pandas', 'NumPy', 'Power BI', 'Tableau', 'Excel',
+    'Cybersecurity', 'Ethical Hacking', 'Penetration Testing', 'Wireshark', 'Cryptography', 'Network Security'
   ];
-  const detected = skillsList.filter(s => lower.includes(s.toLowerCase().replace('&', '')));
-  const atsScore = Math.min(95, Math.max(55, 45 + detected.length * 5));
 
+  const detected = [];
+  skillsList.forEach(s => {
+    const escaped = s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    const regex = (s === 'C++' || s === 'C#' || s === '.NET') ? new RegExp(escaped, 'i') : new RegExp('\\b' + escaped + '\\b', 'i');
+    if (regex.test(rawText)) {
+      detected.push(s);
+    }
+  });
+  const uniqueSkills = [...new Set(detected)];
+
+  // Email and Phone Extraction
+  const emailMatch = rawText.match(/[\w\.-]+@[\w\.-]+\.\w+/);
+  const email = emailMatch ? emailMatch[0] : '';
+  const phoneMatch = rawText.match(/(?:\+?91[\s\-]?)?[6-9]\d{4}[\s\-]?\d{5}|\+?\d{1,3}[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}|\b[6-9]\d{9}\b/);
+  const phone = phoneMatch ? phoneMatch[0].trim() : '';
+
+  // Candidate Name
+  const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  let candidateName = 'Student Candidate';
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    const lowLine = lines[i].toLowerCase();
+    if (['resume', 'curriculum', 'email', 'phone', 'github', 'linkedin', '@'].some(h => lowLine.includes(h))) continue;
+    if (lines[i].length >= 3 && lines[i].length <= 40 && !/^\d+$/.test(lines[i])) {
+      candidateName = lines[i];
+      break;
+    }
+  }
+
+  // Section-aware Projects
+  const projects = [];
+  const projSecMatch = rawText.match(/(?:KEY\s+|ACADEMIC\s+)?PROJECTS?(?:\s*&?\s*(?:PORTFOLIO|ACADEMIC))?\s*[:\n]([\s\S]+?)(?=\n[A-Z\s]{4,}[:\n]|$)/i);
+  if (projSecMatch) {
+    const secLines = projSecMatch[1].split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let curProj = null;
+    secLines.forEach(line => {
+      if (/^[•\-*–]/.test(line)) {
+        if (curProj) curProj.bullets.push(line.replace(/^[•\-*–\s]+/, '').trim());
+      } else {
+        const cleanTitle = line.replace(/\s*\([^)]*\)/g, '').replace(/\s*\|.*$/, '').trim();
+        if (cleanTitle.length >= 3 && cleanTitle.length <= 65 && !/^(?:github|http|tech|stack)/i.test(cleanTitle)) {
+          if (curProj) projects.push(curProj);
+          curProj = { title: cleanTitle, bullets: [] };
+        }
+      }
+    });
+    if (curProj) projects.push(curProj);
+  }
+
+  const formattedProjects = projects.length > 0 ? projects.map(p => ({
+    title: p.title,
+    desc: p.bullets.length > 0 ? p.bullets.join(' • ') : 'Engineered reliable software modules and integrated tested API endpoints.'
+  })) : [
+    { title: `${uniqueSkills[0] || 'Software'} Enterprise Portal`, desc: 'Architected full-stack modules with database integration and RESTful API communications.' }
+  ];
+
+  // Section-aware Internships / Experience
+  const internships = [];
+  const expSecMatch = rawText.match(/(?:WORK\s+EXPERIENCE|INTERNSHIPS?|PROFESSIONAL\s+EXPERIENCE|EXPERIENCE)\s*[:\n]([\s\S]+?)(?=\n[A-Z\s]{4,}[:\n]|$)/i);
+  if (expSecMatch) {
+    const secLines = expSecMatch[1].split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let curExp = null;
+    secLines.forEach(line => {
+      if (/^[•\-*–]/.test(line)) {
+        if (curExp) curExp.bullets.push(line.replace(/^[•\-*–\s]+/, '').trim());
+      } else {
+        let role = 'Software Engineering Intern';
+        let company = 'Technology Solutions';
+        const m = line.match(/([A-Za-z\s]+(?:Intern|Developer|Engineer|Lead|Analyst))\s*[-–|@]\s*([A-Za-z0-9\s]+?)(?:\s*\(|$)/i);
+        if (m) {
+          role = m[1].trim();
+          company = m[2].trim();
+        }
+        if (curExp) internships.push(curExp);
+        curExp = { role, company, bullets: [] };
+      }
+    });
+    if (curExp) internships.push(curExp);
+  }
+
+  const formattedInternships = internships.length > 0 ? internships.map(e => ({
+    role: e.role,
+    company: e.company,
+    desc: e.bullets.length > 0 ? e.bullets.join(' • ') : 'Collaborated with engineering team on production code and automated testing.'
+  })) : (/intern|experience|trainee/i.test(lower) ? [{
+    role: 'Software Engineering Intern',
+    company: 'Technology Solutions',
+    desc: 'Contributed to production codebases, automated database queries, and implemented unit test coverage.'
+  }] : []);
+
+  // Certifications
+  const certifications = [];
+  const certSecMatch = rawText.match(/(?:CERTIFICATIONS?|LICENSES?|ACHIEVEMENTS?)\s*[:\n]([\s\S]+?)(?=\n[A-Z\s]{4,}[:\n]|$)/i);
+  if (certSecMatch) {
+    certSecMatch[1].split('\n').forEach(l => {
+      const c = l.replace(/^[•\-*–\s\d.]+/, '').trim();
+      if (c.length > 4 && c.length < 80 && !certifications.includes(c)) certifications.push(c);
+    });
+  }
+
+  // ATS Scoring
+  let score = 0;
+  const suggestions = [];
+
+  if (email && phone) score += 15;
+  else if (email || phone) { score += 10; suggestions.push('Add both a professional college email and mobile number at the top of your resume header.'); }
+  else suggestions.push('Missing primary contact details (email or phone). Ensure headers are ATS-parseable.');
+
+  score += 15; // Education points
+
+  if (uniqueSkills.length >= 10) score += 25;
+  else if (uniqueSkills.length >= 7) { score += 20; suggestions.push('Broaden your skills section with 3+ complementary libraries, cloud platforms, or databases.'); }
+  else if (uniqueSkills.length >= 4) { score += 15; suggestions.push('Expand your Technical Skills matrix to include 8+ in-demand industry tools.'); }
+  else { score += 8; suggestions.push('Low keyword density: Incorporate more explicit programming languages, databases, and developer frameworks.'); }
+
+  if (formattedProjects.length >= 2) score += 20;
+  else if (formattedProjects.length >= 1) { score += 14; suggestions.push('Include at least 2 distinct capstone projects with live demo links and tech stack labels.'); }
+  else { score += 5; suggestions.push('No prominent Project section detected. Campus hiring managers heavily prioritize portfolio projects.'); }
+
+  if (formattedInternships.length > 0) score += 15;
+  else { score += 5; suggestions.push('No internship or work experience section found. Add open-source contributions or research work.'); }
+
+  const actionVerbs = ['developed', 'built', 'designed', 'implemented', 'optimized', 'engineered', 'created', 'deployed', 'architected', 'automated'];
+  const verbCount = actionVerbs.filter(v => lower.includes(v)).length;
+  const hasMetrics = /\b\d+%\b|\b\d+x\b|\b\d+\+?\s*(?:users|queries|ms|sec|requests)\b/i.test(lower);
+  if (verbCount >= 3 && hasMetrics) score += 10;
+  else if (verbCount >= 1 || hasMetrics) { score += 6; suggestions.push('Quantify your impact using measurable metrics (e.g. reduced latency by 35%, served 500+ users).'); }
+  else { score += 3; suggestions.push('Begin bullet points with strong action verbs: Designed, Engineered, Optimized, Automated.'); }
+
+  const atsScore = Math.min(98, Math.max(35, score));
+
+  // Role Matching
   const roleRequirements = {
-    sde: ['Java', 'C++', 'Data Structures & Algorithms', 'System Design', 'SQL & DBMS'],
-    webdev: ['JavaScript', 'React.js', 'Node.js', 'HTML5', 'CSS3'],
-    'data-analyst': ['Python', 'SQL & DBMS', 'Power BI', 'Pandas & NumPy', 'Statistics'],
-    aiml: ['Python', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow'],
-    'cloud-devops': ['AWS', 'Docker', 'Linux', 'Kubernetes', 'CI/CD'],
-    cybersecurity: ['Networking', 'Linux', 'Security Auditing', 'Cryptography', 'Python']
+    sde: ['Data Structures & Algorithms', 'Java', 'C++', 'SQL & DBMS', 'Operating Systems', 'Computer Networks', 'System Design', 'Git & GitHub'],
+    webdev: ['HTML/CSS', 'JavaScript', 'React.js', 'Node.js', 'REST APIs', 'SQL & DBMS', 'Git & GitHub', 'TypeScript'],
+    'data-analyst': ['Python', 'SQL & DBMS', 'Power BI', 'Pandas & NumPy', 'Statistics', 'Excel'],
+    aiml: ['Python', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow', 'Data Structures & Algorithms', 'Scikit-Learn'],
+    'cloud-devops': ['Linux', 'AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Python', 'Computer Networks'],
+    cybersecurity: ['Computer Networks', 'Linux', 'Ethical Hacking', 'Operating Systems', 'Python']
   };
 
   const reqSkills = roleRequirements[targetRole] || roleRequirements['sde'];
-  const matched = reqSkills.filter(r => detected.some(d => d.toLowerCase().includes(r.toLowerCase())));
-  const missing = reqSkills.filter(r => !matched.includes(r));
+  const matchedSkills = reqSkills.filter(req => {
+    const reqClean = req.toLowerCase().replace(/[/&]/g, ' ');
+    const parts = reqClean.split(/\s+/).filter(p => p.length > 1);
+    return uniqueSkills.some(u => {
+      const uClean = u.toLowerCase().replace(/[/&]/g, ' ');
+      return reqClean.includes(uClean) || uClean.includes(reqClean) || parts.some(p => uClean.includes(p));
+    });
+  });
+  const missingSkills = reqSkills.filter(r => !matchedSkills.includes(r));
+  const roleMatchPct = reqSkills.length > 0 ? Math.round((matchedSkills.length / reqSkills.length) * 100) : 75;
+
+  let scoreGrade = 'Needs Refinement';
+  if (atsScore >= 80) scoreGrade = 'Excellent (ATS Ready)';
+  else if (atsScore >= 65) scoreGrade = 'Good (Competitive)';
 
   res.json({
     success: true,
+    message: `Resume successfully analyzed! ATS Score: ${atsScore}/100`,
     data: {
       fileName,
-      candidateName: 'Candidate (Extracted)',
+      candidateName,
+      email,
+      phone,
       atsScore,
-      scoreGrade: atsScore >= 80 ? 'Excellent (Tier 1 Ready)' : 'Good (Competitive)',
-      skills: detected.length > 0 ? detected : ['Java', 'SQL & DBMS', 'Git & GitHub'],
+      scoreGrade,
+      skills: uniqueSkills,
       education: ['Bachelor of Technology • 8.4+ CGPA'],
-      projects: [
-        { title: 'Full-Stack Web / Software Platform', desc: 'Engineered REST API backend with secure user sessions and database queries.' },
-        { title: 'Machine Learning / Algorithmic Pipeline', desc: 'Implemented data processing pipelines with measurable accuracy metrics.' }
-      ],
-      internships: [
-        { company: 'Software Solutions Intern', role: 'Software Engineering Intern', desc: 'Collaborated on production codebase, wrote unit tests, and resolved bugs.' }
-      ],
-      certifications: ['AWS Cloud Practitioner', 'HackerRank Problem Solving'],
+      projects: formattedProjects,
+      internships: formattedInternships,
+      certifications,
       targetRoleMatch: {
         targetRole: targetRole.toUpperCase(),
-        matchPercentage: Math.min(95, Math.round((matched.length / Math.max(1, reqSkills.length)) * 100)),
-        matchedSkills: matched,
-        missingSkills: missing
+        matchPercentage: roleMatchPct,
+        matchedSkills,
+        missingSkills
       },
-      suggestions: [
-        'Add quantitative metrics to your project achievements (e.g. latency reduced by 30%).',
-        'Begin each bullet point with strong action verbs: Architected, Optimized, Engineered.'
-      ]
-    }
+      suggestions
+    },
+    atsScore,
+    scoreGrade,
+    skills: uniqueSkills,
+    projects: formattedProjects,
+    internships: formattedInternships,
+    certifications,
+    targetRoleMatch: {
+      targetRole: targetRole.toUpperCase(),
+      matchPercentage: roleMatchPct,
+      matchedSkills,
+      missingSkills
+    },
+    suggestions
   });
 });
 

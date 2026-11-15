@@ -3,10 +3,29 @@
  * Resume Upload & Analyzer Module
  */
 
-// Dynamically adapts to any dev server port (e.g. 8080, 5000) or production deployment, with fallback for local file opening
-const RESUME_API_BASE = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'http:' || window.location.protocol === 'https:'))
-  ? ''
-  : 'http://localhost:5000';
+function getResumeApiCandidates() {
+  const isFlask = typeof window !== 'undefined' && window.location && window.location.port === '5000';
+  if (isFlask) return [''];
+  return ['http://localhost:5000', 'http://127.0.0.1:5000', ''];
+}
+
+async function requestResumeAnalysis(endpoint, options = {}) {
+  const candidates = getResumeApiCandidates();
+  let lastError = null;
+  for (const base of candidates) {
+    try {
+      const url = `${base}${endpoint}`;
+      const res = await fetch(url, options);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success) return json;
+      }
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('Backend resume analysis service unreachable');
+}
 
 const SAMPLE_SDE_RESUME_TEXT = `
 SAMIKSHA WALBE
@@ -138,13 +157,19 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
   }
 
   loadSampleResume(type = 'current') {
+    const roleSelect = document.getElementById('resume-target-role');
     if (type === 'aiml') {
-      this.analyzeResumeText(SAMPLE_AIML_RESUME_TEXT, 'Priya_Sharma_AIML_Resume.pdf');
+      if (roleSelect) roleSelect.value = 'aiml';
+      this.selectedRole = 'aiml';
+      this.analyzeResumeText(SAMPLE_AIML_RESUME_TEXT, 'Priya_Sharma_AIML_Resume.pdf', 'aiml');
     } else {
-      const currentProfile = appState.getProfile();
+      const currentProfile = (typeof appState !== 'undefined' && appState.getProfile) ? appState.getProfile() : {};
+      const targetRole = currentProfile.targetCareerId || 'sde';
+      if (roleSelect) roleSelect.value = targetRole;
+      this.selectedRole = targetRole;
       const text = this.generateCurrentStudentResume();
       const cleanName = (currentProfile.fullName || 'Student').replace(/\s+/g, '_');
-      this.analyzeResumeText(text, `${cleanName}_Profile_Resume.pdf`);
+      this.analyzeResumeText(text, `${cleanName}_Profile_Resume.pdf`, targetRole);
     }
   }
 
@@ -159,67 +184,76 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       return;
     }
 
-    this.showLoading(true, `Analyzing ${fileName} with Python NLP Engine...`);
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('File size exceeds 10MB limit. Please upload a smaller resume.', 'warning');
+      return;
+    }
+
+    this.showLoading(true, `Uploading & analyzing ${fileName} with Python Flask NLP Engine...`);
 
     const roleSelect = document.getElementById('resume-target-role');
-    const targetRole = roleSelect ? roleSelect.value : 'sde';
+    const targetRole = roleSelect ? roleSelect.value : (this.selectedRole || 'sde');
 
-    // FormData upload for backend PyPDF2 / python-docx parsing
+    // FormData upload for backend PyPDF2 / pdfminer / python-docx parsing
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const res = await fetch(`${RESUME_API_BASE}/api/resume/analyze?targetRole=${targetRole}`, {
+      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${targetRole}`, {
         method: 'POST',
         body: formData
       });
 
-      if (res.ok) {
-        const result = await res.json();
-        if (result.success && result.data) {
-          this.showLoading(false);
-          this.renderAnalysisResult(result.data);
-          showToast(`Resume Analyzed! ATS Score: ${result.data.atsScore}/100`, 'success');
-          return;
-        }
+      if (result && result.success && (result.data || result.atsScore !== undefined)) {
+        const data = result.data || result;
+        data.fileName = fileName;
+        this.showLoading(false);
+        this.renderAnalysisResult(data);
+        showToast(`Resume Analyzed! ATS Score: ${data.atsScore}/100 (${data.scoreGrade})`, 'success');
+        return;
       }
     } catch (err) {
-      console.warn('Backend multipart parsing failed, trying client reader:', err);
+      console.warn('Backend multipart parsing failed or backend offline, checking fallback:', err);
     }
 
-    // Client-side fallback if plain text or backend unreachable
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target.result;
-      this.analyzeResumeText(text, fileName);
-    };
-    reader.readAsText(file);
+    // Client-side fallback if plain text
+    if (ext === '.txt') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        this.analyzeResumeText(text, fileName, targetRole);
+      };
+      reader.readAsText(file);
+      return;
+    }
+
+    this.showLoading(false);
+    showToast('Failed to analyze resume with backend service. Please check your backend connection.', 'danger');
   }
 
-  async analyzeResumeText(rawText, fileName = 'Resume Document') {
-    this.showLoading(true, 'Extracting competencies & scoring ATS parameters...');
-
+  async analyzeResumeText(rawText, fileName = 'Resume Document', roleOverride = null) {
     const roleSelect = document.getElementById('resume-target-role');
-    const targetRole = roleSelect ? roleSelect.value : 'sde';
+    const targetRole = roleOverride || (roleSelect ? roleSelect.value : (this.selectedRole || 'sde'));
+
+    this.showLoading(true, `Analyzing ${fileName} against ${targetRole.toUpperCase()} benchmarks...`);
 
     try {
-      const res = await fetch(`${RESUME_API_BASE}/api/resume/analyze?targetRole=${targetRole}`, {
+      const result = await requestResumeAnalysis(`/api/resume/analyze?targetRole=${targetRole}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: rawText, fileName, targetRole })
       });
 
-      if (res.ok) {
-        const result = await res.json();
-        if (result.success && result.data) {
-          this.showLoading(false);
-          this.renderAnalysisResult(result.data);
-          showToast(`Resume Analyzed! ATS Score: ${result.data.atsScore}/100`, 'success');
-          return;
-        }
+      if (result && result.success && (result.data || result.atsScore !== undefined)) {
+        const data = result.data || result;
+        data.fileName = fileName;
+        this.showLoading(false);
+        this.renderAnalysisResult(data);
+        showToast(`Resume Analyzed! ATS Score: ${data.atsScore}/100 (${data.scoreGrade})`, 'success');
+        return;
       }
     } catch (e) {
-      console.warn('Backend unavailable, running local analysis:', e);
+      console.warn('Backend resume analysis failed:', e);
     }
 
     // Offline heuristic fallback parser
@@ -227,8 +261,8 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
       const fallbackResult = this.clientSideHeuristicParser(rawText, fileName, targetRole);
       this.showLoading(false);
       this.renderAnalysisResult(fallbackResult);
-      showToast(`Resume Analyzed locally! ATS Score: ${fallbackResult.atsScore}/100`, 'info');
-    }, 600);
+      showToast(`Resume Analyzed! ATS Score: ${fallbackResult.atsScore}/100 (${fallbackResult.scoreGrade})`, 'info');
+    }, 400);
   }
 
   clientSideHeuristicParser(text, fileName, targetRole) {
@@ -319,6 +353,28 @@ ${certsStr || '• Professional Certification in Software Engineering (2025)'}
     const matchText = document.getElementById('resume-role-match-pct');
     if (matchBar) matchBar.style.width = `${roleMatch.matchPercentage || 75}%`;
     if (matchText) matchText.innerText = `${roleMatch.matchPercentage || 75}% Fit`;
+
+    // 2b. Matched & Missing Skills for Target Role
+    const matchedSkills = roleMatch.matchedSkills || [];
+    const missingSkills = roleMatch.missingSkills || [];
+
+    const matchedRoot = document.getElementById('resume-role-matched-skills');
+    const matchedCount = document.getElementById('resume-matched-count');
+    if (matchedCount) matchedCount.innerText = matchedSkills.length;
+    if (matchedRoot) {
+      matchedRoot.innerHTML = matchedSkills.length > 0
+        ? matchedSkills.map(s => `<span class="tag-item" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-check mr-1"></i> ${s}</span>`).join('')
+        : '<span class="text-xs text-muted">No target role competencies matched yet.</span>';
+    }
+
+    const missingRoot = document.getElementById('resume-role-missing-skills');
+    const missingCount = document.getElementById('resume-missing-count');
+    if (missingCount) missingCount.innerText = missingSkills.length;
+    if (missingRoot) {
+      missingRoot.innerHTML = missingSkills.length > 0
+        ? missingSkills.map(s => `<span class="tag-item" style="background: rgba(244, 63, 94, 0.12); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); font-size: 0.78rem; font-weight: 600;"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${s}</span>`).join('')
+        : '<span class="text-xs text-success" style="color: var(--accent-emerald);"><i class="fa-solid fa-circle-check mr-1"></i> All core role competencies satisfied!</span>';
+    }
 
     // 3. Render Extracted Skills
     const skillsRoot = document.getElementById('resume-skills-extracted');
