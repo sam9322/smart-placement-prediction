@@ -7,12 +7,11 @@ Stack: Python Flask + SQLite + PBKDF2 Password Hashing
 """
 
 import os
-import io
 import re
 import json
 import sqlite3
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -2329,7 +2328,6 @@ def get_personalized_youtube_recommendations():
     dev_skills = user_dict.get('devSkills') or 'Full Stack & APIs'
     aptitude_score = int(user_dict.get('aptitudeScore', 80) or 80)
     coding_rating = int(user_dict.get('codingRating', 1600) or 1600)
-    skills = user_dict.get('skills', [])
     projects = user_dict.get('projects', [])
     internships = user_dict.get('internships', [])
     target_career_id = user_dict.get('targetCareerId', 'sde')
