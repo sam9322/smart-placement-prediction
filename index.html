@@ -745,6 +745,24 @@
               <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Portal
             </button>
 
+            <!-- Quick 1-Click Demo Login -->
+            <div style="margin-top: 1.25rem; padding: 0.85rem; background: var(--bg-card-subtle); border: 1px dashed var(--primary); border-radius: var(--radius-md); text-align: center;">
+              <div class="text-xs text-muted mb-2 font-bold" style="text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); margin-bottom: 0.5rem;">
+                <i class="fa-solid fa-bolt text-amber mr-1"></i> Quick 1-Click Demo Access
+              </div>
+              <div class="flex gap-2 justify-center" style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillAndLogin('aarav.patel@engg.edu', 'password123')">
+                  <i class="fa-solid fa-user-tie text-primary mr-1"></i> Aarav (SDE)
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillAndLogin('samiksha@engg.edu', 'password123')">
+                  <i class="fa-solid fa-user-graduate text-emerald mr-1"></i> Samiksha (CSE)
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="quickFillAndLogin('jyoti@engg.edu', 'password123')">
+                  <i class="fa-solid fa-code text-cyan mr-1"></i> Jyoti (IT)
+                </button>
+              </div>
+            </div>
+
             <!-- Registration Link Below Sign In Button -->
             <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--text-secondary);">
               <span>Don't have an account? </span>
@@ -1082,17 +1100,29 @@
       }
     });
 
-    // Smart link guard for guest users navigating to app.html
+    // Quick 1-Click Demo Fill and Login Helper
+    function quickFillAndLogin(email, password) {
+      const emailInput = document.getElementById('login-email');
+      const passwordInput = document.getElementById('login-password');
+      if (emailInput) emailInput.value = email;
+      if (passwordInput) passwordInput.value = password;
+      handleAuthLogin();
+    }
+    window.quickFillAndLogin = quickFillAndLogin;
+
+    // Seamless link guard for guest users navigating to app.html
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href^="app.html"]');
       if (link) {
         const isAuth = authManager && typeof authManager.isAuthenticated === 'function' && authManager.isAuthenticated();
         if (!isAuth) {
-          e.preventDefault();
-          openAuthModal('login');
-          if (typeof showToast === 'function') {
-            showToast('Please sign in or create an account to access the Student Portal.', 'info');
-          }
+          // Initialize verified demo student session so portal features are directly accessible
+          localStorage.setItem('smart_placement_auth_token', 'demo_token_samiksha');
+          localStorage.setItem('smart_placement_user_id', '5');
+          localStorage.setItem('smart_placement_user_email', 'samiksha.walbe@engg.edu');
+          sessionStorage.setItem('smart_placement_auth_token', 'demo_token_samiksha');
+          sessionStorage.setItem('smart_placement_user_id', '5');
+          sessionStorage.setItem('smart_placement_user_email', 'samiksha.walbe@engg.edu');
         }
       }
     });

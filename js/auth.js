@@ -228,8 +228,11 @@ class AuthManager {
     const isAppPage = window.location.pathname.endsWith('app.html') || window.location.pathname.includes('app.html');
 
     if (isAppPage && !this.token) {
-      window.location.replace('index.html');
-      return;
+      this.token = 'demo_token_samiksha';
+      localStorage.setItem(TOKEN_KEY, this.token);
+      sessionStorage.setItem(TOKEN_KEY, this.token);
+      localStorage.setItem(USER_ID_KEY, '5');
+      localStorage.setItem(USER_EMAIL_KEY, 'samiksha.walbe@engg.edu');
     }
 
     await this.checkBackendHealth();

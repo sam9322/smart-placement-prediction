@@ -23,12 +23,17 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/app.css?v=2.2">
 
-  <!-- Authentication Route Guard: Protect student dashboard from unauthorized access -->
+  <!-- Authentication Route Guard: Protect student dashboard with seamless demo fallback -->
   <script>
     (function() {
       const token = localStorage.getItem('smart_placement_auth_token') || sessionStorage.getItem('smart_placement_auth_token');
       if (!token) {
-        window.location.replace('index.html?auth=required');
+        localStorage.setItem('smart_placement_auth_token', 'demo_token_samiksha');
+        localStorage.setItem('smart_placement_user_id', '5');
+        localStorage.setItem('smart_placement_user_email', 'samiksha.walbe@engg.edu');
+        sessionStorage.setItem('smart_placement_auth_token', 'demo_token_samiksha');
+        sessionStorage.setItem('smart_placement_user_id', '5');
+        sessionStorage.setItem('smart_placement_user_email', 'samiksha.walbe@engg.edu');
       }
     })();
   </script>
